@@ -1,0 +1,36 @@
+{
+  "name": "@arc/jupiter",
+  "version": "0.0.1",
+  "private": false,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "echo skip"
+  },
+  "peerDependencies": {
+    "@arc/solana": "*"
+  },
+  "devDependencies": {
+    "@arc/solana": "workspace:*",
+    "@solana/kit": "^2.0.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.3.3"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}
+
+

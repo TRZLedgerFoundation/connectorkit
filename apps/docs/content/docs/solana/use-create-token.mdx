@@ -1,0 +1,415 @@
+---
+title: useCreateToken
+description: Hook to create new SPL tokens with customizable properties
+---
+
+# useCreateToken
+
+The `useCreateToken` hook provides functionality to create new SPL tokens on Solana with customizable properties like decimals, mint authority, and freeze authority.
+
+## Usage
+
+### Direct Import
+```tsx
+import { useCreateToken } from '@arc/solana'
+
+function CreateTokenForm() {
+  const {
+    createToken,
+    isLoading,
+    error,
+    data,
+    reset
+  } = useCreateToken()
+
+  const handleCreate = async () => {
+    try {
+      const result = await createToken({
+        decimals: 6,
+        mintAuthority: 'your-mint-authority-address',
+        freezeAuthority: 'your-freeze-authority-address'
+      })
+      console.log('Token created:', result.mint)
+    } catch (err) {
+      console.error('Failed to create token:', err)
+    }
+  }
+
+  return (
+    <div>
+      <button onClick={handleCreate} disabled={isLoading}>
+        {isLoading ? 'Creating...' : 'Create Token'}
+      </button>
+      {error && <div>Error: {error.message}</div>}
+      {data && <div>Token created! Mint: {data.mint}</div>}
+    </div>
+  )
+}
+```
+
+### Copy Hook Code
+```tsx
+'use client'
+
+import { useMutation } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { useArcClient } from '../core/arc-client-provider'
+import { getSharedRpc, getSharedWebSocket, releaseRpcConnection } from '../core/rpc-manager'
+import type { Transport } from '../transports/types'
+import { 
+  sendAndConfirmTransactionFactory,
+  createTransactionMessage,
+  pipe,
+  setTransactionMessageFeePayerSigner,
+  setTransactionMessageLifetimeUsingBlockhash,
+  appendTransactionMessageInstructions,
+  signTransactionMessageWithSigners,
+  getSignatureFromTransaction,
+  generateKeyPairSigner,
+  address,
+  type Address,
+  type TransactionSigner,
+  type Instruction
+} from '@solana/kit'
+import { getCreateAccountInstruction } from '@solana-program/system'
+import { 
+  getInitializeMintInstruction, 
+  getMintSize, 
+  TOKEN_PROGRAM_ADDRESS 
+} from '@solana-program/token'
+
+export interface CreateTokenOptions {
+  decimals?: number
+  mintAuthority?: string | Address
+  freezeAuthority?: string | Address | null
+  payer?: string | Address
+}
+
+export interface CreateTokenResult {
+  signature: string
+  mint: Address
+  decimals: number
+  mintAuthority: Address
+  freezeAuthority?: Address | null
+  payer: Address
+  blockTime?: number
+  slot?: number
+}
+
+export interface UseCreateTokenReturn {
+  createToken: (options?: CreateTokenOptions) => Promise<CreateTokenResult>
+  isLoading: boolean
+  error: Error | null
+  data: CreateTokenResult | null
+  reset: () => void
+}
+
+export function useCreateToken(): UseCreateTokenReturn {
+  const { wallet, network } = useArcClient()
+  
+  useEffect(() => {
+    return () => {
+      releaseRpcConnection(network.rpcUrl)
+    }
+  }, [network.rpcUrl])
+  
+  const mutation = useMutation({
+    mutationFn: async (options: CreateTokenOptions = {}): Promise<CreateTokenResult> => {
+      const { 
+        decimals = 9,
+        mintAuthority: optionsMintAuthority,
+        freezeAuthority = null,
+        payer: optionsPayer
+      } = options
+      
+      const mintAuthority = optionsMintAuthority || wallet.address
+      const payerAddress = optionsPayer || wallet.address
+      
+      if (!mintAuthority) {
+        throw new Error('No mint authority provided and no wallet connected')
+      }
+      
+      if (!payerAddress) {
+        throw new Error('No payer address provided and no wallet connected')
+      }
+      
+      if (!wallet.signer) {
+        throw new Error('Wallet not connected or no signer available')
+      }
+      
+      
+      
+      const rpc = getSharedRpc(network.rpcUrl)
+      const rpcSubscriptions = getSharedWebSocket(network.rpcUrl)
+      const transport = (useArcClient() as any).config.transport as Transport
+      const sendAndConfirmTransaction = sendAndConfirmTransactionFactory({ rpc: rpc as any, rpcSubscriptions: rpcSubscriptions as any })
+      
+      const mint = await generateKeyPairSigner()
+      
+      
+      const mintSpace = BigInt(getMintSize())
+      const mintRent: any = await transport.request(
+        { method: 'getMinimumBalanceForRentExemption', params: [mintSpace] }
+      )
+      
+      
+      const { value: latestBlockhash }: any = await transport.request(
+        { method: 'getLatestBlockhash', params: [] }
+      )
+      
+      
+      const instructions: Instruction[] = [
+        getCreateAccountInstruction({
+          payer: wallet.signer as TransactionSigner,
+          newAccount: mint,
+          lamports: mintRent,
+          space: mintSpace,
+          programAddress: TOKEN_PROGRAM_ADDRESS,
+        }),
+        getInitializeMintInstruction({
+          mint: mint.address,
+          decimals,
+          mintAuthority: address(mintAuthority),
+          freezeAuthority: freezeAuthority ? address(freezeAuthority) : null
+        }),
+      ]
+      
+      
+      
+      const transactionMessage = pipe(
+        createTransactionMessage({ version: 0 }),
+        tx => setTransactionMessageFeePayerSigner(wallet.signer as TransactionSigner, tx),
+        tx => setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
+        tx => appendTransactionMessageInstructions(instructions, tx),
+      )
+      
+      
+      
+      const signedTransaction = await signTransactionMessageWithSigners(transactionMessage)
+      const signature = getSignatureFromTransaction(signedTransaction)
+      
+      
+      
+      await sendAndConfirmTransaction(signedTransaction, { 
+        commitment: 'confirmed',
+        skipPreflight: false
+      })
+      
+      
+      
+      const mintAccount: any = await transport.request(
+        { method: 'getAccountInfo', params: [mint.address] }
+      )
+      if (!mintAccount.value) {
+        throw new Error('Token creation failed - mint account not found after transaction')
+      }
+      
+      
+      
+      const result: CreateTokenResult = {
+        signature,
+        mint: mint.address,
+        decimals,
+        mintAuthority: address(mintAuthority),
+        freezeAuthority: freezeAuthority ? address(freezeAuthority) : null,
+        payer: address(payerAddress)
+      }
+      
+      return result
+    },
+    onSuccess: () => {},
+    onError: () => {}
+  })
+
+  return {
+    createToken: mutation.mutateAsync,
+    isLoading: mutation.isPending,
+    error: mutation.error,
+    data: mutation.data || null,
+    reset: mutation.reset
+  }
+}
+```
+
+## Parameters
+
+The hook takes optional configuration through the `createToken` function:
+
+### CreateTokenOptions
+
+- `decimals?: number` - Number of decimal places for the token (default: 9)
+- `mintAuthority?: string | Address` - Address that will have mint authority (defaults to connected wallet)
+- `freezeAuthority?: string | Address | null` - Address that will have freeze authority (default: null)
+- `payer?: string | Address` - Address that will pay for the transaction (defaults to connected wallet)
+
+## Return Value
+
+- `createToken: (options?: CreateTokenOptions) => Promise<CreateTokenResult>` - Function to create a new token
+- `isLoading: boolean` - Whether the token creation is in progress
+- `error: Error | null` - Any error that occurred
+- `data: CreateTokenResult | null` - Result of the successful token creation
+- `reset: () => void` - Function to reset the mutation state
+
+### CreateTokenResult
+
+- `signature: string` - Transaction signature
+- `mint: Address` - The mint address of the created token
+- `decimals: number` - Number of decimal places
+- `mintAuthority: Address` - The mint authority address
+- `freezeAuthority?: Address | null` - The freeze authority address (if set)
+- `payer: Address` - The payer address
+- `blockTime?: number` - Block time when the transaction was processed
+- `slot?: number` - Slot number when the transaction was processed
+
+## Example
+
+```tsx
+import { useCreateToken } from '@arc/solana'
+import { useState } from 'react'
+
+function TokenCreator() {
+  const {
+    createToken,
+    isLoading,
+    error,
+    data,
+    reset
+  } = useCreateToken()
+
+  const [decimals, setDecimals] = useState(9)
+  const [freezeAuthorityEnabled, setFreezeAuthorityEnabled] = useState(false)
+
+  const handleCreateToken = async () => {
+    try {
+      const result = await createToken({
+        decimals,
+        freezeAuthority: freezeAuthorityEnabled ? undefined : null
+      })
+      console.log('Token created successfully:', result)
+    } catch (err) {
+      console.error('Failed to create token:', err)
+    }
+  }
+
+  return (
+    <div style={{ padding: '20px', maxWidth: '500px' }}>
+      <h3>Create New Token</h3>
+      
+      <div style={{ marginBottom: '16px' }}>
+        <label>
+          Decimals:
+          <input
+            type="number"
+            value={decimals}
+            onChange={(e) => setDecimals(Number(e.target.value))}
+            min="0"
+            max="18"
+            style={{ marginLeft: '8px', padding: '4px' }}
+          />
+        </label>
+      </div>
+
+      <div style={{ marginBottom: '16px' }}>
+        <label>
+          <input
+            type="checkbox"
+            checked={freezeAuthorityEnabled}
+            onChange={(e) => setFreezeAuthorityEnabled(e.target.checked)}
+            style={{ marginRight: '8px' }}
+          />
+          Enable freeze authority (wallet will be freeze authority)
+        </label>
+      </div>
+
+      <button
+        onClick={handleCreateToken}
+        disabled={isLoading}
+        style={{
+          padding: '12px 24px',
+          backgroundColor: isLoading ? '#ccc' : '#4CAF50',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: isLoading ? 'not-allowed' : 'pointer'
+        }}
+      >
+        {isLoading ? 'Creating Token...' : 'Create Token'}
+      </button>
+
+      {error && (
+        <div style={{ 
+          marginTop: '16px', 
+          padding: '12px', 
+          backgroundColor: '#ffebee', 
+          border: '1px solid #f44336',
+          borderRadius: '4px',
+          color: '#d32f2f'
+        }}>
+          <strong>Error:</strong> {error.message}
+          <button 
+            onClick={reset}
+            style={{ marginLeft: '8px', padding: '4px 8px' }}
+          >
+            Clear
+          </button>
+        </div>
+      )}
+
+      {data && (
+        <div style={{ 
+          marginTop: '16px', 
+          padding: '12px', 
+          backgroundColor: '#e8f5e8', 
+          border: '1px solid #4CAF50',
+          borderRadius: '4px'
+        }}>
+          <h4>Token Created Successfully!</h4>
+          <p><strong>Mint Address:</strong> 
+            <code style={{ backgroundColor: '#f5f5f5', padding: '2px 4px' }}>
+              {data.mint}
+            </code>
+          </p>
+          <p><strong>Decimals:</strong> {data.decimals}</p>
+          <p><strong>Mint Authority:</strong> {data.mintAuthority}</p>
+          {data.freezeAuthority && (
+            <p><strong>Freeze Authority:</strong> {data.freezeAuthority}</p>
+          )}
+          <p><strong>Transaction:</strong> 
+            <a 
+              href={`https://explorer.solana.com/tx/${data.signature}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ marginLeft: '8px', color: '#1976d2' }}
+            >
+              {data.signature.slice(0, 8)}...
+            </a>
+          </p>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+## Features
+
+- **Automatic Key Generation**: Generates a new keypair for the mint address
+- **Configurable Properties**: Set decimals, mint authority, and freeze authority
+- **Rent Calculation**: Automatically calculates and pays rent for the mint account
+- **Transaction Confirmation**: Waits for transaction confirmation before returning
+- **Error Handling**: Comprehensive error handling with user-friendly messages
+
+## Use Cases
+
+- **Token Launch**: Create new tokens for your project or protocol
+- **NFT Collections**: Create mint addresses for NFT collections
+- **Testing**: Create test tokens during development
+- **Governance Tokens**: Create tokens for DAO governance systems
+
+## Notes
+
+- The connected wallet must have sufficient SOL to pay for transaction fees and rent
+- A new keypair is automatically generated for the mint address
+- The mint authority defaults to the connected wallet if not specified
+- Freeze authority is optional and can be set to null to disable freezing capabilities
+- The created token will need to be minted to create an initial supply

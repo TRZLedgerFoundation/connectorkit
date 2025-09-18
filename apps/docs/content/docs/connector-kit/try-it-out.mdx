@@ -1,0 +1,110 @@
+---
+title: Try It Out
+description: Arc Connector Kit offers multiple implementation approaches to fit your applications needs
+
+---
+
+import { ConnectButton } from '@arc/connector-kit'
+import { StandardWalletDemo } from '../../../components/standard-wallet-demo'
+
+
+## 1. Drop-in and build
+
+Use the drop-in components for quick integrations.
+
+```tsx
+import { ConnectButton } from '@arc/connector-kit'
+
+<ConnectButton />
+```
+
+<div 
+  className="relative flex flex-col items-center justify-center w-full h-[300px] rounded-xl gap-6 p-6 border border-gray-200"
+  style={{
+    backgroundImage: `repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(46, 77, 97, 0.08) 10px,
+      rgba(46, 77, 97, 0.08) 11px
+    )`
+  }}
+  >
+  <ConnectButton />
+</div>
+
+## 2. Build what you need with ARC
+
+or use the simple headless SDK for wallet connection and state management.
+
+<StandardWalletDemo />
+
+## 3. Headless Implementation
+
+Complete control over UI and behavior:
+
+```tsx
+import { useConnector } from '@arc/connector-kit'
+import { useWalletAddress, useBalance } from '@arc/solana'
+
+function CustomWalletConnect() {
+  const { wallets, select, disconnect } = useConnector()
+  const { address, connected } = useWalletAddress()
+  const { balance } = useBalance({ address })
+
+  return (
+    <div>
+      {!connected ? (
+        wallets?.map(wallet => (
+          <button 
+            key={wallet.name}
+            onClick={() => select(wallet.name)}
+            disabled={!wallet.installed}
+          >
+            Connect {wallet.name}
+          </button>
+        ))
+      ) : (
+        <div>
+          <p>Connected: {address}</p>
+          <p>Balance: {Number(balance) / 1e9} SOL</p>
+          <button onClick={disconnect}>Disconnect</button>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+## 4. Advanced Features
+
+Access wallet capabilities and sign transactions:
+
+```tsx
+function TransactionSigner() {
+  const { selectedWallet } = useConnector()
+  
+  const handleSign = async () => {
+    const features = selectedWallet?.features
+    const signFeature = features?.['solana:signTransaction']
+    
+    if (signFeature) {
+      // Your transaction signing logic
+    }
+  }
+  
+  return <button onClick={handleSign}>Sign Transaction</button>
+}
+```
+
+## Choose Your Approach
+
+- **Pre-built Components** - Fastest setup, minimal customization
+- **Interactive Demo** - Rich UX with animations and wallet management
+- **Headless Implementation** - Maximum flexibility and control
+- **Advanced Features** - Transaction signing and wallet capabilities
+
+## Next Steps
+
+- [Getting Started](/docs/connector-kit/introduction) - Full implementation guide
+- [@arc/solana](/docs/solana) - For transaction building and blockchain operations

@@ -1,0 +1,45 @@
+# @arc/jupiter
+
+**Example: Extending Arc with DeFi Protocols**
+
+This package demonstrates how to extend Arc with protocol-specific functionality. While not currently active, it shows the pattern for integrating Jupiter (or any DEX) into the Arc ecosystem.
+
+## 🎯 Purpose
+
+Shows how to:
+- Implement the `SwapProvider` interface
+- Integrate with Arc's provider system
+- Add protocol-specific functionality
+
+## 🏗️ Pattern
+
+```typescript
+// 1. Implement the provider interface
+export function createJupiter(config): SwapProvider {
+  return {
+    name: 'jupiter',
+    quote: async (params) => { /* ... */ },
+    buildTransaction: async (quote) => { /* ... */ },
+    isTokenSupported: (mint) => { /* ... */ }
+  }
+}
+
+// 2. Use with Arc
+import { createJupiter } from '@arc/jupiter'
+import { ArcProvider } from '@arc/solana'
+
+<ArcProvider config={{
+  providers: [createProvider({ 
+    swap: [createJupiter()] 
+  })]
+}}>
+```
+
+## 🚀 Extension Ideas
+
+- `@arc/marinade` - Liquid staking
+- `@arc/kamino` - Yield vaults
+- `@arc/drift` - Perpetuals trading
+- `@arc/phoenix` - Order book DEX
+
+Each extension follows the same pattern, implementing Arc's provider interfaces.

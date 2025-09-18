@@ -1,0 +1,393 @@
+---
+title: useRecentPrioritizationFees
+description: Hook to get recent prioritization fees for transaction fee estimation and optimization
+---
+
+# useRecentPrioritizationFees
+
+The `useRecentPrioritizationFees` hook fetches recent prioritization fees from the Solana blockchain. These fees help you estimate appropriate prioritization fees for your transactions to ensure they are processed quickly, especially during network congestion.
+
+## Usage
+
+### Direct Import
+```tsx
+import { useRecentPrioritizationFees } from '@arc/solana'
+
+function PrioritizationFeesDisplay() {
+  const { fees, isLoading, error } = useRecentPrioritizationFees({
+    addresses: ['11111111111111111111111111111112'], // System program
+    refreshInterval: 15000
+  })
+  
+  if (isLoading) return <div>Loading fees...</div>
+  if (error) return <div>Error: {error.message}</div>
+  
+  const avgFee = fees?.reduce((sum, fee) => sum + Number(fee.prioritizationFee), 0) || 0
+  const averageFee = fees?.length ? avgFee / fees.length : 0
+  
+  return (
+    <div>
+      <p>Recent Fees: {fees?.length || 0} samples</p>
+      <p>Average Fee: {averageFee.toLocaleString()} microlamports</p>
+    </div>
+  )
+}
+```
+
+### Copy Hook Code
+```tsx
+'use client'
+
+import { useQuery } from '@tanstack/react-query'
+import { useCallback } from 'react'
+import { useArcClient } from '../core/arc-client-provider'
+import type { Transport } from '../transports/types'
+import { 
+  ArcError,
+  createNetworkError,
+  type ArcErrorContext
+} from '../core/error-handler'
+import type { Address } from '@solana/kit'
+
+type PrioritizationFee = Readonly<{
+  slot: bigint
+  prioritizationFee: bigint
+}>
+
+export interface UseRecentPrioritizationFeesOptions {
+  addresses?: Address[]
+  refreshInterval?: number
+  enabled?: boolean
+}
+
+export interface UseRecentPrioritizationFeesReturn {
+  fees: readonly PrioritizationFee[] | null
+  isLoading: boolean
+  error: ArcError | null
+  refetch: () => void
+  clear: () => void
+}
+
+export function useRecentPrioritizationFees(
+  options: UseRecentPrioritizationFeesOptions = {}
+): UseRecentPrioritizationFeesReturn {
+  const { network } = useArcClient()
+  
+  const {
+    addresses = [],
+    refreshInterval,
+    enabled = true,
+  } = options
+
+  const query = useQuery<readonly PrioritizationFee[], ArcError>({
+    networkMode: "offlineFirst",
+    queryKey: ['recentPrioritizationFees', network.rpcUrl, addresses],
+    queryFn: async ({ signal }) => {
+      const context: ArcErrorContext = {
+        operation: 'getRecentPrioritizationFees',
+        timestamp: Date.now(),
+        rpcUrl: network.rpcUrl
+      }
+
+      try {
+        const transport = (useArcClient() as any).config.transport as Transport
+        const result: any = await transport.request(
+          { method: 'getRecentPrioritizationFees', params: [addresses] },
+          { signal }
+        )
+        return result as readonly PrioritizationFee[]
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        throw createNetworkError(
+          `Failed to fetch recent prioritization fees: ${errorMessage}`,
+          context,
+          error as Error
+        )
+      }
+    },
+    enabled: enabled,
+    refetchInterval: refreshInterval,
+    refetchOnWindowFocus: false,
+    staleTime: 5_000,
+    gcTime: 5 * 60_000,
+    retry: 1,
+    notifyOnChangeProps: ['data', 'error', 'isLoading'],
+  })
+
+  const clear = useCallback(() => {
+    query.refetch()
+  }, [query])
+
+  return {
+    fees: query.data ?? null,
+    isLoading: query.isLoading,
+    error: query.error ?? null,
+    refetch: query.refetch,
+    clear,
+  }
+}
+```
+
+## Parameters
+
+- `addresses?: Address[]` - Array of account addresses to filter fees by (default: [])
+- `refreshInterval?: number` - How often to refresh data in milliseconds (optional)
+- `enabled?: boolean` - Whether the query is enabled (default: true)
+
+## Return Value
+
+- `fees: readonly PrioritizationFee[] | null` - Array of recent prioritization fee samples containing:
+  - `slot: bigint` - The slot where this fee was observed
+  - `prioritizationFee: bigint` - The prioritization fee in microlamports
+- `isLoading: boolean` - Whether the fees are loading
+- `error: ArcError | null` - Any error that occurred
+- `refetch: () => void` - Function to manually refetch the fees
+- `clear: () => void` - Function to clear and refetch the fees
+
+## Example
+
+```tsx
+import { useRecentPrioritizationFees } from '@arc/solana'
+import { useEffect, useState } from 'react'
+
+function PrioritizationFeeAnalyzer() {
+  const {
+    fees,
+    isLoading,
+    error,
+    refetch,
+    clear
+  } = useRecentPrioritizationFees({
+    addresses: [], // Get global fees, or specify addresses for targeted analysis
+    refreshInterval: 10000 // Update every 10 seconds
+  })
+
+  const [feeRecommendations, setFeeRecommendations] = useState({
+    low: 0,
+    medium: 0,
+    high: 0
+  })
+
+  useEffect(() => {
+    if (!fees || fees.length === 0) return
+
+    // Convert fees to numbers for analysis
+    const feeNumbers = fees.map(f => Number(f.prioritizationFee)).sort((a, b) => a - b)
+    
+    // Calculate percentiles for recommendations
+    const low = feeNumbers[Math.floor(feeNumbers.length * 0.25)] || 0
+    const medium = feeNumbers[Math.floor(feeNumbers.length * 0.5)] || 0
+    const high = feeNumbers[Math.floor(feeNumbers.length * 0.75)] || 0
+
+    setFeeRecommendations({ low, medium, high })
+  }, [fees])
+
+  if (isLoading && !fees) {
+    return (
+      <div style={{ padding: '16px', textAlign: 'center' }}>
+        <div>Loading recent prioritization fees...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div style={{ padding: '16px', color: 'red' }}>
+        <div>Error loading fees: {error.message}</div>
+        <button onClick={() => refetch()}>Retry</button>
+      </div>
+    )
+  }
+
+  const totalFees = fees?.length || 0
+  const avgFee = fees?.length 
+    ? fees.reduce((sum, fee) => sum + Number(fee.prioritizationFee), 0) / fees.length 
+    : 0
+
+  const maxFee = fees?.length 
+    ? Math.max(...fees.map(f => Number(f.prioritizationFee)))
+    : 0
+
+  const minFee = fees?.length 
+    ? Math.min(...fees.map(f => Number(f.prioritizationFee)))
+    : 0
+
+  return (
+    <div style={{ padding: '16px' }}>
+      <h3>Prioritization Fee Analyzer</h3>
+      
+      <div style={{ display: 'grid', gap: '12px', marginBottom: '16px' }}>
+        <div style={{ 
+          backgroundColor: '#f5f5f5', 
+          padding: '16px', 
+          borderRadius: '8px',
+          display: 'grid',
+          gap: '8px'
+        }}>
+          <h4 style={{ margin: 0 }}>Fee Statistics</h4>
+          <div><strong>Total Samples:</strong> {totalFees}</div>
+          <div><strong>Average Fee:</strong> {avgFee.toLocaleString()} microlamports</div>
+          <div><strong>Min Fee:</strong> {minFee.toLocaleString()} microlamports</div>
+          <div><strong>Max Fee:</strong> {maxFee.toLocaleString()} microlamports</div>
+        </div>
+
+        <div style={{ 
+          backgroundColor: '#e8f5e8', 
+          padding: '16px', 
+          borderRadius: '8px'
+        }}>
+          <h4 style={{ margin: 0, marginBottom: '12px' }}>Fee Recommendations</h4>
+          
+          <div style={{ display: 'grid', gap: '8px' }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '8px',
+              backgroundColor: '#c8e6c9',
+              borderRadius: '4px'
+            }}>
+              <span><strong>Low Priority (25th percentile):</strong></span>
+              <span>{feeRecommendations.low.toLocaleString()} μL</span>
+            </div>
+            
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '8px',
+              backgroundColor: '#fff3c4',
+              borderRadius: '4px'
+            }}>
+              <span><strong>Medium Priority (50th percentile):</strong></span>
+              <span>{feeRecommendations.medium.toLocaleString()} μL</span>
+            </div>
+            
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '8px',
+              backgroundColor: '#ffcdd2',
+              borderRadius: '4px'
+            }}>
+              <span><strong>High Priority (75th percentile):</strong></span>
+              <span>{feeRecommendations.high.toLocaleString()} μL</span>
+            </div>
+          </div>
+          
+          <div style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+            μL = microlamports (1 SOL = 1,000,000,000 microlamports)
+          </div>
+        </div>
+
+        {fees && fees.length > 0 && (
+          <div style={{ 
+            backgroundColor: '#f0f4ff', 
+            padding: '16px', 
+            borderRadius: '8px'
+          }}>
+            <h4 style={{ margin: 0, marginBottom: '8px' }}>Recent Fee Samples</h4>
+            <div style={{ 
+              maxHeight: '200px', 
+              overflowY: 'auto',
+              border: '1px solid #ddd',
+              borderRadius: '4px'
+            }}>
+              {fees.slice(0, 10).map((fee, index) => (
+                <div key={index} style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '4px 8px',
+                  borderBottom: index < 9 ? '1px solid #eee' : 'none',
+                  fontSize: '12px'
+                }}>
+                  <span>Slot {fee.slot.toString()}</span>
+                  <span>{Number(fee.prioritizationFee).toLocaleString()} μL</span>
+                </div>
+              ))}
+            </div>
+            {fees.length > 10 && (
+              <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                Showing 10 of {fees.length} samples
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div style={{ display: 'flex', gap: '8px' }}>
+        <button 
+          onClick={() => refetch()}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#2196F3',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Refresh Fees
+        </button>
+        
+        <button 
+          onClick={() => clear()}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#ff9800',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Clear & Reload
+        </button>
+      </div>
+    </div>
+  )
+}
+```
+
+## Prioritization Fee System
+
+**What are Prioritization Fees?**
+- Additional fees paid to validators to prioritize transaction processing
+- Measured in microlamports (1 SOL = 1,000,000,000 microlamports)
+- Higher fees increase the likelihood of faster transaction processing
+
+**How They Work:**
+- Validators sort transactions by fee amount (highest first)
+- During network congestion, low-fee transactions may be delayed or dropped
+- Fees are burned (removed from circulation), not given to validators
+
+**Fee Strategies:**
+- **Low Priority**: Use 25th percentile for non-urgent transactions
+- **Medium Priority**: Use 50th percentile (median) for standard speed
+- **High Priority**: Use 75th percentile or higher for urgent transactions
+
+## Use Cases
+
+- **Transaction Fee Estimation**: Determine appropriate fees for different priority levels
+- **Wallet Applications**: Show users recommended fee options
+- **DeFi Protocols**: Dynamically adjust fees based on network conditions
+- **Trading Bots**: Optimize execution speed vs cost for different strategies
+- **Network Analytics**: Monitor fee trends and network congestion
+
+## Best Practices
+
+- **Monitor Regularly**: Fees can change rapidly during high network activity
+- **Use Percentiles**: Base recommendations on percentile analysis, not just averages
+- **Account-Specific Analysis**: Filter by relevant addresses for more accurate estimates
+- **Fallback Strategies**: Have backup fee levels if initial estimates are too low
+- **Cost vs Speed**: Balance transaction cost against execution urgency
+
+## Notes
+
+- Returns up to 150 recent fee samples by default
+- Fees are returned in microlamports (1 SOL = 1,000,000,000 microlamports)
+- Empty addresses array returns global fee data
+- Specific addresses filter fees for transactions involving those accounts
+- Fees can vary significantly based on network congestion and time of day
+- Consider using moving averages for smoother fee recommendations

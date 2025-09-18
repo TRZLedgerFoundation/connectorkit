@@ -1,0 +1,43 @@
+{
+  "name": "arc",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The React hooks library for Solana - making blockchain development as simple as React state",
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "examples/*",
+    "tools/*"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "type-check": "turbo type-check",
+    "clean": "turbo clean",
+    "format": "biome format --write .",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo build && changeset publish"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.1.3",
+    "@changesets/cli": "^2.29.5",
+    "@types/d3-path": "^3.1.1",
+    "@types/js-cookie": "^3.0.6",
+    "@types/node": "^24.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "eslint": "^9.32.0",
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "jsdom": "^26.1.0"
+  },
+  "packageManager": "pnpm@9.12.3"
+}

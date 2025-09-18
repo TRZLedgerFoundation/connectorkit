@@ -1,0 +1,530 @@
+---
+title: useMintTokens
+description: Hook to mint tokens to a recipient with form input management
+---
+
+# useMintTokens
+
+The `useMintTokens` hook provides functionality to mint SPL tokens to a recipient address, with built-in form input management and automatic token account creation.
+
+## Usage
+
+### Direct Import
+```tsx
+import { useMintTokens } from '@arc/solana'
+
+function MintTokensForm() {
+  const {
+    mintTokens,
+    isLoading,
+    error,
+    data,
+    mintInput,
+    toInput,
+    amountInput,
+    setMintInput,
+    setToInput,
+    setAmountInput,
+    handleSubmit
+  } = useMintTokens()
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        value={mintInput}
+        onChange={(e) => setMintInput(e.target.value)}
+        placeholder="Mint address"
+      />
+      <input
+        value={toInput}
+        onChange={(e) => setToInput(e.target.value)}
+        placeholder="Recipient address"
+      />
+      <input
+        value={amountInput}
+        onChange={(e) => setAmountInput(e.target.value)}
+        placeholder="Amount (raw units)"
+      />
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? 'Minting...' : 'Mint Tokens'}
+      </button>
+      {error && <div>Error: {error.message}</div>}
+      {data && <div>Minted! Signature: {data.signature}</div>}
+    </form>
+  )
+}
+```
+
+### Copy Hook Code
+```tsx
+'use client'
+
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useArcClient } from '../core/arc-client-provider'
+import { getSharedRpc, getSharedWebSocket, releaseRpcConnection } from '../core/rpc-manager'
+import type { Transport } from '../transports/types'
+import { 
+  sendAndConfirmTransactionFactory,
+  createTransactionMessage,
+  pipe,
+  setTransactionMessageFeePayerSigner,
+  setTransactionMessageLifetimeUsingBlockhash,
+  appendTransactionMessageInstructions,
+  signTransactionMessageWithSigners,
+  getSignatureFromTransaction,
+  address,
+  type Address,
+  type TransactionSigner,
+  type Instruction
+} from '@solana/kit'
+import { 
+  TOKEN_PROGRAM_ADDRESS, 
+  findAssociatedTokenPda,
+  getMintToInstruction,
+  getCreateAssociatedTokenInstruction
+} from '@solana-program/token'
+import { createInvalidator } from '../utils/invalidate'
+
+export interface MintTokensOptions {
+  mint: string | Address
+  to: string | Address
+  amount: bigint
+  mintAuthority?: string | Address
+  createAccountIfNeeded?: boolean
+}
+
+export interface MintTokensResult {
+  signature: string
+  mint: Address
+  amount: bigint
+  to: Address
+  toTokenAccount: Address
+  mintAuthority: Address
+  createdAccount?: boolean
+  blockTime?: number
+  slot?: number
+}
+
+export interface UseMintTokensReturn {
+  mintTokens: (options: MintTokensOptions) => Promise<MintTokensResult>
+  isLoading: boolean
+  error: Error | null
+  data: MintTokensResult | null
+  reset: () => void
+  
+  mintInput: string
+  toInput: string
+  amountInput: string
+  setMintInput: (value: string) => void
+  setToInput: (value: string) => void
+  setAmountInput: (value: string) => void
+  handleMintInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleToInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleAmountInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleSubmit: (event?: { preventDefault?: () => void }) => Promise<MintTokensResult | undefined>
+  mintFromInputs: () => Promise<MintTokensResult | undefined>
+}
+
+export function useMintTokens(
+  initialMintInput: string = '',
+  initialToInput: string = '',
+  initialAmountInput: string = ''
+): UseMintTokensReturn {
+  const { wallet, network, config } = useArcClient()
+  const queryClient = useQueryClient()
+  
+  const [mintInput, setMintInput] = useState(initialMintInput)
+  const [toInput, setToInput] = useState(initialToInput)
+  const [amountInput, setAmountInput] = useState(initialAmountInput)
+  
+  const stableOptionsRef = useRef({
+    network: network.rpcUrl,
+    commitment: config.commitment || 'confirmed',
+  })
+  
+  useEffect(() => {
+    stableOptionsRef.current = {
+      network: network.rpcUrl,
+      commitment: config.commitment || 'confirmed',
+    }
+  }, [network.rpcUrl, config.commitment])
+  
+  useEffect(() => {
+    return () => {
+      releaseRpcConnection(network.rpcUrl)
+    }
+  }, [network.rpcUrl])
+  
+  const mutation = useMutation({
+    mutationFn: async (options: MintTokensOptions): Promise<MintTokensResult> => {
+      const { 
+        mint, 
+        to, 
+        amount, 
+        mintAuthority: optionsMintAuthority,
+        createAccountIfNeeded = true 
+      } = options
+      
+      const mintAuthority = optionsMintAuthority || wallet.address
+      
+      if (!mintAuthority) {
+        throw new Error('No mint authority provided and no wallet connected')
+      }
+      
+      if (!wallet.signer) {
+        throw new Error('Wallet not connected or no signer available')
+      }
+      
+      
+      
+      const rpc = getSharedRpc(network.rpcUrl)
+      const rpcSubscriptions = getSharedWebSocket(network.rpcUrl)
+      const transport = (useArcClient() as any).config.transport as Transport
+      const sendAndConfirmTransaction = sendAndConfirmTransactionFactory({ rpc: rpc as any, rpcSubscriptions: rpcSubscriptions as any })
+      
+      const [toTokenAccount] = await findAssociatedTokenPda({
+        mint: address(mint),
+        owner: address(to),
+        tokenProgram: TOKEN_PROGRAM_ADDRESS,
+      })
+      
+      
+      
+      const toAccountInfo: any = await transport.request(
+        { method: 'getAccountInfo', params: [toTokenAccount] }
+      )
+      const needsToCreateAccount = !toAccountInfo.value && createAccountIfNeeded
+      
+      if (!toAccountInfo.value && !createAccountIfNeeded) {
+        throw new Error('Recipient token account does not exist and createAccountIfNeeded is false')
+      }
+      
+      
+      
+      const { value: latestBlockhash }: any = await transport.request(
+        { method: 'getLatestBlockhash', params: [] }
+      )
+      
+      
+      const instructions: Instruction[] = []
+      
+      if (needsToCreateAccount) {
+        const createAccountInstruction = getCreateAssociatedTokenInstruction({
+          payer: wallet.signer as TransactionSigner,
+          ata: toTokenAccount,
+          owner: address(to),
+          mint: address(mint),
+        })
+        instructions.push(createAccountInstruction)
+        
+      }
+      
+      const mintInstruction = getMintToInstruction({
+        mint: address(mint),
+        token: toTokenAccount,
+        amount,
+        mintAuthority: address(mintAuthority)
+      })
+      instructions.push(mintInstruction)
+      
+      
+      const transactionMessage = pipe(
+        createTransactionMessage({ version: 0 }),
+        tx => setTransactionMessageFeePayerSigner(wallet.signer as TransactionSigner, tx),
+        tx => setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
+        tx => appendTransactionMessageInstructions(instructions, tx),
+      )
+      
+      
+      
+      const signedTransaction = await signTransactionMessageWithSigners(transactionMessage)
+      const signature = getSignatureFromTransaction(signedTransaction)
+      
+      
+      
+      await sendAndConfirmTransaction(signedTransaction, { 
+        commitment: 'confirmed',
+        skipPreflight: false
+      })
+      
+      
+      
+      const result: MintTokensResult = {
+        signature,
+        mint: address(mint),
+        amount,
+        to: address(to),
+        toTokenAccount,
+        mintAuthority: address(mintAuthority),
+        createdAccount: needsToCreateAccount
+      }
+      
+      return result
+    },
+    onSuccess: async (result) => {
+      // Invalidate cache for mint and recipient
+      const invalidator = createInvalidator(queryClient)
+      await invalidator.invalidateAfterMint(
+        result.mint.toString(),
+        result.to.toString(),
+        { refetch: true }
+      )
+    },
+    onError: () => {}
+  })
+
+  const handleMintInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setMintInput(event.target.value)
+  }, [])
+  
+  const handleToInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setToInput(event.target.value)
+  }, [])
+  
+  const handleAmountInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setAmountInput(event.target.value)
+  }, [])
+  
+  const mintFromInputs = useCallback(async () => {
+    if (!mintInput || !toInput || !amountInput) {
+      throw new Error('Mint address, recipient address, and amount are all required')
+    }
+    
+    try {
+      const amountBigInt = BigInt(amountInput)
+      
+      return await mutation.mutateAsync({
+        mint: mintInput,
+        to: toInput,
+        amount: amountBigInt,
+        createAccountIfNeeded: true,
+      })
+    } catch (error) { throw error }
+  }, [mintInput, toInput, amountInput, mutation.mutateAsync])
+  
+  const handleSubmit = useCallback(async (event?: { preventDefault?: () => void }) => {
+    event?.preventDefault?.()
+    return mintInput && toInput && amountInput ? mintFromInputs() : undefined
+  }, [mintInput, toInput, amountInput, mintFromInputs])
+
+  return {
+    mintTokens: mutation.mutateAsync,
+    isLoading: mutation.isPending,
+    error: mutation.error,
+    data: mutation.data || null,
+    reset: mutation.reset,  
+    mintInput,
+    toInput,
+    amountInput,
+    setMintInput,
+    setToInput,
+    setAmountInput,
+    handleMintInputChange,
+    handleToInputChange,
+    handleAmountInputChange,
+    handleSubmit,
+    mintFromInputs,
+  }
+}
+```
+
+## Parameters
+
+The hook accepts optional initial values for the form inputs:
+- `initialMintInput?: string` - Initial mint address value (default: '')
+- `initialToInput?: string` - Initial recipient address value (default: '')
+- `initialAmountInput?: string` - Initial amount value (default: '')
+
+## MintTokensOptions
+
+- `mint: string | Address` - The mint address of the token to mint
+- `to: string | Address` - The recipient address
+- `amount: bigint` - The amount to mint (in raw token units)
+- `mintAuthority?: string | Address` - The mint authority (defaults to connected wallet)
+- `createAccountIfNeeded?: boolean` - Whether to create the token account if it doesn't exist (default: true)
+
+## Return Value
+
+- `mintTokens: (options: MintTokensOptions) => Promise<MintTokensResult>` - Function to mint tokens
+- `isLoading: boolean` - Whether the mint operation is in progress
+- `error: Error | null` - Any error that occurred
+- `data: MintTokensResult | null` - Result of the successful mint operation
+- `reset: () => void` - Function to reset the mutation state
+
+**Form Management:**
+- `mintInput: string` - Current mint input value
+- `toInput: string` - Current recipient input value
+- `amountInput: string` - Current amount input value
+- `setMintInput: (value: string) => void` - Set mint input value
+- `setToInput: (value: string) => void` - Set recipient input value
+- `setAmountInput: (value: string) => void` - Set amount input value
+- `handleMintInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void` - Mint input change handler
+- `handleToInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void` - Recipient input change handler
+- `handleAmountInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void` - Amount input change handler
+- `handleSubmit: (event?: { preventDefault?: () => void }) => Promise<MintTokensResult | undefined>` - Form submit handler
+- `mintFromInputs: () => Promise<MintTokensResult | undefined>` - Mint using current input values
+
+## Example
+
+```tsx
+import { useMintTokens } from '@arc/solana'
+import { useMint } from '@arc/solana'
+
+function MintTokensInterface() {
+  const {
+    mintTokens,
+    isLoading,
+    error,
+    data,
+    reset,
+    mintInput,
+    toInput,
+    amountInput,
+    setMintInput,
+    setToInput,
+    setAmountInput,
+    handleSubmit
+  } = useMintTokens()
+
+  const { mint } = useMint({ mintAddress: mintInput })
+
+  const formatAmount = (rawAmount: string) => {
+    if (!rawAmount || !mint) return rawAmount
+    const amount = BigInt(rawAmount)
+    const divisor = BigInt(10 ** mint.decimals)
+    const formatted = Number(amount) / Number(divisor)
+    return formatted.toString()
+  }
+
+  return (
+    <div style={{ padding: '20px', maxWidth: '500px' }}>
+      <h3>Mint Tokens</h3>
+      
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div>
+          <label>Mint Address:</label>
+          <input
+            type="text"
+            value={mintInput}
+            onChange={(e) => setMintInput(e.target.value)}
+            placeholder="Enter mint address"
+            style={{ width: '100%', padding: '8px', marginTop: '4px' }}
+          />
+        </div>
+
+        <div>
+          <label>Recipient Address:</label>
+          <input
+            type="text"
+            value={toInput}
+            onChange={(e) => setToInput(e.target.value)}
+            placeholder="Enter recipient address"
+            style={{ width: '100%', padding: '8px', marginTop: '4px' }}
+          />
+        </div>
+
+        <div>
+          <label>
+            Amount (raw units)
+            {mint && ` - ${formatAmount(amountInput)} tokens with ${mint.decimals} decimals`}:
+          </label>
+          <input
+            type="text"
+            value={amountInput}
+            onChange={(e) => setAmountInput(e.target.value)}
+            placeholder="Enter amount in raw units"
+            style={{ width: '100%', padding: '8px', marginTop: '4px' }}
+          />
+          {mint && (
+            <small style={{ color: '#666' }}>
+              For {mint.decimals} decimals, 1 token = {(10 ** mint.decimals).toLocaleString()} raw units
+            </small>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading || !mintInput || !toInput || !amountInput}
+          style={{
+            padding: '12px',
+            backgroundColor: isLoading ? '#ccc' : '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: isLoading ? 'not-allowed' : 'pointer'
+          }}
+        >
+          {isLoading ? 'Minting...' : 'Mint Tokens'}
+        </button>
+      </form>
+
+      {error && (
+        <div style={{ 
+          marginTop: '16px', 
+          padding: '12px', 
+          backgroundColor: '#ffebee', 
+          border: '1px solid #f44336',
+          borderRadius: '4px',
+          color: '#d32f2f'
+        }}>
+          <strong>Error:</strong> {error.message}
+          <button 
+            onClick={reset}
+            style={{ marginLeft: '8px', padding: '4px 8px' }}
+          >
+            Clear
+          </button>
+        </div>
+      )}
+
+      {data && (
+        <div style={{ 
+          marginTop: '16px', 
+          padding: '12px', 
+          backgroundColor: '#e8f5e8', 
+          border: '1px solid #4CAF50',
+          borderRadius: '4px'
+        }}>
+          <h4>Mint Successful!</h4>
+          <p><strong>Signature:</strong> 
+            <a 
+              href={`https://explorer.solana.com/tx/${data.signature}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ marginLeft: '8px', color: '#1976d2' }}
+            >
+              {data.signature.slice(0, 8)}...
+            </a>
+          </p>
+          <p><strong>Amount Minted:</strong> {data.amount.toString()}</p>
+          <p><strong>To Account:</strong> {data.toTokenAccount}</p>
+          {data.createdAccount && <p><strong>Created token account</strong></p>}
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+## Features
+
+- **Automatic Token Account Creation**: Creates associated token accounts if they don't exist
+- **Form Input Management**: Built-in form state management with change handlers
+- **Mint Authority Flexibility**: Uses connected wallet as mint authority by default
+- **Cache Invalidation**: Automatically refreshes related data after successful minting
+- **Error Handling**: Comprehensive error handling with user-friendly messages
+
+## Use Cases
+
+- **Token Distribution**: Mint tokens to users or liquidity pools
+- **Rewards Systems**: Distribute reward tokens to users
+- **Testing**: Mint test tokens during development
+- **Initial Token Supply**: Create initial token supply for new projects
+
+## Notes
+
+- Requires the connected wallet to have mint authority for the specified token
+- Automatically calculates the associated token account address for the recipient
+- The amount should be provided in raw token units (considering decimals)
+- Transaction fees are paid by the connected wallet

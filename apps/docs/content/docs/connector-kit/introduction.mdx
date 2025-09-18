@@ -1,0 +1,125 @@
+---
+title: Getting Started
+description: Headless wallet connector client and React provider built on Wallet Standard for Solana applications.
+---
+
+## Install
+
+```bash
+npm install @arc/connector-kit
+```
+
+## Quick Start
+
+Wrap your app with `ConnectorProvider` and add a connect button:
+
+```tsx title="App.tsx"
+"use client"
+
+import { ConnectorProvider, ConnectButton } from '@arc/connector-kit'
+
+export default function App() {
+  return (
+    <ConnectorProvider config={{ autoConnect: true }}>
+      <ConnectButton />
+    </ConnectorProvider>
+  )
+}
+```
+
+## Access Wallet State
+
+Use the `useConnector` hook to access wallet connection state:
+
+```tsx title="WalletInfo.tsx"
+import { useConnector } from '@arc/connector-kit'
+
+function WalletInfo() {
+  const { connected, selectedWallet, selectedAccount, disconnect } = useConnector()
+
+  if (!connected) return <div>Not connected</div>
+  
+  return (
+    <div>
+      <p>Wallet: {selectedWallet?.name}</p>
+      <p>Account: {selectedAccount}</p>
+      <button onClick={disconnect}>Disconnect</button>
+    </div>
+  )
+}
+```
+
+## Configuration
+
+Configure the provider with optional settings:
+
+```tsx
+<ConnectorProvider
+  config={{
+    autoConnect: true,    // Auto-reconnect to last wallet
+    debug: false,         // Enable debug logging
+  }}
+  mobile={{
+    appIdentity: {
+      name: "Your App",
+      uri: "https://your-app.com",
+      icon: "https://your-app.com/icon.png",
+    },
+  }}
+>
+```
+
+## Components
+
+| Component | Description |
+|-----------|-------------|
+| `ConnectorProvider` | Provides wallet state to child components |
+| `ConnectButton` | Complete wallet connection interface |
+| `WalletList` | Display available wallets for selection |
+| `AccountDropdown` | Connected wallet info with disconnect option |
+| `ConnectorDialog` | Standalone wallet selection dialog |
+
+## Hooks
+
+| Hook | Returns | Description |
+|------|---------|-------------|
+| `useConnector()` | `ConnectorSnapshot` | Main wallet connection state and methods |
+| `useConnectorClient()` | `ConnectorClient` | Access to underlying client instance |
+
+### useConnector Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `wallets` | `WalletInfo[]` | Available wallets |
+| `selectedWallet` | `Wallet \| null` | Connected wallet |
+| `connected` | `boolean` | Connection status |
+| `connecting` | `boolean` | Connection in progress |
+| `accounts` | `AccountInfo[]` | Available accounts |
+| `selectedAccount` | `string \| null` | Selected account address |
+| `select(name)` | `(name: string) => Promise<void>` | Connect to wallet |
+| `disconnect()` | `() => Promise<void>` | Disconnect wallet |
+| `selectAccount(address)` | `(address: string) => Promise<void>` | Switch account |
+
+## Framework Setup
+
+### Next.js
+
+Add webpack fallbacks if needed:
+
+```js title="next.config.js"
+module.exports = {
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false, net: false, tls: false }
+    return config
+  },
+}
+```
+
+### React Server Components
+
+Use `"use client"` directive when needed:
+
+```tsx
+"use client"
+import { ConnectorProvider } from '@arc/connector-kit'
+```

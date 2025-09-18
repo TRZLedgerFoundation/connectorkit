@@ -1,0 +1,104 @@
+---
+title: Introduction
+description: a comprehensive set of React hooks that make Solana development as intuitive as traditional web development. Built on @solana/kit with full TypeScript support.
+---
+
+## Three Levels of Complexity
+
+Arc adapts to your needs with progressive complexity:
+
+### Level 1: Simple Hooks
+Perfect for most use cases with zero configuration.
+
+```tsx
+import { useWallet, useBalance, useTransaction } from '@arc/solana'
+
+function WalletInfo() {
+  const wallet = useWallet()
+  const balance = useBalance()
+  const { sendTransaction } = useTransaction()
+  
+  return (
+    <div>
+      <p>Address: {wallet.publicKey?.toBase58()}</p>
+      <p>Balance: {balance.data} SOL</p>
+    </div>
+  )
+}
+```
+
+### Level 2: Typed Program Accounts
+Built-in codecs for common Solana programs.
+
+```tsx
+import { useMint, useProgramAccount } from '@arc/solana'
+
+function TokenInfo() {
+  const { mint } = useMint({ 
+    mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' // USDC
+  })
+  
+  return (
+    <div>
+      <p>Supply: {mint?.supply ? Number(mint.supply).toLocaleString() : 'Loading...'}</p>
+      <p>Decimals: {mint?.decimals ?? 'Loading...'}</p>
+    </div>
+  )
+}
+```
+
+### Level 3: Custom Codecs
+Schema validation and custom parsing for any Solana program.
+
+```tsx
+import { useAccount, useProgramAccount } from '@arc/solana'
+import { z } from 'zod'
+
+const AccountSchema = z.object({
+  address: z.string(),
+  lamports: z.bigint(),
+  owner: z.string()
+})
+
+function ValidatedAccount() {
+  const { data, validation } = useAccount({
+    address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    schema: AccountSchema,
+    onValidationSuccess: (data) => console.log('✅ Valid:', data)
+  })
+  
+  return (
+    <div>
+      <p>Validation: {validation?.success ? '✅ Valid' : '❌ Invalid'}</p>
+    </div>
+  )
+}
+```
+
+## Available Hooks
+
+### Wallet & Connection
+- `useWallet()` - Wallet connection state and methods
+- `useBalance()` - SOL and token balances
+- `useCluster()` - Network information
+
+### Transactions
+- `useTransaction()` - Send transactions
+- `useAirdrop()` - Request SOL airdrops (devnet)
+- `useLatestBlockhash()` - Get recent blockhash
+
+### Accounts & Programs
+- `useAccount()` - Generic account data with validation
+- `useMint()` - Token mint information
+- `useProgramAccount()` - Program-specific account parsing
+
+### Utilities
+- `useSlot()` - Current slot information
+- `useEpochInfo()` - Epoch details
+- `useSignatureStatuses()` - Transaction confirmation
+
+## Installation
+
+```bash
+npm install @arc/solana
+```

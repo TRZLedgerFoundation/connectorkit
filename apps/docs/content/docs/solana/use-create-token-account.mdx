@@ -1,0 +1,434 @@
+---
+title: useCreateTokenAccount
+description: Hook to create associated token accounts for SPL tokens
+---
+
+# useCreateTokenAccount
+
+The `useCreateTokenAccount` hook provides functionality to create associated token accounts (ATAs) for SPL tokens. This is required before a wallet can hold or receive a specific token.
+
+## Usage
+
+### Direct Import
+```tsx
+import { useCreateTokenAccount } from '@arc/solana'
+
+function CreateTokenAccountForm() {
+  const {
+    createTokenAccount,
+    isLoading,
+    error,
+    data,
+    reset
+  } = useCreateTokenAccount()
+
+  const handleCreate = async () => {
+    try {
+      const result = await createTokenAccount({
+        mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
+        owner: 'owner-wallet-address'
+      })
+      console.log('Token account created:', result.tokenAccount)
+    } catch (err) {
+      console.error('Failed to create token account:', err)
+    }
+  }
+
+  return (
+    <div>
+      <button onClick={handleCreate} disabled={isLoading}>
+        {isLoading ? 'Creating...' : 'Create Token Account'}
+      </button>
+      {error && <div>Error: {error.message}</div>}
+      {data && <div>Account created! Address: {data.tokenAccount}</div>}
+    </div>
+  )
+}
+```
+
+### Copy Hook Code
+```tsx
+'use client'
+
+import { useMutation } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { useArcClient } from '../core/arc-client-provider'
+import { getSharedRpc, getSharedWebSocket, releaseRpcConnection } from '../core/rpc-manager'
+import type { Transport } from '../transports/types'
+import { 
+  sendAndConfirmTransactionFactory,
+  createTransactionMessage,
+  pipe,
+  setTransactionMessageFeePayerSigner,
+  setTransactionMessageLifetimeUsingBlockhash,
+  appendTransactionMessageInstructions,
+  signTransactionMessageWithSigners,
+  getSignatureFromTransaction,
+  address,
+  type Address,
+  type TransactionSigner,
+  type Instruction
+} from '@solana/kit'
+import { 
+  TOKEN_PROGRAM_ADDRESS, 
+  findAssociatedTokenPda,
+  getCreateAssociatedTokenInstruction
+} from '@solana-program/token'
+
+export interface CreateTokenAccountOptions {
+  mint: string | Address
+  owner?: string | Address
+  payer?: string | Address
+}
+
+export interface CreateTokenAccountResult {
+  signature: string
+  mint: Address
+  owner: Address
+  tokenAccount: Address
+  payer: Address
+  blockTime?: number
+  slot?: number
+}
+
+export interface UseCreateTokenAccountReturn {
+  createTokenAccount: (options: CreateTokenAccountOptions) => Promise<CreateTokenAccountResult>
+  isLoading: boolean
+  error: Error | null
+  data: CreateTokenAccountResult | null
+  reset: () => void
+}
+
+export function useCreateTokenAccount(): UseCreateTokenAccountReturn {
+  const { wallet, network } = useArcClient()
+  
+  useEffect(() => {
+    return () => {
+      releaseRpcConnection(network.rpcUrl)
+    }
+  }, [network.rpcUrl])
+  
+  const mutation = useMutation({
+    mutationFn: async (options: CreateTokenAccountOptions): Promise<CreateTokenAccountResult> => {
+      const { 
+        mint, 
+        owner: optionsOwner,
+        payer: optionsPayer
+      } = options
+      
+      const ownerAddress = optionsOwner || wallet.address
+      const payerAddress = optionsPayer || wallet.address
+      
+      if (!ownerAddress) {
+        throw new Error('No owner address provided and no wallet connected')
+      }
+      
+      if (!payerAddress) {
+        throw new Error('No payer address provided and no wallet connected')
+      }
+      
+      if (!wallet.signer) {
+        throw new Error('Wallet not connected or no signer available')
+      }
+      
+      
+      
+      const rpc = getSharedRpc(network.rpcUrl)
+      const transport = (useArcClient() as any).config.transport as Transport
+      
+      const [tokenAccount] = await findAssociatedTokenPda({
+        mint: address(mint),
+        owner: address(ownerAddress),
+        tokenProgram: TOKEN_PROGRAM_ADDRESS,
+      })
+      
+      
+      
+      const existingAccount: any = await transport.request(
+        { method: 'getAccountInfo', params: [tokenAccount] }
+      )
+      if (existingAccount.value) {
+        throw new Error(`Token account already exists: ${tokenAccount}`)
+      }
+      
+      
+      
+      const { value: latestBlockhash }: any = await transport.request(
+        { method: 'getLatestBlockhash', params: [] }
+      )
+      
+      
+      const createAccountInstruction = getCreateAssociatedTokenInstruction({
+        payer: wallet.signer as TransactionSigner,
+        ata: tokenAccount,
+        owner: address(ownerAddress),
+        mint: address(mint),
+      })
+      
+      
+      
+      const rpcSubscriptions = getSharedWebSocket(network.rpcUrl)
+      const sendAndConfirmTransaction = sendAndConfirmTransactionFactory({ rpc: rpc as any, rpcSubscriptions: rpcSubscriptions as any })
+      
+      const transactionMessage = pipe(
+        createTransactionMessage({ version: 0 }),
+        tx => setTransactionMessageFeePayerSigner(wallet.signer as TransactionSigner, tx),
+        tx => setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
+        tx => appendTransactionMessageInstructions([createAccountInstruction], tx),
+      )
+      
+      
+      
+      const signedTransaction = await signTransactionMessageWithSigners(transactionMessage)
+      const signature = getSignatureFromTransaction(signedTransaction)
+      
+      
+      
+      await sendAndConfirmTransaction(signedTransaction, { 
+        commitment: 'confirmed',
+        skipPreflight: false
+      })
+      
+      
+      
+      const newAccount: any = await transport.request(
+        { method: 'getAccountInfo', params: [tokenAccount] }
+      )
+      if (!newAccount.value) {
+        throw new Error('Token account creation failed - account not found after transaction')
+      }
+      
+      
+      
+      const result: CreateTokenAccountResult = {
+        signature,
+        mint: address(mint),
+        owner: address(ownerAddress),
+        tokenAccount,
+        payer: address(payerAddress)
+      }
+      
+      return result
+    },
+    onSuccess: () => {},
+    onError: () => {}
+  })
+
+  return {
+    createTokenAccount: mutation.mutateAsync,
+    isLoading: mutation.isPending,
+    error: mutation.error,
+    data: mutation.data || null,
+    reset: mutation.reset
+  }
+}
+```
+
+## Parameters
+
+The hook takes configuration through the `createTokenAccount` function:
+
+### CreateTokenAccountOptions
+
+- `mint: string | Address` - The mint address of the token (required)
+- `owner?: string | Address` - The wallet that will own the token account (defaults to connected wallet)
+- `payer?: string | Address` - The wallet that will pay for the transaction (defaults to connected wallet)
+
+## Return Value
+
+- `createTokenAccount: (options: CreateTokenAccountOptions) => Promise<CreateTokenAccountResult>` - Function to create a token account
+- `isLoading: boolean` - Whether the account creation is in progress
+- `error: Error | null` - Any error that occurred
+- `data: CreateTokenAccountResult | null` - Result of the successful account creation
+- `reset: () => void` - Function to reset the mutation state
+
+### CreateTokenAccountResult
+
+- `signature: string` - Transaction signature
+- `mint: Address` - The mint address of the token
+- `owner: Address` - The owner of the token account
+- `tokenAccount: Address` - The created token account address
+- `payer: Address` - The payer address
+- `blockTime?: number` - Block time when the transaction was processed
+- `slot?: number` - Slot number when the transaction was processed
+
+## Example
+
+```tsx
+import { useCreateTokenAccount } from '@arc/solana'
+import { useWalletAddress } from '@arc/solana'
+import { useState } from 'react'
+
+function TokenAccountCreator() {
+  const {
+    createTokenAccount,
+    isLoading,
+    error,
+    data,
+    reset
+  } = useCreateTokenAccount()
+
+  const { address: walletAddress } = useWalletAddress()
+  const [mintAddress, setMintAddress] = useState('')
+  const [ownerAddress, setOwnerAddress] = useState('')
+
+  const handleCreateAccount = async () => {
+    if (!mintAddress.trim()) {
+      alert('Please enter a mint address')
+      return
+    }
+
+    try {
+      const result = await createTokenAccount({
+        mint: mintAddress,
+        owner: ownerAddress || walletAddress
+      })
+      console.log('Token account created successfully:', result)
+    } catch (err) {
+      console.error('Failed to create token account:', err)
+    }
+  }
+
+  return (
+    <div style={{ padding: '20px', maxWidth: '600px' }}>
+      <h3>Create Token Account</h3>
+      
+      <div style={{ marginBottom: '16px' }}>
+        <label>
+          Mint Address:
+          <input
+            type="text"
+            value={mintAddress}
+            onChange={(e) => setMintAddress(e.target.value)}
+            placeholder="Enter token mint address"
+            style={{ 
+              width: '100%', 
+              padding: '8px', 
+              marginTop: '4px',
+              fontSize: '14px',
+              fontFamily: 'monospace'
+            }}
+          />
+        </label>
+        <small style={{ color: '#666' }}>
+          Example: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v (USDC)
+        </small>
+      </div>
+
+      <div style={{ marginBottom: '16px' }}>
+        <label>
+          Owner Address (optional):
+          <input
+            type="text"
+            value={ownerAddress}
+            onChange={(e) => setOwnerAddress(e.target.value)}
+            placeholder={`Leave empty to use connected wallet (${walletAddress?.slice(0, 8)}...)`}
+            style={{ 
+              width: '100%', 
+              padding: '8px', 
+              marginTop: '4px',
+              fontSize: '14px',
+              fontFamily: 'monospace'
+            }}
+          />
+        </label>
+        <small style={{ color: '#666' }}>
+          If not specified, the connected wallet will be the owner
+        </small>
+      </div>
+
+      <button
+        onClick={handleCreateAccount}
+        disabled={isLoading || !mintAddress.trim() || !walletAddress}
+        style={{
+          padding: '12px 24px',
+          backgroundColor: isLoading || !mintAddress.trim() || !walletAddress ? '#ccc' : '#4CAF50',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: isLoading || !mintAddress.trim() || !walletAddress ? 'not-allowed' : 'pointer'
+        }}
+      >
+        {isLoading ? 'Creating Account...' : 'Create Token Account'}
+      </button>
+
+      {!walletAddress && (
+        <p style={{ color: '#f44336', marginTop: '8px' }}>
+          Please connect your wallet to create a token account
+        </p>
+      )}
+
+      {error && (
+        <div style={{ 
+          marginTop: '16px', 
+          padding: '12px', 
+          backgroundColor: '#ffebee', 
+          border: '1px solid #f44336',
+          borderRadius: '4px',
+          color: '#d32f2f'
+        }}>
+          <strong>Error:</strong> {error.message}
+          <button 
+            onClick={reset}
+            style={{ marginLeft: '8px', padding: '4px 8px' }}
+          >
+            Clear
+          </button>
+        </div>
+      )}
+
+      {data && (
+        <div style={{ 
+          marginTop: '16px', 
+          padding: '12px', 
+          backgroundColor: '#e8f5e8', 
+          border: '1px solid #4CAF50',
+          borderRadius: '4px'
+        }}>
+          <h4>Token Account Created Successfully!</h4>
+          <p><strong>Token Account:</strong> 
+            <code style={{ backgroundColor: '#f5f5f5', padding: '2px 4px' }}>
+              {data.tokenAccount}
+            </code>
+          </p>
+          <p><strong>Mint:</strong> {data.mint}</p>
+          <p><strong>Owner:</strong> {data.owner}</p>
+          <p><strong>Transaction:</strong> 
+            <a 
+              href={`https://explorer.solana.com/tx/${data.signature}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ marginLeft: '8px', color: '#1976d2' }}
+            >
+              {data.signature.slice(0, 8)}...
+            </a>
+          </p>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+## Features
+
+- **Associated Token Account Creation**: Creates the standard ATA for a mint/owner pair
+- **Automatic Address Calculation**: Calculates the deterministic ATA address
+- **Existence Check**: Verifies the account doesn't already exist before creating
+- **Transaction Confirmation**: Waits for transaction confirmation before returning
+- **Error Handling**: Comprehensive error handling with user-friendly messages
+
+## Use Cases
+
+- **Token Onboarding**: Create token accounts for users when they first interact with a token
+- **Batch Account Creation**: Create multiple token accounts for different tokens
+- **Pre-funding**: Create accounts before transferring tokens to a user
+- **Multi-token Support**: Enable wallets to hold various SPL tokens
+
+## Notes
+
+- The connected wallet must have sufficient SOL to pay for transaction fees and rent
+- Associated token accounts have deterministic addresses based on the mint and owner
+- The hook will throw an error if the account already exists
+- Most token operations (like transfers) will automatically create the recipient's account if needed
+- ATA creation is a one-time operation per mint/owner combination

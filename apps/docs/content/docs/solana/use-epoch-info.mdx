@@ -1,0 +1,353 @@
+---
+title: useEpochInfo
+description: Hook to get comprehensive epoch information including progress, timing estimates, and slot details
+---
+
+# useEpochInfo
+
+The `useEpochInfo` hook fetches comprehensive information about the current epoch on the Solana blockchain, including epoch progress, timing estimates, and slot details. This is essential for understanding the current state of the network and estimating when the epoch will end.
+
+## Usage
+
+### Direct Import
+```tsx
+import { useEpochInfo } from '@arc/solana'
+
+function EpochInfoDisplay() {
+  const { epochInfo, isLoading, error } = useEpochInfo({
+    refreshInterval: 30000,
+    commitment: 'confirmed'
+  })
+  
+  if (isLoading) return <div>Loading epoch info...</div>
+  if (error) return <div>Error: {error.message}</div>
+  
+  return (
+    <div>
+      <p>Epoch: {epochInfo?.epoch.toString()}</p>
+      <p>Progress: {(epochInfo?.epochProgress * 100).toFixed(2)}%</p>
+      <p>Time Remaining: {Math.round((epochInfo?.estimatedTimeRemainingMs || 0) / 60000)} minutes</p>
+    </div>
+  )
+}
+```
+
+### Copy Hook Code
+```tsx
+'use client'
+
+import { useQuery } from '@tanstack/react-query'
+import { useArcClient } from '../core/arc-client-provider'
+import type { Transport } from '../transports/types'
+import { queryKeys } from '../utils/query-keys'
+import { 
+  ArcError,
+  createNetworkError,
+  type ArcErrorContext
+} from '../core/error-handler'
+
+export interface UseEpochInfoOptions {
+  refreshInterval?: number
+  enabled?: boolean
+  commitment?: 'processed' | 'confirmed' | 'finalized'
+}
+
+export interface EpochInfo {
+  epoch: bigint
+  slotIndex: bigint
+  slotsInEpoch: bigint
+  absoluteSlot: bigint
+  blockHeight: bigint
+  epochProgress: number
+  estimatedTimeRemainingMs: number
+  estimatedEpochEndTime: Date
+}
+
+export interface UseEpochInfoReturn {
+  epochInfo: EpochInfo | null
+  isLoading: boolean
+  error: ArcError | null
+  refetch: () => void
+}
+
+export function useEpochInfo(
+  options: UseEpochInfoOptions = {}
+): UseEpochInfoReturn {
+  const { network } = useArcClient()
+  
+  const {
+    refreshInterval = 30000,
+    enabled = true,
+    commitment = 'confirmed',
+  } = options
+
+  const query = useQuery<EpochInfo, ArcError>({
+    networkMode: "offlineFirst",
+    queryKey: [...queryKeys.epochInfo(network.rpcUrl), commitment],
+    queryFn: async ({ signal }) => {
+      const context: ArcErrorContext = {
+        operation: 'getEpochInfo',
+        timestamp: Date.now(),
+        rpcUrl: network.rpcUrl
+      }
+
+      try {
+        const transport = (useArcClient() as any).config.transport as Transport
+        const response: any = await transport.request(
+          { method: 'getEpochInfo', params: [ { commitment } ] },
+          { signal }
+        )
+        
+        const {
+          epoch,
+          slotIndex,
+          slotsInEpoch,
+          absoluteSlot,
+          blockHeight,
+        } = response
+
+        // Calculate progress and timing estimates
+        const epochProgress = Number(slotIndex) / Number(slotsInEpoch)
+        const slotsRemaining = Number(slotsInEpoch) - Number(slotIndex)
+        
+        const avgSlotTime = 400
+        const estimatedTimeRemainingMs = slotsRemaining * avgSlotTime
+        const estimatedEpochEndTime = new Date(Date.now() + estimatedTimeRemainingMs)
+
+        const epochInfo: EpochInfo = {
+          epoch,
+          slotIndex,
+          slotsInEpoch,
+          absoluteSlot,
+          blockHeight,
+          epochProgress,
+          estimatedTimeRemainingMs,
+          estimatedEpochEndTime,
+        }
+
+        return epochInfo
+
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        throw createNetworkError(
+          `Failed to fetch epoch info: ${errorMessage}`,
+          context,
+          error as Error
+        )
+      }
+    },
+    enabled: enabled,
+    refetchInterval: refreshInterval,
+    refetchOnWindowFocus: false,
+    staleTime: 20_000,
+    gcTime: 5 * 60_000,
+    retry: 1,
+    notifyOnChangeProps: ['data', 'error', 'isLoading'],
+  })
+
+  return {
+    epochInfo: query.data ?? null,
+    isLoading: query.isLoading,
+    error: query.error ?? null,
+    refetch: query.refetch,
+  }
+}
+```
+
+## Parameters
+
+- `refreshInterval?: number` - How often to refresh data in milliseconds (default: 30000)
+- `enabled?: boolean` - Whether the query is enabled (default: true)
+- `commitment?: 'processed' | 'confirmed' | 'finalized'` - Commitment level (default: 'confirmed')
+
+## Return Value
+
+- `epochInfo: EpochInfo | null` - The epoch information object containing:
+  - `epoch: bigint` - Current epoch number
+  - `slotIndex: bigint` - Current slot within the epoch
+  - `slotsInEpoch: bigint` - Total slots in this epoch
+  - `absoluteSlot: bigint` - Current absolute slot number
+  - `blockHeight: bigint` - Current block height
+  - `epochProgress: number` - Progress through epoch (0-1)
+  - `estimatedTimeRemainingMs: number` - Estimated time until epoch end
+  - `estimatedEpochEndTime: Date` - Estimated epoch end timestamp
+- `isLoading: boolean` - Whether the epoch info is loading
+- `error: ArcError | null` - Any error that occurred
+- `refetch: () => void` - Function to manually refetch the epoch info
+
+## Example
+
+```tsx
+import { useEpochInfo } from '@arc/solana'
+import { useEffect, useState } from 'react'
+
+function EpochDashboard() {
+  const {
+    epochInfo,
+    isLoading,
+    error,
+    refetch
+  } = useEpochInfo({
+    refreshInterval: 10000, // Update every 10 seconds
+    commitment: 'confirmed'
+  })
+
+  const [timeRemaining, setTimeRemaining] = useState<string>('')
+
+  useEffect(() => {
+    if (!epochInfo) return
+
+    const updateTimer = () => {
+      const now = Date.now()
+      const remaining = epochInfo.estimatedEpochEndTime.getTime() - now
+      
+      if (remaining <= 0) {
+        setTimeRemaining('Epoch should have ended')
+        return
+      }
+
+      const hours = Math.floor(remaining / (1000 * 60 * 60))
+      const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((remaining % (1000 * 60)) / 1000)
+      
+      setTimeRemaining(`${hours}h ${minutes}m ${seconds}s`)
+    }
+
+    updateTimer()
+    const interval = setInterval(updateTimer, 1000)
+    return () => clearInterval(interval)
+  }, [epochInfo])
+
+  if (isLoading && !epochInfo) {
+    return (
+      <div style={{ padding: '16px', textAlign: 'center' }}>
+        <div>Loading epoch information...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div style={{ padding: '16px', color: 'red' }}>
+        <div>Error loading epoch info: {error.message}</div>
+        <button onClick={() => refetch()}>Retry</button>
+      </div>
+    )
+  }
+
+  if (!epochInfo) return null
+
+  return (
+    <div style={{ padding: '16px' }}>
+      <h3>Solana Epoch Dashboard</h3>
+      
+      <div style={{ display: 'grid', gap: '12px', marginBottom: '16px' }}>
+        <div style={{ 
+          backgroundColor: '#f5f5f5', 
+          padding: '16px', 
+          borderRadius: '8px',
+          display: 'grid',
+          gap: '8px'
+        }}>
+          <h4 style={{ margin: 0 }}>Current Epoch</h4>
+          <div><strong>Epoch Number:</strong> {epochInfo.epoch.toString()}</div>
+          <div><strong>Block Height:</strong> {epochInfo.blockHeight.toString()}</div>
+          <div><strong>Absolute Slot:</strong> {epochInfo.absoluteSlot.toString()}</div>
+        </div>
+
+        <div style={{ 
+          backgroundColor: '#e3f2fd', 
+          padding: '16px', 
+          borderRadius: '8px',
+          display: 'grid',
+          gap: '8px'
+        }}>
+          <h4 style={{ margin: 0 }}>Epoch Progress</h4>
+          <div>
+            <strong>Progress:</strong> {(epochInfo.epochProgress * 100).toFixed(2)}%
+          </div>
+          <div style={{ 
+            backgroundColor: '#ddd', 
+            height: '8px', 
+            borderRadius: '4px',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              backgroundColor: '#2196F3',
+              height: '100%',
+              width: `${epochInfo.epochProgress * 100}%`,
+              transition: 'width 0.3s ease'
+            }} />
+          </div>
+          <div>
+            <strong>Slot:</strong> {epochInfo.slotIndex.toString()} / {epochInfo.slotsInEpoch.toString()}
+          </div>
+        </div>
+
+        <div style={{ 
+          backgroundColor: '#f3e5f5', 
+          padding: '16px', 
+          borderRadius: '8px',
+          display: 'grid',
+          gap: '8px'
+        }}>
+          <h4 style={{ margin: 0 }}>Timing Estimates</h4>
+          <div><strong>Time Remaining:</strong> {timeRemaining}</div>
+          <div>
+            <strong>Estimated End:</strong> {epochInfo.estimatedEpochEndTime.toLocaleString()}
+          </div>
+          <div style={{ fontSize: '12px', color: '#666' }}>
+            Based on 400ms average slot time
+          </div>
+        </div>
+      </div>
+
+      <button 
+        onClick={() => refetch()}
+        style={{
+          padding: '8px 16px',
+          backgroundColor: '#2196F3',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer'
+        }}
+      >
+        Refresh Now
+      </button>
+    </div>
+  )
+}
+```
+
+## Epoch System Overview
+
+**Epochs** are important periods in Solana's consensus mechanism:
+- Each epoch lasts approximately 2-3 days (432,000 slots)
+- At the end of each epoch, stakes are recalculated
+- Validator rewards are distributed
+- Network parameters may be updated
+
+**Key Properties:**
+- `epoch`: The current epoch number (increments every ~2-3 days)
+- `slotIndex`: Current position within the epoch (0 to slotsInEpoch-1)
+- `slotsInEpoch`: Total slots in this epoch (usually 432,000)
+- `absoluteSlot`: Global slot number since genesis
+- `epochProgress`: Percentage completion (0.0 to 1.0)
+
+## Use Cases
+
+- **Staking Applications**: Show when rewards will be distributed
+- **Validator Dashboards**: Monitor epoch transitions and stake changes
+- **DeFi Protocols**: Time-based logic that depends on epoch boundaries
+- **Network Monitoring**: Track network health and timing
+- **Governance**: Schedule proposals and voting around epoch boundaries
+
+## Notes
+
+- Epoch timing estimates are based on 400ms average slot time
+- Actual epoch duration can vary based on network conditions
+- Uses confirmed commitment by default for reliable data
+- Progress calculations are performed client-side for better UX
+- Includes comprehensive error handling with network context
+- Refreshes every 30 seconds by default to balance accuracy and performance

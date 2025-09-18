@@ -1,0 +1,332 @@
+---
+title: useTokenBalance
+description: Hook to fetch and monitor SPL token balances
+---
+
+# useTokenBalance
+
+The `useTokenBalance` hook fetches and monitors SPL token balances for a given mint and owner. It automatically finds the associated token account and provides formatted balance information.
+
+## Usage
+
+### Direct Import
+```tsx
+import { useTokenBalance } from '@arc/solana'
+
+function MyComponent() {
+  const { balance, uiAmount, decimals, isLoading } = useTokenBalance({
+    mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' // USDC
+  })
+  
+  return (
+    <div>
+      {balance && (
+        <div>
+          <p>Balance: {uiAmount} USDC</p>
+          <p>Raw Amount: {balance.toString()}</p>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+### Copy Hook Code
+If you prefer to copy the hook directly:
+
+```tsx
+'use client'
+
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback, useEffect } from 'react'
+import { useArcClient } from '../core/arc-client-provider'
+import { releaseRpcConnection } from '../core/rpc-manager'
+import type { Transport } from '../transports/types'
+import { 
+  address,
+  type Address
+} from '@solana/kit'
+import { TOKEN_PROGRAM_ADDRESS, findAssociatedTokenPda } from '@solana-program/token'
+import { queryKeys } from '../utils/query-keys'
+
+export interface TokenBalance {
+  mint: Address
+  amount: bigint
+  decimals: number
+  uiAmount: number
+  uiAmountString: string
+  tokenAccount: Address
+}
+
+export interface UseTokenBalanceOptions {
+  mint: string | Address
+  owner?: string | Address
+  tokenAccount?: string | Address
+  refreshInterval?: number
+  enabled?: boolean
+  onUpdate?: (balance: TokenBalance) => void
+}
+
+export interface UseTokenBalanceReturn {
+  balance: bigint | null
+  uiAmount: number | null
+  decimals: number | null
+  tokenAccount: Address | null
+  tokenBalance: TokenBalance | null
+  isLoading: boolean
+  error: Error | null
+  refetch: () => void
+  clear: () => void
+}
+
+export function useTokenBalance(options: UseTokenBalanceOptions): UseTokenBalanceReturn {
+  const { wallet, network } = useArcClient()
+  const queryClient = useQueryClient()
+  
+  useEffect(() => {
+    return () => {
+      releaseRpcConnection(network.rpcUrl)
+    }
+  }, [network.rpcUrl])
+  
+  const {
+    mint,
+    owner: optionsOwner,
+    tokenAccount: explicitTokenAccount,
+    refreshInterval = 30000,
+    enabled = true,
+    onUpdate,
+  } = options
+
+  const targetOwner = optionsOwner || wallet.address
+  
+  const { data, isLoading, error, refetch } = useQuery({
+    networkMode: "offlineFirst", // 🚀 BETTER UX: Work with cached data when offline
+    queryKey: [...queryKeys.tokenBalance(explicitTokenAccount || undefined), mint, targetOwner, network.rpcUrl],
+    queryFn: async ({ signal }): Promise<TokenBalance | null> => {
+      if (!targetOwner) {
+        throw new Error('No owner provided and no wallet connected')
+      }
+      
+      let tokenAccountAddress: Address
+      
+      if (explicitTokenAccount) {
+        tokenAccountAddress = address(explicitTokenAccount)
+      } else {
+        const [ata] = await findAssociatedTokenPda({
+          mint: address(mint),
+          owner: address(targetOwner),
+          tokenProgram: TOKEN_PROGRAM_ADDRESS,
+        })
+        tokenAccountAddress = ata
+      }
+      
+      const transport = (useArcClient() as any).config.transport as Transport
+      const response: any = await transport.request(
+        { method: 'getTokenAccountBalance', params: [tokenAccountAddress] },
+        { signal }
+      )
+      
+      if (!response.value) {
+        return null
+      }
+      
+      const balanceInfo = response.value
+      
+      const result: TokenBalance = {
+        mint: address(mint),
+        amount: BigInt(balanceInfo.amount),
+        decimals: balanceInfo.decimals,
+        uiAmount: balanceInfo.uiAmount || 0,
+        uiAmountString: balanceInfo.uiAmountString || '0',
+        tokenAccount: tokenAccountAddress
+      }
+      
+      if (onUpdate) {
+        onUpdate(result)
+      }
+      
+      return result
+    },
+    enabled: enabled && !!targetOwner && !!mint,
+    refetchInterval: refreshInterval,
+    refetchOnWindowFocus: false,
+    staleTime: 15_000,
+    gcTime: 5 * 60_000,
+    retry: 1,
+    notifyOnChangeProps: ['data', 'error'],
+  })
+
+  const clear = useCallback(() => {
+    const key = [...queryKeys.tokenBalance(explicitTokenAccount || undefined), mint, targetOwner, network.rpcUrl]
+    queryClient.removeQueries({ queryKey: key })
+  }, [queryClient, explicitTokenAccount, mint, targetOwner, network.rpcUrl])
+
+  return {
+    balance: data?.amount || null,
+    uiAmount: data?.uiAmount || null,
+    decimals: data?.decimals || null,
+    tokenAccount: data?.tokenAccount || null,
+    tokenBalance: data || null,
+    isLoading,
+    error,
+    refetch,
+    clear,
+  }
+}
+```
+
+## Parameters
+
+- `mint: string | Address` - The SPL token mint address
+- `owner?: string | Address` - Token account owner (uses connected wallet if not provided)
+- `tokenAccount?: string | Address` - Specific token account address (auto-finds ATA if not provided)
+- `refreshInterval?: number` - How often to refresh balance in milliseconds (default: 30000)
+- `enabled?: boolean` - Whether the query is enabled (default: true)
+- `onUpdate?: (balance: TokenBalance) => void` - Callback fired when balance updates
+
+## Return Value
+
+- `balance: bigint | null` - Raw token balance in smallest units
+- `uiAmount: number | null` - User-friendly balance amount (adjusted for decimals)
+- `decimals: number | null` - Number of decimal places for the token
+- `tokenAccount: Address | null` - The token account address being queried
+- `tokenBalance: TokenBalance | null` - Complete balance information object
+- `isLoading: boolean` - Whether the balance is loading
+- `error: Error | null` - Any error that occurred
+- `refetch: () => void` - Function to manually refetch the balance
+- `clear: () => void` - Function to clear cached balance data
+
+## TokenBalance Interface
+
+```tsx
+interface TokenBalance {
+  mint: Address          // Token mint address
+  amount: bigint         // Raw balance in smallest units
+  decimals: number       // Token decimal places
+  uiAmount: number       // User-friendly amount
+  uiAmountString: string // String representation of uiAmount
+  tokenAccount: Address  // Token account address
+}
+```
+
+## Example
+
+### Basic Usage
+```tsx
+import { useTokenBalance } from '@arc/solana'
+
+function TokenBalanceDisplay({ mint }: { mint: string }) {
+  const { tokenBalance, isLoading, error } = useTokenBalance({
+    mint,
+    onUpdate: (balance) => {
+      console.log('Token balance updated:', balance.uiAmount)
+    }
+  })
+
+  if (isLoading) return <div>Loading token balance...</div>
+  if (error) return <div>Error: {error.message}</div>
+  if (!tokenBalance) return <div>No balance found</div>
+
+  return (
+    <div>
+      <h3>Token Balance</h3>
+      <p>Amount: {tokenBalance.uiAmount}</p>
+      <p>Raw: {tokenBalance.amount.toString()}</p>
+      <p>Decimals: {tokenBalance.decimals}</p>
+      <p>Token Account: {tokenBalance.tokenAccount}</p>
+    </div>
+  )
+}
+```
+
+### Multiple Token Balances
+```tsx
+import { useTokenBalance } from '@arc/solana'
+
+const COMMON_TOKENS = [
+  { symbol: 'USDC', mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' },
+  { symbol: 'SOL', mint: 'So11111111111111111111111111111111111111112' },
+  { symbol: 'USDT', mint: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB' }
+]
+
+function TokenPortfolio() {
+  return (
+    <div>
+      <h2>Token Portfolio</h2>
+      {COMMON_TOKENS.map(token => (
+        <TokenBalanceRow key={token.mint} token={token} />
+      ))}
+    </div>
+  )
+}
+
+function TokenBalanceRow({ token }) {
+  const { uiAmount, isLoading } = useTokenBalance({
+    mint: token.mint,
+    refreshInterval: 15000 // Refresh every 15 seconds
+  })
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px' }}>
+      <span>{token.symbol}</span>
+      <span>{isLoading ? 'Loading...' : uiAmount || '0'}</span>
+    </div>
+  )
+}
+```
+
+### With Specific Owner
+```tsx
+import { useTokenBalance } from '@arc/solana'
+
+function OwnerTokenBalance({ owner, mint }: { owner: string; mint: string }) {
+  const { tokenBalance, isLoading, error } = useTokenBalance({
+    mint,
+    owner,
+    enabled: !!owner && !!mint
+  })
+
+  if (!owner || !mint) return <div>Owner and mint required</div>
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error: {error.message}</div>
+
+  return (
+    <div>
+      <p>Owner: {owner}</p>
+      <p>Balance: {tokenBalance?.uiAmount || 0}</p>
+    </div>
+  )
+}
+```
+
+### Real-time Balance Monitoring
+```tsx
+import { useTokenBalance } from '@arc/solana'
+import { useState } from 'react'
+
+function RealTimeBalance({ mint }: { mint: string }) {
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
+
+  const { tokenBalance, isLoading } = useTokenBalance({
+    mint,
+    refreshInterval: 5000, // Very frequent updates
+    onUpdate: (balance) => {
+      setLastUpdate(new Date())
+      // Could trigger notifications, etc.
+      if (balance.uiAmount > 0) {
+        console.log(`Balance updated: ${balance.uiAmount}`)
+      }
+    }
+  })
+
+  return (
+    <div>
+      <h3>Real-time Balance</h3>
+      <p>Balance: {tokenBalance?.uiAmount || 0}</p>
+      <p>Last Update: {lastUpdate?.toLocaleTimeString() || 'Never'}</p>
+      <small>Refreshing every 5 seconds</small>
+    </div>
+  )
+}
+```
