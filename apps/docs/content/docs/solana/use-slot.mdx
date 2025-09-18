@@ -11,7 +11,7 @@ The `useSlot` hook fetches the current slot number from the Solana blockchain. S
 
 ### Direct Import
 ```tsx
-import { useSlot } from '@arc/solana'
+import { useSlot } from '@connectorkit/solana'
 
 function SlotDisplay() {
   const { slot, isLoading, error } = useSlot({
@@ -121,8 +121,8 @@ export function useSlot(options: UseSlotOptions = {}): UseSlotReturn {
 ## Example
 
 ```tsx
-import { useSlot } from '@arc/solana'
-import { useBlockHeight } from '@arc/solana'
+import { useSlot } from '@connectorkit/solana'
+import { useBlockHeight } from '@connectorkit/solana'
 import { useEffect, useState } from 'react'
 
 function SlotBlockComparison() {

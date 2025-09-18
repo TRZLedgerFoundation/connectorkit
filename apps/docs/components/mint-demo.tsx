@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useMint } from '@arc/solana'
+import { useMint } from '@connectorkit/solana'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'
 import { Alert, AlertDescription } from './ui/alert'

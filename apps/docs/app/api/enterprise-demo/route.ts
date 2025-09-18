@@ -1,4 +1,4 @@
-import { createClient } from '@arc/solana/client'
+import { createClient } from '@connectorkit/solana/client'
 import { NextRequest, NextResponse } from 'next/server'
 
 /**

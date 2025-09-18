@@ -9,9 +9,9 @@
     "postinstall": "fumadocs-mdx"
   },
   "dependencies": {
-    "@arc/jupiter": "workspace:*",
-    "@arc/solana": "workspace:*",
-    "@arc/ui-primitives": "workspace:*",
+    "@connectorkit/jupiter": "workspace:*",
+    "@connectorkit/solana": "workspace:*",
+    "@connectorkit/ui-primitives": "workspace:*",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-avatar": "^1.1.10",

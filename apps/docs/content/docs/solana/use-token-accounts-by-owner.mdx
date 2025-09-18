@@ -11,8 +11,8 @@ The `useTokenAccountsByOwner` hook provides functionality to fetch all token acc
 
 ### Direct Import
 ```tsx
-import { useTokenAccountsByOwner } from '@arc/solana'
-import { useWalletAddress } from '@arc/solana'
+import { useTokenAccountsByOwner } from '@connectorkit/solana'
+import { useWalletAddress } from '@connectorkit/solana'
 
 function TokenPortfolio() {
   const { address } = useWalletAddress()
@@ -272,8 +272,8 @@ export function useTokenAccountsByOwner(
 ## Example
 
 ```tsx
-import { useTokenAccountsByOwner } from '@arc/solana'
-import { useWalletAddress } from '@arc/solana'
+import { useTokenAccountsByOwner } from '@connectorkit/solana'
+import { useWalletAddress } from '@connectorkit/solana'
 import { useState } from 'react'
 
 function TokenPortfolioViewer() {

@@ -11,7 +11,7 @@ The `useRecentPrioritizationFees` hook fetches recent prioritization fees from t
 
 ### Direct Import
 ```tsx
-import { useRecentPrioritizationFees } from '@arc/solana'
+import { useRecentPrioritizationFees } from '@connectorkit/solana'
 
 function PrioritizationFeesDisplay() {
   const { fees, isLoading, error } = useRecentPrioritizationFees({
@@ -147,7 +147,7 @@ export function useRecentPrioritizationFees(
 ## Example
 
 ```tsx
-import { useRecentPrioritizationFees } from '@arc/solana'
+import { useRecentPrioritizationFees } from '@connectorkit/solana'
 import { useEffect, useState } from 'react'
 
 function PrioritizationFeeAnalyzer() {

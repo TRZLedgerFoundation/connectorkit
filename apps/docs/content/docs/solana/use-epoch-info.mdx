@@ -11,7 +11,7 @@ The `useEpochInfo` hook fetches comprehensive information about the current epoc
 
 ### Direct Import
 ```tsx
-import { useEpochInfo } from '@arc/solana'
+import { useEpochInfo } from '@connectorkit/solana'
 
 function EpochInfoDisplay() {
   const { epochInfo, isLoading, error } = useEpochInfo({
@@ -178,7 +178,7 @@ export function useEpochInfo(
 ## Example
 
 ```tsx
-import { useEpochInfo } from '@arc/solana'
+import { useEpochInfo } from '@connectorkit/solana'
 import { useEffect, useState } from 'react'
 
 function EpochDashboard() {

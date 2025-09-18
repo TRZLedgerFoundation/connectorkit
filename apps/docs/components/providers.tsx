@@ -2,7 +2,7 @@
 
 import { QueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
-import { createProvider, ArcProvider } from '@arc/solana'
+import { createProvider, ArcProvider } from '@connectorkit/solana'
 import { createJupiter } from '@arc/providers'
 import { 
   AppProvider, 
@@ -10,7 +10,7 @@ import {
   getDefaultMobileConfig,
   solanaTheme,
   type MobileWalletAdapterConfig 
-} from '@arc/connector-kit'
+} from '@connectorkit/connector-kit'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({

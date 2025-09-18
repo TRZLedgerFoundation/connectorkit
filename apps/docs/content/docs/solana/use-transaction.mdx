@@ -11,7 +11,7 @@ The `useTransaction` hook provides comprehensive transaction management includin
 
 ### Direct Import
 ```tsx
-import { useTransaction } from '@arc/solana'
+import { useTransaction } from '@connectorkit/solana'
 
 function MyComponent() {
   const { sendTransaction, isLoading, error } = useTransaction()
@@ -495,7 +495,7 @@ export function useTransaction(options: UseTransactionOptions = {}): UseTransact
 ## Example
 
 ```tsx
-import { useTransaction } from '@arc/solana'
+import { useTransaction } from '@connectorkit/solana'
 import { getTransferSolInstruction } from '@solana-program/system'
 
 function TransferSOL() {

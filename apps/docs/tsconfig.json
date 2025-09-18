@@ -18,8 +18,8 @@
     "paths": {
       "@/.source": ["./.source/index.ts"],
       "@/*": ["./*"],
-      "@arc/connector-kit": ["../../packages/connector-kit/src/index.ts"],
-      "@arc/*": ["../../packages/*/src"]
+      "@connectorkit/connector-kit": ["../../packages/connector-kit/src/index.ts"],
+      "@connectorkit/*": ["../../packages/*/src"]
     },
     "plugins": [
       {

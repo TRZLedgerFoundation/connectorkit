@@ -11,7 +11,7 @@ The `useMint` hook fetches and monitors mint account data from the Solana blockc
 
 ### Direct Import
 ```tsx
-import { useMint } from '@arc/solana'
+import { useMint } from '@connectorkit/solana'
 
 function MintInfo({ mintAddress }) {
   const { mint, isLoading, error, exists } = useMint({
@@ -179,7 +179,7 @@ export function useMint(options: UseMintOptions = {}): UseMintReturn {
 ## Example
 
 ```tsx
-import { useMint } from '@arc/solana'
+import { useMint } from '@connectorkit/solana'
 
 function TokenMintDetails({ mintAddress }: { mintAddress: string }) {
   const { 

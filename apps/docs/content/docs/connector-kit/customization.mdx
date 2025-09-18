@@ -18,7 +18,7 @@ Try out the customization features live:
 Choose from 4 Solana-optimized themes:
 
 ```tsx
-import { ConnectButton, solanaTheme, phantomTheme, minimalTheme, darkTheme } from '@arc/connector-kit'
+import { ConnectButton, solanaTheme, phantomTheme, minimalTheme, darkTheme } from '@connectorkit/connector-kit'
 
 function App() {
   return <ConnectButton theme={solanaTheme} />
@@ -30,7 +30,7 @@ function App() {
 Create branded themes with partial overrides:
 
 ```tsx
-import { mergeThemeOverrides, solanaTheme } from '@arc/connector-kit'
+import { mergeThemeOverrides, solanaTheme } from '@connectorkit/connector-kit'
 
 const brandTheme = mergeThemeOverrides(solanaTheme, {
   colors: { primary: '#FF6B6B', accent: '#4ECDC4' },
@@ -45,7 +45,7 @@ const brandTheme = mergeThemeOverrides(solanaTheme, {
 Use `getDefaultConfig` for quick setup:
 
 ```tsx
-import { AppProvider, getDefaultConfig } from '@arc/connector-kit'
+import { AppProvider, getDefaultConfig } from '@connectorkit/connector-kit'
 
 const config = getDefaultConfig({
   appName: 'My App',
@@ -61,7 +61,7 @@ const config = getDefaultConfig({
 Programmatically manage modals:
 
 ```tsx
-import { useModal, modalRoutes } from '@arc/connector-kit'
+import { useModal, modalRoutes } from '@connectorkit/connector-kit'
 
 function WalletControls() {
   const modal = useModal()
@@ -81,7 +81,7 @@ function WalletControls() {
 Filter wallets by capabilities:
 
 ```tsx
-import { getPopularWallets, getMobileWallets } from '@arc/connector-kit'
+import { getPopularWallets, getMobileWallets } from '@connectorkit/connector-kit'
 
 const popularWallets = getPopularWallets() // Phantom, Solflare, etc.
 const mobileWallets = getMobileWallets()   // Mobile-first wallets
@@ -92,7 +92,7 @@ const mobileWallets = getMobileWallets()   // Mobile-first wallets
 Build your own connect experience:
 
 ```tsx
-import { useConnector, useModal } from '@arc/connector-kit'
+import { useConnector, useModal } from '@connectorkit/connector-kit'
 
 function CustomButton() {
   const { connected, connecting, selectedWallet } = useConnector()

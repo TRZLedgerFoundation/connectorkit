@@ -11,7 +11,7 @@ The `useSwap` hook provides functionality to get quotes and execute token swaps 
 
 ### Direct Import
 ```tsx
-import { useSwap } from '@arc/solana'
+import { useSwap } from '@connectorkit/solana'
 
 function SwapInterface() {
   const {
@@ -226,8 +226,8 @@ export function useSwap(options: UseSwapOptions = {}): UseSwapReturn {
 ## Example
 
 ```tsx
-import { useSwap } from '@arc/solana'
-import { useWalletAddress } from '@arc/solana'
+import { useSwap } from '@connectorkit/solana'
+import { useWalletAddress } from '@connectorkit/solana'
 import { useState } from 'react'
 
 function TokenSwapInterface() {

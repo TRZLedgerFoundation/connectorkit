@@ -1,7 +1,7 @@
 "use client"
 
 import { useModal } from '../../hooks'
-import { Dialog, DialogContent, DialogBackdrop, DialogClose } from '@arc/ui-primitives'
+import { Dialog, DialogContent, DialogBackdrop, DialogClose } from '@connectorkit/ui-primitives'
 import { modalRoutes } from '../../lib/connector-client'
 import type { ConnectorOptions } from '../../types'
 

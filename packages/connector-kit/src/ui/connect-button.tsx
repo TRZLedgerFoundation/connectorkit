@@ -8,7 +8,7 @@ import {
   DropdownTrigger,
   DropdownContent,
   DropdownItem
-} from '@arc/ui-primitives'
+} from '@connectorkit/ui-primitives'
 import { ConnectModal } from './connect-modal'
 
 import {

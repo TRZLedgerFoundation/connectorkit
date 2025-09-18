@@ -1,5 +1,5 @@
 // Re-export all providers for centralized access
-// This allows: import { createJupiter, createKamino } from 'arc/providers'
+// This allows: import { createJupiter, createKamino } from '@connectorkit/providers'
 
 // Jupiter provider
 export { 
@@ -8,15 +8,15 @@ export {
   type JupiterQuoteResponse,
   type JupiterSwapResponse,
   getJupiterTokens 
-} from '@arc/jupiter'
+} from '@connectorkit/jupiter'
 
 // Future providers will be added here:
-// export { createKamino, type KaminoConfig } from '@arc/kamino'
-// export { createRaydium, type RaydiumConfig } from '@arc/raydium'
-// export { createOrcaWhirlpools, type OrcaConfig } from '@arc/orca'
+// export { createKamino, type KaminoConfig } from '@connectorkit/kamino'
+// export { createRaydium, type RaydiumConfig } from '@connectorkit/raydium'
+// export { createOrcaWhirlpools, type OrcaConfig } from '@connectorkit/orca'
 
 // Import locally for internal use
-import { createJupiter } from '@arc/jupiter'
+import { createJupiter } from '@connectorkit/jupiter'
 
 // Provider registry type for future extensibility
 export interface ProviderRegistry {

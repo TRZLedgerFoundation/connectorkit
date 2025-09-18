@@ -6,7 +6,7 @@ description: Headless wallet connector client and React provider built on Wallet
 ## Install
 
 ```bash
-npm install @arc/connector-kit
+npm install @connectorkit/connector-kit
 ```
 
 ## Quick Start
@@ -16,7 +16,7 @@ Wrap your app with `ConnectorProvider` and add a connect button:
 ```tsx title="App.tsx"
 "use client"
 
-import { ConnectorProvider, ConnectButton } from '@arc/connector-kit'
+import { ConnectorProvider, ConnectButton } from '@connectorkit/connector-kit'
 
 export default function App() {
   return (
@@ -32,7 +32,7 @@ export default function App() {
 Use the `useConnector` hook to access wallet connection state:
 
 ```tsx title="WalletInfo.tsx"
-import { useConnector } from '@arc/connector-kit'
+import { useConnector } from '@connectorkit/connector-kit'
 
 function WalletInfo() {
   const { connected, selectedWallet, selectedAccount, disconnect } = useConnector()
@@ -121,5 +121,5 @@ Use `"use client"` directive when needed:
 
 ```tsx
 "use client"
-import { ConnectorProvider } from '@arc/connector-kit'
+import { ConnectorProvider } from '@connectorkit/connector-kit'
 ```

@@ -11,7 +11,7 @@ The `useAccount` hook fetches and monitors account information from the Solana b
 
 ### Direct Import
 ```tsx
-import { useAccount } from '@arc/solana'
+import { useAccount } from '@connectorkit/solana'
 
 function MyComponent() {
   const { account, isLoading, error } = useAccount({
@@ -209,7 +209,7 @@ export function useAccount<T = AccountInfo>(options: UseAccountOptions<T> = {}):
 ## Example
 
 ```tsx
-import { useAccount } from '@arc/solana'
+import { useAccount } from '@connectorkit/solana'
 
 function AccountInfo({ address }: { address: string }) {
   const { account, isLoading, error } = useAccount({

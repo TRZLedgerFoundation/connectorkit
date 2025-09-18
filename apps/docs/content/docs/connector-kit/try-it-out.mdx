@@ -4,7 +4,7 @@ description: Arc Connector Kit offers multiple implementation approaches to fit 
 
 ---
 
-import { ConnectButton } from '@arc/connector-kit'
+import { ConnectButtonWrapper } from '../../../components/connect-button-wrapper'
 import { StandardWalletDemo } from '../../../components/standard-wallet-demo'
 
 
@@ -13,7 +13,7 @@ import { StandardWalletDemo } from '../../../components/standard-wallet-demo'
 Use the drop-in components for quick integrations.
 
 ```tsx
-import { ConnectButton } from '@arc/connector-kit'
+import { ConnectButton } from '@connectorkit/connector-kit'
 
 <ConnectButton />
 ```
@@ -30,7 +30,7 @@ import { ConnectButton } from '@arc/connector-kit'
     )`
   }}
   >
-  <ConnectButton />
+  <ConnectButtonWrapper />
 </div>
 
 ## 2. Build what you need with ARC
@@ -44,8 +44,8 @@ or use the simple headless SDK for wallet connection and state management.
 Complete control over UI and behavior:
 
 ```tsx
-import { useConnector } from '@arc/connector-kit'
-import { useWalletAddress, useBalance } from '@arc/solana'
+import { useConnector } from '@connectorkit/connector-kit'
+import { useWalletAddress, useBalance } from '@connectorkit/solana'
 
 function CustomWalletConnect() {
   const { wallets, select, disconnect } = useConnector()
@@ -107,4 +107,4 @@ function TransactionSigner() {
 ## Next Steps
 
 - [Getting Started](/docs/connector-kit/introduction) - Full implementation guide
-- [@arc/solana](/docs/solana) - For transaction building and blockchain operations
+- [@connectorkit/solana](/docs/solana) - For transaction building and blockchain operations

@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { useTransaction, useBalance, useArcClient } from '@arc/solana'
+import { useTransaction, useBalance, useArcClient } from '@connectorkit/solana'
 import { Button } from './ui/button'
 import { Alert, AlertDescription } from './ui/alert'
 import { Spinner } from './ui/spinner'

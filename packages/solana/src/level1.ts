@@ -35,7 +35,7 @@ export interface ConfigureOptions {
  * 
  * @example
  * ```js
- * import { configure } from '@arc/solana'
+ * import { configure } from '@connectorkit/solana'
  * 
  * // Use mainnet
  * configure({ network: 'mainnet' })
@@ -67,7 +67,7 @@ export interface BalanceOptions {
  * 
  * @example
  * ```js
- * import { getBalance } from '@arc/solana'
+ * import { getBalance } from '@connectorkit/solana'
  * 
  * const balance = await getBalance('9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM')
  * console.log(`Balance: ${balance} SOL`)
@@ -108,7 +108,7 @@ export interface TransactionResult {
  * 
  * @example
  * ```js
- * import { transferSOL } from '@arc/solana'
+ * import { transferSOL } from '@connectorkit/solana'
  * 
  * const result = await transferSOL({
  *   from: privateKey,  // Uint8Array or base58 string
@@ -147,7 +147,7 @@ export interface AirdropOptions {
  * 
  * @example
  * ```js
- * import { requestAirdrop } from '@arc/solana'
+ * import { requestAirdrop } from '@connectorkit/solana'
  * 
  * const result = await requestAirdrop('9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM')
  * console.log(`Airdrop complete! ${result.explorerUrl}`)
@@ -172,7 +172,7 @@ export async function requestAirdrop(
  * 
  * @example
  * ```js
- * import { getTransaction } from '@arc/solana'
+ * import { getTransaction } from '@connectorkit/solana'
  * 
  * const tx = await getTransaction('5VERVy...')
  * console.log(`Transaction status: ${tx.status}`)

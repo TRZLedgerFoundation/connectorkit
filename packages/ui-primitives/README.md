@@ -26,8 +26,8 @@ export {
 }
 
 // Use with Arc + any framework
-import { Dialog } from '@arc/ui-primitives'
-import { useWallet } from '@arc/solana'
+import { Dialog } from '@connectorkit/ui-primitives'
+import { useWallet } from '@connectorkit/solana'
 
 function WalletDialog() {
   const { wallets, connect } = useWallet()

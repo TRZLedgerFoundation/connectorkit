@@ -11,7 +11,7 @@ The `useWalletAdapters` hook manages multiple wallet adapters, handling detectio
 
 ### Direct Import
 ```tsx
-import { useWalletAdapters } from '@arc/solana'
+import { useWalletAdapters } from '@connectorkit/solana'
 
 function WalletSelector({ adapters }) {
   const { 
@@ -323,7 +323,7 @@ export function useWalletAdapters(options: UseWalletAdaptersOptions): UseWalletA
 ## Example
 
 ```tsx
-import { useWalletAdapters } from '@arc/solana'
+import { useWalletAdapters } from '@connectorkit/solana'
 import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets'
 
 const walletAdapters = [

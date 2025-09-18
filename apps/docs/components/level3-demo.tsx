@@ -5,7 +5,7 @@ import {
   useProgramAccount,
   type MintAccount,
   type CustomCodec
-} from '@arc/solana'
+} from '@connectorkit/solana'
 import { type Address, createSolanaRpc } from '@solana/kit'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'

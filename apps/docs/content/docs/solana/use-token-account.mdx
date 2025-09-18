@@ -11,8 +11,8 @@ The `useTokenAccount` hook provides functionality to fetch and monitor a specifi
 
 ### Direct Import
 ```tsx
-import { useTokenAccount } from '@arc/solana'
-import { useWalletAddress } from '@arc/solana'
+import { useTokenAccount } from '@connectorkit/solana'
+import { useWalletAddress } from '@connectorkit/solana'
 
 function TokenAccountDisplay() {
   const { address } = useWalletAddress()
@@ -312,8 +312,8 @@ export function useTokenAccount<T = TokenAccountInfo>(options: UseTokenAccountOp
 ## Example
 
 ```tsx
-import { useTokenAccount } from '@arc/solana'
-import { useWalletAddress } from '@arc/solana'
+import { useTokenAccount } from '@connectorkit/solana'
+import { useWalletAddress } from '@connectorkit/solana'
 import { useState } from 'react'
 
 function TokenAccountViewer() {

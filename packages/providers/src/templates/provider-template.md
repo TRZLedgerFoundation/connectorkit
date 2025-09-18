@@ -45,7 +45,7 @@ mkdir -p packages/kamino/src
 
 ### 3. Implement the provider in src/index.ts
 ```typescript
-import type { SwapProvider, SwapParams, SwapQuote, SwapBuild } from '@arc/solana'
+import type { SwapProvider, SwapParams, SwapQuote, SwapBuild } from '@connectorkit/solana'
 
 export interface KaminoConfig {
   // Provider-specific config
@@ -83,7 +83,7 @@ Update `packages/providers/package.json`:
 ### 5. Update providers/src/index.ts
 ```typescript
 // Add the export
-export { createKamino, type KaminoConfig } from '@arc/kamino'
+export { createKamino, type KaminoConfig } from '@connectorkit/kamino'
 
 // Update the registry type
 export interface ProviderRegistry {

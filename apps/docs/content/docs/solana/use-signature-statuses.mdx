@@ -11,7 +11,7 @@ The `useSignatureStatuses` hook checks the confirmation status of multiple trans
 
 ### Direct Import
 ```tsx
-import { useSignatureStatuses } from '@arc/solana'
+import { useSignatureStatuses } from '@connectorkit/solana'
 
 function TransactionStatusTracker() {
   const signatures = ['signature1...', 'signature2...'] // Your transaction signatures
@@ -157,7 +157,7 @@ export function useSignatureStatuses(
 ## Example
 
 ```tsx
-import { useSignatureStatuses } from '@arc/solana'
+import { useSignatureStatuses } from '@connectorkit/solana'
 import { useState, useEffect } from 'react'
 
 function TransactionTracker() {

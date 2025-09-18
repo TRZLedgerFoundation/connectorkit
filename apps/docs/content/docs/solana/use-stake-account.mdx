@@ -10,7 +10,7 @@ The `useStakeAccount` hook provides functionality to create Solana stake account
 ## Usage
 
 ```tsx
-import { useStakeAccount } from '@arc/solana'
+import { useStakeAccount } from '@connectorkit/solana'
 
 function StakeAccountCreator() {
   const { createStakeAccount, isLoading, error, data } = useStakeAccount()
@@ -277,7 +277,7 @@ interface StakeAccountResult {
 ## Example
 
 ```tsx
-import { useStakeAccount } from '@arc/solana'
+import { useStakeAccount } from '@connectorkit/solana'
 import { useState } from 'react'
 
 function StakeAccountManager() {

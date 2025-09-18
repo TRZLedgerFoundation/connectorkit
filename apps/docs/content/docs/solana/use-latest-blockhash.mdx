@@ -11,7 +11,7 @@ The `useLatestBlockhash` hook fetches the latest blockhash and its last valid bl
 
 ### Direct Import
 ```tsx
-import { useLatestBlockhash } from '@arc/solana'
+import { useLatestBlockhash } from '@connectorkit/solana'
 
 function BlockhashDisplay() {
   const { blockhash, lastValidBlockHeight, isLoading, error } = useLatestBlockhash({
@@ -126,7 +126,7 @@ export function useLatestBlockhash(options: UseLatestBlockhashOptions = {}): Use
 ## Example
 
 ```tsx
-import { useLatestBlockhash, useBlockHeight } from '@arc/solana'
+import { useLatestBlockhash, useBlockHeight } from '@connectorkit/solana'
 import { useEffect, useState } from 'react'
 
 function BlockhashMonitor() {

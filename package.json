@@ -1,8 +1,8 @@
 {
-  "name": "arc",
+  "name": "connector-kit",
   "version": "0.0.0",
   "private": true,
-  "description": "The React hooks library for Solana - making blockchain development as simple as React state",
+  "description": "A connector kit for solana applications",
   "workspaces": [
     "packages/*",
     "apps/*",

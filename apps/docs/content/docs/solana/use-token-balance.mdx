@@ -11,7 +11,7 @@ The `useTokenBalance` hook fetches and monitors SPL token balances for a given m
 
 ### Direct Import
 ```tsx
-import { useTokenBalance } from '@arc/solana'
+import { useTokenBalance } from '@connectorkit/solana'
 
 function MyComponent() {
   const { balance, uiAmount, decimals, isLoading } = useTokenBalance({
@@ -214,7 +214,7 @@ interface TokenBalance {
 
 ### Basic Usage
 ```tsx
-import { useTokenBalance } from '@arc/solana'
+import { useTokenBalance } from '@connectorkit/solana'
 
 function TokenBalanceDisplay({ mint }: { mint: string }) {
   const { tokenBalance, isLoading, error } = useTokenBalance({
@@ -242,7 +242,7 @@ function TokenBalanceDisplay({ mint }: { mint: string }) {
 
 ### Multiple Token Balances
 ```tsx
-import { useTokenBalance } from '@arc/solana'
+import { useTokenBalance } from '@connectorkit/solana'
 
 const COMMON_TOKENS = [
   { symbol: 'USDC', mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' },
@@ -278,7 +278,7 @@ function TokenBalanceRow({ token }) {
 
 ### With Specific Owner
 ```tsx
-import { useTokenBalance } from '@arc/solana'
+import { useTokenBalance } from '@connectorkit/solana'
 
 function OwnerTokenBalance({ owner, mint }: { owner: string; mint: string }) {
   const { tokenBalance, isLoading, error } = useTokenBalance({
@@ -302,7 +302,7 @@ function OwnerTokenBalance({ owner, mint }: { owner: string; mint: string }) {
 
 ### Real-time Balance Monitoring
 ```tsx
-import { useTokenBalance } from '@arc/solana'
+import { useTokenBalance } from '@connectorkit/solana'
 import { useState } from 'react'
 
 function RealTimeBalance({ mint }: { mint: string }) {

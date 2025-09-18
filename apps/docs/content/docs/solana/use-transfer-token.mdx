@@ -11,7 +11,7 @@ The `useTransferToken` hook provides an easy way to transfer SPL tokens between 
 
 ### Direct Import
 ```tsx
-import { useTransferToken } from '@arc/solana'
+import { useTransferToken } from '@connectorkit/solana'
 
 function MyComponent() {
   const { 
@@ -403,7 +403,7 @@ export function useTransferToken(
 
 ### Basic Usage
 ```tsx
-import { useTransferToken } from '@arc/solana'
+import { useTransferToken } from '@connectorkit/solana'
 
 function TokenTransfer() {
   const { transferToken, isLoading, error, data } = useTransferToken()
@@ -436,7 +436,7 @@ function TokenTransfer() {
 
 ### With Form Inputs
 ```tsx
-import { useTransferToken } from '@arc/solana'
+import { useTransferToken } from '@connectorkit/solana'
 
 function TokenTransferForm() {
   const { 
@@ -514,7 +514,7 @@ function TokenTransferForm() {
 
 ### USDC Transfer Helper
 ```tsx
-import { useTransferToken } from '@arc/solana'
+import { useTransferToken } from '@connectorkit/solana'
 
 const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
 const USDC_DECIMALS = 6
@@ -570,7 +570,7 @@ function USDCTransfer() {
 
 ### With Account Creation Handling
 ```tsx
-import { useTransferToken } from '@arc/solana'
+import { useTransferToken } from '@connectorkit/solana'
 
 function SmartTokenTransfer() {
   const { transferToken, isLoading } = useTransferToken()

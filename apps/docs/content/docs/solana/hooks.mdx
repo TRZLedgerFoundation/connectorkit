@@ -11,7 +11,7 @@ Arc adapts to your needs with progressive complexity:
 Perfect for most use cases with zero configuration.
 
 ```tsx
-import { useWallet, useBalance, useTransaction } from '@arc/solana'
+import { useWallet, useBalance, useTransaction } from '@connectorkit/solana'
 
 function WalletInfo() {
   const wallet = useWallet()
@@ -31,7 +31,7 @@ function WalletInfo() {
 Built-in codecs for common Solana programs.
 
 ```tsx
-import { useMint, useProgramAccount } from '@arc/solana'
+import { useMint, useProgramAccount } from '@connectorkit/solana'
 
 function TokenInfo() {
   const { mint } = useMint({ 
@@ -51,7 +51,7 @@ function TokenInfo() {
 Schema validation and custom parsing for any Solana program.
 
 ```tsx
-import { useAccount, useProgramAccount } from '@arc/solana'
+import { useAccount, useProgramAccount } from '@connectorkit/solana'
 import { z } from 'zod'
 
 const AccountSchema = z.object({
@@ -100,5 +100,5 @@ function ValidatedAccount() {
 ## Installation
 
 ```bash
-npm install @arc/solana
+npm install @connectorkit/solana
 ```

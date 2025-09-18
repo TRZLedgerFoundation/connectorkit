@@ -18,7 +18,7 @@ Arc provides different entry points optimized for specific use cases:
 
 ### **Default Import** - Complete SDK
 ```typescript
-import { ArcProvider, useBalance, useTransaction } from '@arc/solana'
+import { ArcProvider, useBalance, useTransaction } from '@connectorkit/solana'
 ```
 - **Bundle Size**: ~90KB
 - **Use When**: Building full-featured Solana apps
@@ -26,7 +26,7 @@ import { ArcProvider, useBalance, useTransaction } from '@arc/solana'
 
 ### **`/react`** - React Hooks Only
 ```typescript
-import { useBalance, useWallet } from '@arc/solana/react'
+import { useBalance, useWallet } from '@connectorkit/solana/react'
 ```
 - **Bundle Size**: ~70KB
 - **Use When**: Building React apps with Solana
@@ -34,7 +34,7 @@ import { useBalance, useWallet } from '@arc/solana/react'
 
 ### **`/core`** - Minimal Bundle
 ```typescript
-import { useBalance, useTransferSOL } from '@arc/solana/core'
+import { useBalance, useTransferSOL } from '@connectorkit/solana/core'
 ```
 - **Bundle Size**: ~15KB
 - **Use When**: You need only essential hooks
@@ -42,7 +42,7 @@ import { useBalance, useTransferSOL } from '@arc/solana/core'
 
 ### **`/client`** - Backend/Server API
 ```typescript
-import { createArc, createEnterpriseArc } from '@arc/solana/client'
+import { createArc, createEnterpriseArc } from '@connectorkit/solana/client'
 ```
 - **Bundle Size**: ~30KB
 - **Use When**: Building backend services, bots, or scripts
@@ -50,7 +50,7 @@ import { createArc, createEnterpriseArc } from '@arc/solana/client'
 
 ### **`/experimental`** - Advanced Features
 ```typescript
-import { VersionedTransactionManager } from '@arc/solana/experimental'
+import { VersionedTransactionManager } from '@connectorkit/solana/experimental'
 ```
 - **Bundle Size**: ~40KB
 - **Use When**: You need cutting-edge features
@@ -60,7 +60,7 @@ import { VersionedTransactionManager } from '@arc/solana/experimental'
 
 ### **Level 1: Simple Functions** (No React)
 ```typescript
-import { getBalance, transferSOL, requestAirdrop } from '@arc/solana'
+import { getBalance, transferSOL, requestAirdrop } from '@connectorkit/solana'
 
 // Just works™ - no setup required
 const balance = await getBalance('8rUupu3N3VV...')
@@ -69,7 +69,7 @@ const sig = await transferSOL(from, to, 0.1)
 
 ### **Level 2: React Hooks** (Declarative)
 ```typescript
-import { ArcProvider, useBalance, useWallet } from '@arc/solana'
+import { ArcProvider, useBalance, useWallet } from '@connectorkit/solana'
 
 function App() {
   return (
@@ -89,7 +89,7 @@ function WalletComponent() {
 
 ### **Level 3: Advanced Features** (Power Users)
 ```typescript
-import { useProgramAccount } from '@arc/solana'
+import { useProgramAccount } from '@connectorkit/solana'
 
 // Custom codec for any program
 const { data } = useProgramAccount({

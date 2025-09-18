@@ -22,7 +22,7 @@ const config = {
 
 **After:**
 ```typescript
-import { getDefaultConfig, getDefaultMobileConfig } from '@arc/connector-kit'
+import { getDefaultConfig, getDefaultMobileConfig } from '@connectorkit/connector-kit'
 
 const config = getDefaultConfig({
   appName: 'My Solana App',
@@ -41,7 +41,7 @@ const mobile = getDefaultMobileConfig({
 **Inspired by ConnectKit's centralized modal system**
 
 ```typescript
-import { useModal, modalRoutes } from '@arc/connector-kit'
+import { useModal, modalRoutes } from '@connectorkit/connector-kit'
 
 function MyComponent() {
   const modal = useModal()
@@ -73,7 +73,7 @@ import {
   darkTheme, 
   themes,
   mergeThemeOverrides 
-} from '@arc/connector-kit'
+} from '@connectorkit/connector-kit'
 
 // Use pre-built theme
 <ConnectButton theme={solanaTheme} />
@@ -97,7 +97,7 @@ import {
   getPopularWallets, 
   getMobileWallets,
   getWalletByIdentifier 
-} from '@arc/connector-kit'
+} from '@connectorkit/connector-kit'
 
 // Access wallet metadata
 const phantom = getWalletByIdentifier('phantom')
@@ -207,22 +207,22 @@ const phantomTheme = {
 ### From Legacy Setup:
 ```typescript
 // Before
-import { ConnectorProvider } from '@arc/connector-kit'
+import { ConnectorProvider } from '@connectorkit/connector-kit'
 <ConnectorProvider config={{ autoConnect: true }}>
 
 // After  
-import { AppProvider, getDefaultConfig } from '@arc/connector-kit'
+import { AppProvider, getDefaultConfig } from '@connectorkit/connector-kit'
 <AppProvider connectorConfig={getDefaultConfig({ appName: 'My App' })}>
 ```
 
 ### Theme Migration:
 ```typescript
 // Legacy theme still works
-import { ConnectButton } from '@arc/connector-kit'
+import { ConnectButton } from '@connectorkit/connector-kit'
 <ConnectButton theme={{ primaryColor: '#9945FF', borderRadius: 8 }} />
 
 // New theme system
-import { solanaTheme } from '@arc/connector-kit'
+import { solanaTheme } from '@connectorkit/connector-kit'
 <ConnectButton theme={solanaTheme} />
 ```
 

@@ -10,7 +10,7 @@ The `useProgramAccount` hook is the ultimate power user feature for parsing ANY 
 ## Usage
 
 ```tsx
-import { useProgramAccount } from '@arc/solana'
+import { useProgramAccount } from '@connectorkit/solana'
 
 // Using built-in codec for mint accounts
 function MintAccountComponent() {
@@ -435,7 +435,7 @@ The hook returns an object with the following properties:
 ## Example
 
 ```tsx
-import { useProgramAccount, type MintAccount } from '@arc/solana'
+import { useProgramAccount, type MintAccount } from '@connectorkit/solana'
 
 function TokenMintAnalyzer() {
   const [mintAddress, setMintAddress] = useState('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v') // USDC

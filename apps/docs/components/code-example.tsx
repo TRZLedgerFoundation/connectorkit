@@ -102,7 +102,7 @@ const lending = useLending({ protocol: 'solend' })  // Future
 // 🎯 RESULT: Solana development as simple as React state management`,
 
   setup: `// 1. Setup Arc Provider (QueryClient Handled Automatically)
-import { ArcProvider } from '@arc/solana'
+import { ArcProvider } from '@connectorkit/solana'
 
 // ✅ SIMPLE SETUP: ArcProvider handles QueryClient internally
 export default function App() {
@@ -143,7 +143,7 @@ function AppWithCustomQuery() {
 }`,
 
   wallet: `// 2. Context-Aware Wallet Connection (Zero Props!)
-import { useArcClient } from '@arc/solana'
+import { useArcClient } from '@connectorkit/solana'
 
 function WalletComponent() {
   // 🎉 NEW unified hook: Everything from one place
@@ -195,7 +195,7 @@ function WalletComponent() {
 }`,
 
   balance: `// 3. Auto-Address Balance (Magic Simplicity!)
-import { useBalance, useArcClient } from '@arc/solana'
+import { useBalance, useArcClient } from '@connectorkit/solana'
 
 function BalanceComponent() {
   // 🎉 AUTO-ADDRESS: Automatically uses connected wallet
@@ -238,7 +238,7 @@ function MultiAddressBalance() {
 }`,
 
   airdrop: `// 4. Context-Aware Airdrop (Network Smart!)
-import { useAirdrop, useBalance, useArcClient } from '@arc/solana'
+import { useAirdrop, useBalance, useArcClient } from '@connectorkit/solana'
 
 function AirdropComponent() {
   // 🎉 ALL CONTEXT-AWARE: No manual coordination needed
@@ -347,7 +347,7 @@ function AirdropComponent() {
 }`,
 
   cluster: `// 5. Network Detection & Smart Adaptation
-import { useArcClient } from '@arc/solana'
+import { useArcClient } from '@connectorkit/solana'
 
 function NetworkComponent() {
   const { 
@@ -464,7 +464,7 @@ function AdaptiveFeatures() {
 }`,
 
   transaction: `// 6. Auto-Signer Transactions (Zero Configuration!)
-import { useTransaction, useBalance, useArcClient } from '@arc/solana'
+import { useTransaction, useBalance, useArcClient } from '@connectorkit/solana'
 import { getTransferSolInstruction } from '@solana-program/system'
 import { address, lamports } from '@solana/kit'
 
@@ -555,7 +555,7 @@ function AdvancedTransfer() {
 }`,
 
   mint: `// 🎉 Arc Level 2: Typed Program Accounts (Mint Data Magic!)
-import { useMint, useProgramAccount } from '@arc/solana'
+import { useMint, useProgramAccount } from '@connectorkit/solana'
 
 // Level 2 Example 1: Built-in useMint hook (easiest)
 function TokenMintAnalyzer() {
@@ -656,7 +656,7 @@ function MintComparison() {
 
   level3: `// 🚀 Arc Level 3: Generic Program Accounts + Schema Validation
 import { useState } from 'react'
-import { useAccount, useProgramAccount, type CustomCodec, AddressSchema } from '@arc/solana'
+import { useAccount, useProgramAccount, type CustomCodec, AddressSchema } from '@connectorkit/solana'
 import { type Address, createSolanaRpc } from '@solana/kit'
 import { z } from 'zod'
 
@@ -796,7 +796,7 @@ import {
   useBalance, 
   useAirdrop,
   useTransaction
-} from '@arc/solana'
+} from '@connectorkit/solana'
 import { getTransferSolInstruction } from '@solana-program/system'
 import { address, lamports } from '@solana/kit'
 import { QueryClient } from '@tanstack/react-query'

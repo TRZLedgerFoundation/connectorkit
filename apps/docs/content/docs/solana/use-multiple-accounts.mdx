@@ -10,7 +10,7 @@ The `useMultipleAccounts` hook allows you to fetch multiple Solana accounts in a
 ## Usage
 
 ```tsx
-import { useMultipleAccounts } from '@arc/solana'
+import { useMultipleAccounts } from '@connectorkit/solana'
 
 function MultipleAccountsComponent() {
   const { accounts, isLoading, error } = useMultipleAccounts({
@@ -283,7 +283,7 @@ interface AccountInfo {
 ## Example
 
 ```tsx
-import { useMultipleAccounts } from '@arc/solana'
+import { useMultipleAccounts } from '@connectorkit/solana'
 
 function TokenMintList() {
   const tokenMints = [

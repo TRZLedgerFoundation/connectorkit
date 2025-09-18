@@ -11,7 +11,7 @@ The `useBlockHeight` hook fetches the current block height (number of confirmed 
 
 ### Direct Import
 ```tsx
-import { useBlockHeight } from '@arc/solana'
+import { useBlockHeight } from '@connectorkit/solana'
 
 function BlockHeightDisplay() {
   const { blockHeight, blockHeightNumber, isLoading, error } = useBlockHeight({
@@ -151,7 +151,7 @@ export function useBlockHeight(
 ## Example
 
 ```tsx
-import { useBlockHeight } from '@arc/solana'
+import { useBlockHeight } from '@connectorkit/solana'
 import { useEffect, useState } from 'react'
 
 function BlockHeightMonitor() {

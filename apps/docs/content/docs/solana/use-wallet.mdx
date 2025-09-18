@@ -11,7 +11,7 @@ The `useWallet` hook provides wallet connection functionality with support for b
 
 ### Direct Import
 ```tsx
-import { useWallet } from '@arc/solana'
+import { useWallet } from '@connectorkit/solana'
 
 function MyComponent() {
   const { connected, address, connect, disconnect, signer } = useWallet()
@@ -268,7 +268,7 @@ export function useWallet(options: UseWalletOptions = {}): WalletState {
 
 ### Basic Usage
 ```tsx
-import { useWallet } from '@arc/solana'
+import { useWallet } from '@connectorkit/solana'
 
 function WalletButton() {
   const { connected, connecting, address, connect, disconnect } = useWallet({
@@ -300,7 +300,7 @@ function WalletButton() {
 
 ### With Wallet Adapters
 ```tsx
-import { useWallet } from '@arc/solana'
+import { useWallet } from '@connectorkit/solana'
 // Import your wallet adapters
 import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets'
 
@@ -352,7 +352,7 @@ function WalletSelector() {
 
 ### Direct Signer Injection
 ```tsx
-import { useWallet } from '@arc/solana'
+import { useWallet } from '@connectorkit/solana'
 import { generateKeyPairSigner } from '@solana/kit'
 
 function DirectSignerExample() {
@@ -384,7 +384,7 @@ function DirectSignerExample() {
 
 ### Production Setup
 ```tsx
-import { useWallet } from '@arc/solana'
+import { useWallet } from '@connectorkit/solana'
 import { 
   PhantomWalletAdapter,
   SolflareWalletAdapter,

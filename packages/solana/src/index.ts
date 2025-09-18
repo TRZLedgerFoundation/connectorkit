@@ -2,10 +2,10 @@
  * @arc/solana - Default Export
  * 
  * Complete SDK with all features. For specific use cases:
- * - React only: import from '@arc/solana/react'
- * - Minimal bundle: import from '@arc/solana/core'  
- * - Backend/server: import from '@arc/solana/client'
- * - Advanced features: import from '@arc/solana/experimental'
+ * - React only: import from '@connectorkit/solana/react'
+ * - Minimal bundle: import from '@connectorkit/solana/core'  
+ * - Backend/server: import from '@connectorkit/solana/client'
+ * - Advanced features: import from '@connectorkit/solana/experimental'
  */
 
 // ===== LEVEL 1: ZERO CONFIG FUNCTIONS =====

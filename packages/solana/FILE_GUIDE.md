@@ -119,22 +119,22 @@ src/
 
 ```typescript
 // Full SDK (default)
-import { useBalance, createArc } from '@arc/solana'
+import { useBalance, createArc } from '@connectorkit/solana'
 
 // React only 
-import { useBalance } from '@arc/solana/react'
+import { useBalance } from '@connectorkit/solana/react'
 
 // Minimal bundle
-import { useBalance } from '@arc/solana/core'
+import { useBalance } from '@connectorkit/solana/core'
 
 // Backend only
-import { createArc } from '@arc/solana/client'
+import { createArc } from '@connectorkit/solana/client'
 
 // Advanced features
-import { VersionedTransactionManager } from '@arc/solana/experimental'
+import { VersionedTransactionManager } from '@connectorkit/solana/experimental'
 
 // Simple functions
-import { getBalance } from '@arc/solana'
+import { getBalance } from '@connectorkit/solana'
 ```
 
 ## Best Practices
