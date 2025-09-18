@@ -25,7 +25,7 @@ export function TransactionStandardDemo() {
 
     // 🎉 Shared wallet state through ArcClient context (replacement for deprecated useWallet)
     const { wallet: { connected, address: walletAddress, signer } } = useArcClient()
-    const { balance, refetch: refetchBalance } = useBalance({ address: walletAddress || undefined }) // Explicit address from standard wallets
+    const { balance, isLoading: balanceLoading, refetch: refetchBalance } = useBalance({ address: walletAddress || undefined }) // Explicit address from standard wallets
     const { sendTransaction, isLoading, error } = useTransaction() // Automatically uses connected signer
 
     useEffect(() => { setHasMounted(true) }, [])
@@ -112,7 +112,7 @@ export function TransactionStandardDemo() {
                     Balance
                 </span>
                 <span className="text-xs text-gray-500 font-mono">
-                    {balance !== null && balance !== undefined ? `${formatBalance(balance)} SOL` : 'Loading...'}
+                    {balanceLoading ? 'Loading...' : balance !== null && balance !== undefined ? `${formatBalance(balance)} SOL` : '0.0000 SOL'}
                 </span>
             </div>
             <div className="grid grid-cols-4 gap-2">

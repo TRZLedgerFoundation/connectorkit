@@ -14,12 +14,7 @@ export default defineConfig({
   entry: {
     index: 'src/index.ts',
     react: 'src/react/index.ts',
-    core: 'src/core.ts',
-    client: 'src/client.ts',
-    experimental: 'src/experimental/index.ts',
-    programs: 'src/programs.ts',
-    graphql: 'src/graphql.ts',
-    subscriptions: 'src/subscriptions.ts'
+    client: 'src/client.ts'
   },
   format: ['cjs', 'esm'],
   dts: true,

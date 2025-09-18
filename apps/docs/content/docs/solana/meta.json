@@ -3,33 +3,11 @@
     "defaultOpen": false,
     "pages": [
       "hooks",
-      "use-standard-wallets",
-      "use-wallet-address",
-      "use-account",
       "use-balance",
-      "use-multiple-accounts",
-      "use-program-account",
-      "use-stake-account",
-      "use-mint",
-      "use-token-balance",
-      "use-token-account",
-      "use-token-accounts-by-owner",
-      "use-create-token",
-      "use-create-token-account",
-      "use-mint-tokens",
-      "use-burn-tokens",
-      "use-swap",
-      "use-transaction",
-      "use-transfer-sol",
-      "use-transfer-token",
-      "use-airdrop",
+      "use-airdrop", 
       "use-cluster",
-      "use-block-height",
-      "use-slot",
-      "use-epoch-info",
-      "use-latest-blockhash",
-      "use-recent-prioritization-fees",
-      "use-signature-statuses"
+      "use-wallet-address",
+      "use-transaction",
+      "use-swap"
     ]
   }
-  

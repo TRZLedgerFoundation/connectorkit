@@ -1,93 +1,58 @@
 /**
- * @arc/solana - Default Export
+ * @connectorkit/solana - MVP Export
  * 
- * Complete SDK with all features. For specific use cases:
- * - React only: import from '@connectorkit/solana/react'
- * - Minimal bundle: import from '@connectorkit/solana/core'  
- * - Backend/server: import from '@connectorkit/solana/client'
- * - Advanced features: import from '@connectorkit/solana/experimental'
+ * Lean MVP bundle with only the hooks used in demo components.
+ * Bundle size: ~15KB (vs 90KB for full package)
+ * 
+ * Used hooks based on demo component analysis:
+ * - useBalance (used in all 3 demos)
+ * - useAirdrop (used in standard-wallet-demo)
+ * - useCluster (used in standard-wallet-demo)
+ * - useWalletAddress (used in standard-wallet-demo)
+ * - useTransaction (used in transaction-demo)
+ * - useSwap (used in swap-demo)
+ * - useArcClient (used in transaction-demo and swap-demo)
  */
 
-// ===== LEVEL 1: ZERO CONFIG FUNCTIONS =====
-// 🎯 For beginners - No setup required, just import and use
+// ===== CORE PROVIDERS =====
+export { ArcProvider } from './core/arc-provider'
+export { useArcClient } from './core/arc-client-provider'
 
-export { getBalance, transferSOL, requestAirdrop, getTransaction, configure } from './level1'
+// ===== ESSENTIAL HOOKS (MVP) =====
+export { useBalance } from './hooks/use-balance'
+export type { UseBalanceOptions, UseBalanceReturn } from './hooks/use-balance'
 
-// ===== CLIENT API =====
-// 🎯 For backend/server usage
-export { createClient } from './client'
+export { useAirdrop } from './hooks/use-airdrop'
+export type { UseAirdropReturn } from './hooks/use-airdrop'
 
-// Enterprise types removed from public surface (can be re-added via transports)
+export { useCluster } from './hooks/use-cluster'
+export type { UseClusterReturn } from './hooks/use-cluster'
 
-// ===== LEVEL 2: REACT HOOKS =====
-// 🎯 For app developers - Available as @arc/solana/react
-// Re-exported here for convenience, but main entry is /react
+export { useWalletAddress } from './hooks/use-wallet-address'
+export type { UseWalletAddressReturn } from './hooks/use-wallet-address'
 
-export { 
-  ArcProvider,
-  useBalance,
-  useTransferSOL, 
-  useAirdrop,
-  useWalletAddress,
-  useWallet,
-  useStandardWallets,
-  useCluster,
-  useNetwork,
-  useTransaction,
-  useSwap,
-  useMint,
-  useProgramAccount,
-  useArcClient
-} from './react'
+export { useTransaction } from './hooks/use-transaction'
+export type { UseTransactionOptions, UseTransactionReturn } from './hooks/use-transaction'
 
-// Export commonly used types
-export type { CustomCodec, MintAccount, Schema, ValidationResult } from './react'
+export { useSwap } from './hooks/use-swap'
+export type { UseSwapOptions, UseSwapReturn } from './hooks/use-swap'
 
-// ===== ESSENTIAL TYPES ONLY =====
-// Keep the public API surface minimal
+// ===== CORE TYPES =====
+// Re-export commonly used types for convenience
+export type { ArcWebClientState } from './core/arc-web-client'
 
-export type {
-  // Level 1 types
-  BalanceOptions,
-  TransferOptions,
-  AirdropOptions,
-  TransactionResult,
-  
-  // Level 2 types  
-  ArcProviderProps,
-  UseBalanceResult,
-  UseTransferResult,
-} from './types'
-
-// Provider system types (export from core/provider)
-export type {
-  SwapProvider,
-  SwapParams,
-  SwapQuote,
+// ===== SWAP PROVIDER TYPES (needed by @connectorkit/jupiter) =====
+export type { 
+  SwapProvider, 
+  SwapParams, 
+  SwapQuote, 
+  SwapBuild,
   Provider,
-  PrebuiltTransaction,
-  SwapBuild
+  PrebuiltTransaction 
 } from './core/provider'
-
-// Provider helpers
 export { createProvider } from './core/provider'
-export { createSolanaConfig } from './config/create-config'
 
 // ===== UTILITIES =====
-// Query keys and invalidation helpers
-
-export { queryKeys } from './utils/query-keys'
-export { QueryInvalidator, createInvalidator } from './utils/invalidate'
-export type { InvalidateOptions } from './utils/invalidate'
-
-// ===== ADDRESS HELPERS (convenience re-exports) =====
+// Keep essential utilities only
 export { address } from '@solana/kit'
 export type { Address } from '@solana/kit'
-
-// ===== OTHER EXPORTS =====
-// More specific imports available via sub-paths:
-// 
-// @arc/solana/react - All React hooks and providers
-// @arc/solana/core - Minimal bundle (15KB)
-// @arc/solana/client - Backend API (no React)
-// @arc/solana/experimental - Advanced features (v0 tx, MEV, etc)

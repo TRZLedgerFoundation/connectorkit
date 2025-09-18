@@ -113,7 +113,10 @@ export function useTransaction(options: UseTransactionOptions = {}): UseTransact
     txConfig: TransactionConfig = {}
   ): Promise<string> => {
     try {
-      const transport = config.transport as Transport
+      const transport = config.transport
+      if (!transport) {
+        throw new Error('No transport configured')
+      }
       const { value: latestBlockhash }: any = await transport.request({ method: 'getLatestBlockhash', params: [] })
       
       const feePayer = txConfig.feePayer || wallet.signer
@@ -167,7 +170,10 @@ export function useTransaction(options: UseTransactionOptions = {}): UseTransact
     mutationFn: async ({ instructions, config: txConfig = {} }: SendTransactionParams): Promise<TransactionResult> => {
       try {
         const { rpc, rpcSubscriptions, sendAndConfirmTransaction } = getRpcClient()
-        const transport = config.transport as Transport
+        const transport = config.transport
+      if (!transport) {
+        throw new Error('No transport configured')
+      }
         const { value: latestBlockhash }: any = await transport.request({ method: 'getLatestBlockhash', params: [] })
         
         const feePayer = txConfig.feePayer || wallet.signer
