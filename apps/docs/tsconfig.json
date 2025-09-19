@@ -18,7 +18,7 @@
     "paths": {
       "@/.source": ["./.source/index.ts"],
       "@/*": ["./*"],
-      "@connectorkit/connector-kit": ["../../packages/connector-kit/src/index.ts"],
+      "@connectorkit/connector": ["../../packages/connector/src/index.ts"],
       "@connectorkit/*": ["../../packages/*/src"]
     },
     "plugins": [

@@ -15,7 +15,7 @@ import {
   mergeThemeOverrides,
   modalRoutes,
   type ThemeName 
-} from '@connectorkit/connector-kit'
+} from '@connectorkit/connector'
 
 export function CustomizationDemo() {
   const [selectedTheme, setSelectedTheme] = useState<ThemeName | 'custom'>('solana')

@@ -19,13 +19,13 @@
     "lint": "echo skip"
   },
   "peerDependencies": {
-    "@connectorkit/hooks": "*"
+    "@connectorkit/sdk": "*"
   },
   "dependencies": {
     "@connectorkit/jupiter": "workspace:*"
   },
   "devDependencies": {
-    "@connectorkit/hooks": "workspace:*",
+    "@connectorkit/sdk": "workspace:*",
     "tsup": "^8.5.0",
     "typescript": "^5.3.3"
   },

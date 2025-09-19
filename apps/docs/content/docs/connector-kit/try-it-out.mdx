@@ -13,7 +13,7 @@ import { StandardWalletDemo } from '../../../components/standard-wallet-demo'
 Use the drop-in components for quick integrations.
 
 ```tsx
-import { ConnectButton } from '@connectorkit/connector-kit'
+import { ConnectButton } from '@connectorkit/connector'
 
 <ConnectButton />
 ```
@@ -44,8 +44,8 @@ or use the simple headless SDK for wallet connection and state management.
 Complete control over UI and behavior:
 
 ```tsx
-import { useConnector } from '@connectorkit/connector-kit'
-import { useWalletAddress, useBalance } from '@connectorkit/hooks'
+import { useConnector } from '@connectorkit/connector'
+import { useWalletAddress, useBalance } from '@connectorkit/sdk'
 
 function CustomWalletConnect() {
   const { wallets, select, disconnect } = useConnector()
@@ -107,4 +107,4 @@ function TransactionSigner() {
 ## Next Steps
 
 - [Getting Started](/docs/connector-kit/introduction) - Full implementation guide
-- [@connectorkit/hooks](/docs/solana) - For transaction building and blockchain operations
+- [@connectorkit/sdk](/docs/solana) - For transaction building and blockchain operations

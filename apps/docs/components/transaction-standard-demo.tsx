@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { useTransaction, useBalance, useArcClient } from '@connectorkit/hooks'
+import { useTransaction, useBalance, useArcClient } from '@connectorkit/sdk'
 import { Button } from './ui/button'
 import { Alert, AlertDescription } from './ui/alert'
 import { Spinner } from './ui/spinner'

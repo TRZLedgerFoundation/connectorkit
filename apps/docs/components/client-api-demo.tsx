@@ -9,7 +9,7 @@ import { motion } from 'motion/react'
 import { Code, Server, Monitor, Zap } from 'lucide-react'
 
 // Import both client and hooks for demonstration
-import { useBalance, useArcClient } from '@connectorkit/hooks'
+import { useBalance, useArcClient } from '@connectorkit/sdk'
 
 /**
  * 🚀 Demo: Arc Client API vs React Hooks

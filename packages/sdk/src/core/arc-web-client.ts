@@ -9,7 +9,7 @@ import {
   WalletStandardKitSigner,
   type StandardWalletInfo,
 } from '../hooks/use-standard-wallets'
-import type { ConnectorClient, ConnectorState } from '@connectorkit/connector-kit'
+import type { ConnectorClient, ConnectorState } from '@connectorkit/connector'
 
 // Connector is the single source of truth; no Arc-managed persistence
 

@@ -5,7 +5,7 @@ description: Essential React hooks for Solana development - lean, focused, and b
 
 # Solana Hooks MVP
 
-The `@connectorkit/hooks` package provides a **focused set of essential React hooks** for Solana development. This MVP version contains only the hooks that are actively used and battle-tested in production applications.
+The `@connectorkit/sdk` package provides a **focused set of essential React hooks** for Solana development. This MVP version contains only the hooks that are actively used and battle-tested in production applications.
 
 ## 🎯 MVP Philosophy
 
@@ -39,7 +39,7 @@ import {
   useWalletAddress,
   useTransaction,
   useSwap 
-} from '@connectorkit/hooks'
+} from '@connectorkit/sdk'
 
 function MyComponent() {
   const { address, connected } = useWalletAddress()
@@ -70,7 +70,7 @@ In the spirit of building a lean, focused MVP, we removed **22 hooks** that were
 - **Network RPC hooks** (7 removed) - use native RPC calls when needed
 - **Account hooks** (3 removed) - use `useTransaction` or native RPC
 - **Transfer hooks** (2 removed) - use `useTransaction` for transfers
-- **Deprecated wallet hooks** (2 removed) - use `@connectorkit/connector-kit`
+- **Deprecated wallet hooks** (2 removed) - use `@connectorkit/connector`
 
 These can always be re-added if there's proven demand, but for now the focus is on the **essential 6 hooks** that cover 95% of use cases.
 

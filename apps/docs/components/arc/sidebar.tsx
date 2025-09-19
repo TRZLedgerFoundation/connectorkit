@@ -164,7 +164,7 @@ export function ArcSidebar({ tree }: ArcSidebarProps) {
           <div className="flex flex-col text-left space-y-2">
             <div className="flex items-end gap-2 justify-left">
                  <span className="text-2xl font-bold text-zinc-900 dark:text-white">ConnectorKit</span>
-                 <div className="text-[11px] text-zinc-500 dark:text-zinc-400 translate-y-[-4px] p-1 py-0.5 border border-zinc-300 dark:border-zinc-800 rounded-md font-mono shadow-sm">0.0.0</div>
+                 <div className="text-[11px] text-zinc-500 dark:text-zinc-400 translate-y-[-4px] p-1 py-0.5 border border-zinc-300 dark:border-zinc-800 rounded-md font-mono shadow-sm ">0.0.0</div>
                </div>
                <span className="text-[16px] text-zinc-500 dark:text-zinc-400 leading-tight">A framework agnostic wallet connection and state management development kit for Solana.</span>
                

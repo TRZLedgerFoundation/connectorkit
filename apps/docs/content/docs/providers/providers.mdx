@@ -33,7 +33,7 @@ Providers integrate seamlessly with Arc's hooks system:
 
 ```tsx
 import { createJupiter } from '@arc/jupiter'
-import { useSwap } from '@connectorkit/hooks'
+import { useSwap } from '@connectorkit/sdk'
 
 function MySwapComponent() {
   const provider = createJupiter({ slippageBps: 50 })
@@ -119,7 +119,7 @@ Import all providers from a single package:
 
 ```tsx
 import { createJupiter } from '@connectorkit/jupiter'
-import { createProvider } from '@connectorkit/hooks'
+import { createProvider } from '@connectorkit/sdk'
 
 // Create multiple providers at once
 const providers = createProviders({
@@ -173,7 +173,7 @@ function MultiProviderSwap() {
 Build your own provider following the `SwapProvider` interface:
 
 ```tsx
-import type { SwapProvider, SwapParams, SwapQuote, SwapBuild } from '@connectorkit/hooks'
+import type { SwapProvider, SwapParams, SwapQuote, SwapBuild } from '@connectorkit/sdk'
 
 export interface CustomConfig {
   apiUrl?: string

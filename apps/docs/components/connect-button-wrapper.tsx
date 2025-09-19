@@ -1,6 +1,6 @@
 'use client'
 
-import { ConnectButton } from '@connectorkit/connector-kit'
+import { ConnectButton } from '@connectorkit/connector'
 
 /**
  * Client-side wrapper for ConnectButton to be used in server-side rendered MDX files

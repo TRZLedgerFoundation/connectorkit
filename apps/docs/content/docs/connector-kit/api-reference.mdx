@@ -14,7 +14,7 @@ Complete reference for all ConnectorKit APIs, components, and utilities.
 The main wallet connection component with built-in modal and state management.
 
 ```tsx
-import { ConnectButton } from '@connectorkit/connector-kit'
+import { ConnectButton } from '@connectorkit/connector'
 
 <ConnectButton 
   size="default"     // "small" | "default" | "large"
@@ -36,7 +36,7 @@ import { ConnectButton } from '@connectorkit/connector-kit'
 Root provider that manages wallet connections and configuration.
 
 ```tsx
-import { AppProvider } from '@connectorkit/connector-kit'
+import { AppProvider } from '@connectorkit/connector'
 
 <AppProvider connectorConfig={config} mobile={mobileConfig}>
   {children}
@@ -87,7 +87,7 @@ interface ArcConfig {
 Creates a default connector configuration.
 
 ```tsx
-import { getDefaultConfig } from '@connectorkit/connector-kit'
+import { getDefaultConfig } from '@connectorkit/connector'
 
 const config = getDefaultConfig({
   appName: 'My App',
@@ -102,7 +102,7 @@ const config = getDefaultConfig({
 Creates default mobile wallet adapter configuration.
 
 ```tsx
-import { getDefaultMobileConfig } from '@connectorkit/connector-kit'
+import { getDefaultMobileConfig } from '@connectorkit/connector'
 
 const mobileConfig = getDefaultMobileConfig({
   appName: 'My App',
@@ -113,11 +113,11 @@ const mobileConfig = getDefaultMobileConfig({
 
 ## Hooks Integration
 
-ConnectorKit integrates seamlessly with `@connectorkit/hooks`:
+ConnectorKit integrates seamlessly with `@connectorkit/sdk`:
 
 ```tsx
-import { useWalletAddress, useBalance } from '@connectorkit/hooks'
-import { ConnectButton } from '@connectorkit/connector-kit'
+import { useWalletAddress, useBalance } from '@connectorkit/sdk'
+import { ConnectButton } from '@connectorkit/connector'
 
 function MyComponent() {
   const address = useWalletAddress()
@@ -144,7 +144,7 @@ import type {
   ArcConfig,
   MobileConfig,
   ThemeConfig
-} from '@connectorkit/connector-kit'
+} from '@connectorkit/connector'
 ```
 
 ## Error Types
