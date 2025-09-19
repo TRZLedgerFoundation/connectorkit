@@ -22,12 +22,15 @@ import {
   Compass,
   Rocket,
   Component,
-  AlertTriangle
+  AlertTriangle,
+  ChevronRight,
+  ChevronDown
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { type PageTree } from 'fumadocs-core/server'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import logoArc from '@/app/(home)/assets/logo-arc.png'
 import { CopyButton } from '@/components/ui/copy-button'
@@ -90,6 +93,16 @@ function shouldShowFolderIcon(folderName: string, depth: number) {
     return false
   }
   
+  // Don't show icons for specific sections
+  if (name.includes('architecture') || 
+      name.includes('hooks reference') || 
+      name.includes('react integration') ||
+      name === 'architecture' ||
+      name === 'hooks reference' ||
+      name === 'react integration') {
+    return false
+  }
+  
   return true
 }
 
@@ -106,8 +119,79 @@ function getFolderIcon(folderName: string) {
   return FileText
 }
 
+// Helper function to check if a folder contains the active page
+function folderContainsActivePage(node: PageTree.Node, pathname: string, parentPath = ''): boolean {
+  const currentPath = parentPath ? `${parentPath}/${node.name}` : String(node.name)
+  
+  if (node.type === 'page' && node.url === pathname) {
+    return true
+  }
+  
+  if (node.type === 'folder') {
+    if (node.index?.url === pathname) {
+      return true
+    }
+    
+    return node.children.some(child => 
+      folderContainsActivePage(child, pathname, currentPath)
+    )
+  }
+  
+  return false
+}
+
+// Helper function to get initially collapsed folders
+function getInitialCollapsedFolders(tree: PageTree.Root, pathname: string): Set<string> {
+  const collapsed = new Set<string>()
+  
+  function processNode(node: PageTree.Node, parentPath = '') {
+    if (node.type === 'folder') {
+      const currentPath = parentPath ? `${parentPath}/${node.name}` : String(node.name)
+      const folderName = String(node.name).toLowerCase()
+      const isTopLevel = parentPath === ''
+      
+      // Default open all top-level sections except architecture, and always keep active page sections open
+      const shouldKeepOpen = (isTopLevel && !folderName.includes('architecture')) ||
+                            folderContainsActivePage(node, pathname, parentPath)
+      
+      // If this folder should be collapsed, add it to the set
+      if (!shouldKeepOpen) {
+        collapsed.add(currentPath)
+      }
+      
+      // Process children
+      node.children.forEach(child => processNode(child, currentPath))
+    }
+  }
+  
+  tree.children.forEach(node => processNode(node))
+  return collapsed
+}
+
 export function ArcSidebar({ tree }: ArcSidebarProps) {
   const pathname = usePathname()
+  
+  // Track which folders are collapsed (default to collapsed unless they contain active page)
+  const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(() => 
+    getInitialCollapsedFolders(tree, pathname)
+  )
+  
+  // Update collapsed state when pathname changes
+  useEffect(() => {
+    setCollapsedFolders(getInitialCollapsedFolders(tree, pathname))
+  }, [tree, pathname])
+  
+  const toggleFolder = (folderPath: string) => {
+    setCollapsedFolders(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(folderPath)) {
+        newSet.delete(folderPath)
+      } else {
+        newSet.add(folderPath)
+      }
+      return newSet
+    })
+  }
 
   return (
     <Base.SidebarProvider>
@@ -163,8 +247,7 @@ export function ArcSidebar({ tree }: ArcSidebarProps) {
           </Link>
           <div className="flex flex-col text-left space-y-2">
             <div className="flex items-end gap-2 justify-left">
-                 <span className="text-2xl font-bold text-zinc-900 dark:text-white">ConnectorKit</span>
-                 <div className="text-[11px] text-zinc-500 dark:text-zinc-400 translate-y-[-4px] p-1 py-0.5 border border-zinc-300 dark:border-zinc-800 rounded-md font-mono shadow-sm ">0.0.0</div>
+                 <span className="text-2xl font-bold text-zinc-900 dark:text-white">Connector Kit</span>
                </div>
                <span className="text-[16px] text-zinc-500 dark:text-zinc-400 leading-tight">A framework agnostic wallet connection and state management development kit for Solana.</span>
                
@@ -186,7 +269,13 @@ export function ArcSidebar({ tree }: ArcSidebarProps) {
         <div className="flex-1 overflow-y-auto p-6">
           <nav className="space-y-2">
             {tree.children.map((node, index) => (
-              <NavigationNode key={`${node.name}-${index}`} node={node} pathname={pathname} />
+              <NavigationNode 
+                key={`${node.name}-${index}`} 
+                node={node} 
+                pathname={pathname} 
+                collapsedFolders={collapsedFolders}
+                toggleFolder={toggleFolder}
+              />
             ))}
           </nav>
         </div>
@@ -211,9 +300,19 @@ interface NavigationNodeProps {
   node: PageTree.Node
   pathname: string
   depth?: number
+  collapsedFolders?: Set<string>
+  toggleFolder?: (folderPath: string) => void
+  parentPath?: string
 }
 
-function NavigationNode({ node, pathname, depth = 0 }: NavigationNodeProps) {
+function NavigationNode({ 
+  node, 
+  pathname, 
+  depth = 0, 
+  collapsedFolders = new Set(), 
+  toggleFolder,
+  parentPath = '' 
+}: NavigationNodeProps) {
   // Handle separator nodes
   if (node.type === 'separator') {
     return <hr className="my-4 border-gray-200 dark:border-gray-800" />
@@ -262,39 +361,89 @@ function NavigationNode({ node, pathname, depth = 0 }: NavigationNodeProps) {
     const IconComponent = getFolderIcon(folderName)
     const deprecated = isDeprecated(folderName)
     
+    // Create unique path for this folder
+    const currentPath = parentPath ? `${parentPath}/${folderName}` : folderName
+    const isCollapsed = collapsedFolders.has(currentPath)
+    
+    const handleToggle = (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      if (toggleFolder) {
+        toggleFolder(currentPath)
+      }
+    }
+    
     return (
       <div className="space-y-2">
         {/* Folder heading */}
         <div className="space-y-1">
           {node.index ? (
-            <Link
-              href={node.index.url}
-              className={cn(
-                "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-150",
-                "hover:bg-gray-100 dark:hover:bg-gray-800",
-                depth > 0 && "ml-4",
-                isActive && [
-                  "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400",
-                  "border-l-2 border-blue-500 dark:border-blue-400 pl-2"
-                ],
-                !isActive && "text-gray-800 dark:text-gray-200"
+            <div className="flex items-center">
+              {hasChildren && (
+                <button
+                  onClick={handleToggle}
+                  className={cn(
+                    "flex items-center justify-center w-6 h-6 rounded-sm transition-all duration-150 mr-1",
+                    "hover:bg-gray-200 dark:hover:bg-gray-700",
+                    depth > 0 && "ml-4"
+                  )}
+                  aria-label={isCollapsed ? "Expand folder" : "Collapse folder"}
+                >
+                  {isCollapsed ? (
+                    <ChevronRight className="h-3 w-3" />
+                  ) : (
+                    <ChevronDown className="h-3 w-3" />
+                  )}
+                </button>
               )}
-            >
-              {showIcon && <IconComponent className="h-4 w-4 shrink-0" />}
-              <span className={cn("truncate", deprecated && "line-through")}>
-                {node.name}
-              </span>
-            </Link>
+              <Link
+                href={node.index.url}
+                className={cn(
+                  "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-150 flex-1",
+                  "hover:bg-gray-100 dark:hover:bg-gray-800",
+                  !hasChildren && depth > 0 && "ml-4",
+                  isActive && [
+                    "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400",
+                    "border-l-2 border-blue-500 dark:border-blue-400 pl-2"
+                  ],
+                  !isActive && "text-gray-800 dark:text-gray-200"
+                )}
+              >
+                {showIcon && <IconComponent className="h-4 w-4 shrink-0" />}
+                <span className={cn("truncate", deprecated && "line-through")}>
+                  {node.name}
+                </span>
+              </Link>
+            </div>
           ) : (
-            <div className={cn(
-              "flex items-center gap-2 px-3 py-2 text-sm font-semibold",
-              depth > 0 && "ml-4",
-              "text-gray-800 dark:text-gray-200"
-            )}>
-              {showIcon && <IconComponent className="h-4 w-4 shrink-0" />}
-              <span className={cn("truncate", deprecated && "line-through")}>
-                {node.name}
-              </span>
+            <div className="flex items-center">
+              {hasChildren && (
+                <button
+                  onClick={handleToggle}
+                  className={cn(
+                    "flex items-center justify-center w-6 h-6 rounded-sm transition-all duration-150 mr-1",
+                    "hover:bg-gray-200 dark:hover:bg-gray-700",
+                    depth > 0 && "ml-4"
+                  )}
+                  aria-label={isCollapsed ? "Expand folder" : "Collapse folder"}
+                >
+                  {isCollapsed ? (
+                    <ChevronRight className="h-3 w-3" />
+                  ) : (
+                    <ChevronDown className="h-3 w-3" />
+                  )}
+                </button>
+              )}
+              <div className={cn(
+                "flex items-center gap-2 px-3 py-2 text-sm font-semibold flex-1",
+                !hasChildren && depth > 0 && "ml-4",
+                "text-gray-800 dark:text-gray-200"
+              )}>
+                {showIcon && <IconComponent className="h-4 w-4 shrink-0" />}
+                <span className={cn("truncate", deprecated && "line-through")}>
+                  {node.name}
+                </span>
+              </div>
             </div>
           )}
           {deprecated && (
@@ -304,15 +453,18 @@ function NavigationNode({ node, pathname, depth = 0 }: NavigationNodeProps) {
           )}
         </div>
         
-        {/* Always show children */}
-        {hasChildren && (
-          <div className="space-y-1">
+        {/* Conditionally show children based on collapsed state */}
+        {hasChildren && !isCollapsed && (
+          <div className="space-y-1 overflow-hidden transition-all duration-200">
             {node.children.map((child, index) => (
-              <NavigationNode
-                key={`${child.name}-${index}`}
-                node={child}
-                pathname={pathname}
-                depth={depth + 1}
+              <NavigationNode 
+                key={`${child.name}-${index}`} 
+                node={child} 
+                pathname={pathname} 
+                depth={depth + 1} 
+                collapsedFolders={collapsedFolders}
+                toggleFolder={toggleFolder}
+                parentPath={currentPath}
               />
             ))}
           </div>

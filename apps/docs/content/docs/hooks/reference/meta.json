@@ -1,4 +1,5 @@
 {
   "title": "Hooks Reference",
+  "defaultOpen": false,
   "pages": ["use-balance", "use-airdrop", "use-cluster", "use-wallet-address", "use-transaction", "use-swap"]
 }

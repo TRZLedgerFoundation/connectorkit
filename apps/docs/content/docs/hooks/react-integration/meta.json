@@ -1,4 +1,5 @@
 {
-  "title": "React Integration",
+  "title": "React Integration", 
+  "defaultOpen": false,
   "pages": ["react", "hooks"]
 }
