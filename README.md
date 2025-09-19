@@ -29,7 +29,7 @@ This monorepo contains several packages:
 - **@connectorkit/sdk** - Core React hooks and utilities for Solana development
 - **@connectorkit/connector** - Wallet connector components and context management
 - **@connectorkit/providers** - Provider templates and configurations
-- **@connectorkit/jupiter** - Jupiter DEX integration
+- **@connectorkit/jupiter** - Jupiter DEX integration example
 - **@connectorkit/ui-primitives** - Headless UI component primitives
 
 ## 🛠️ Development
@@ -77,34 +77,15 @@ pnpm release          # Build and publish packages
 ```
 connector-kit/
 ├── apps/
-│   └── docs/              # Documentation site with enhanced navigation
+│   └── docs/              # Documentation site
 ├── packages/
-│   ├── sdk/               # Core React hooks and Solana utilities
-│   ├── connector/         # Wallet connection components and theming
+│   ├── sdk/               # Core React hooks and utilities
+│   ├── connector/         # Connection components
 │   ├── providers/         # Provider configurations and templates
-│   ├── jupiter/           # Jupiter DEX integration
-│   └── ui-primitives/     # Headless UI component library
-└── examples/              # Example applications and demos
+│   ├── jupiter/           # Jupiter DEX integration example
+│   └── ui-primitives/     # Headless UI components library
+
 ```
-
-## 📚 Enhanced Documentation
-
-The documentation site features a modern, collapsible sidebar navigation system with:
-
-- **Collapsible sections** - Click chevron icons to expand/collapse documentation sections
-- **Smart defaults** - Most sections open by default, architecture sections collapsed for cleaner initial view
-- **Active page highlighting** - Current section automatically stays expanded
-- **Responsive design** - Works seamlessly across desktop and mobile devices
-
-### Documentation Features
-
-- **Interactive examples** for all hooks and components
-- **TypeScript definitions** with complete API documentation
-- **Copy-paste code samples** for quick implementation
-- **Live demos** of wallet connections and transactions
-- **Architecture guides** for understanding the system design
-
-Visit the [documentation](./apps/docs) for detailed guides and examples.
 
 ## 🔧 Testing
 
