@@ -1,13 +1,10 @@
 {
-  "title": "HOOKS 0.0.0",
+  "title": "Solana Development Kit",
   "defaultOpen": true,
   "pages": [
-    "hooks",
-    "use-balance",
-    "use-airdrop",
-    "use-cluster", 
-    "use-wallet-address",
-    "use-transaction",
-    "use-swap"
+    "overview",
+    "architecture",
+    "react-integration", 
+    "reference"
   ]
 }

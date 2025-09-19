@@ -1,21 +1,22 @@
 ---
-title: Solana Hooks - MVP
-description: Essential React hooks for Solana development - lean, focused, and battle-tested.
+title: Hooks Overview
+description: Production-ready React hooks for Solana development - comprehensive, type-safe, and battle-tested.
 ---
 
-# Solana Hooks MVP
+# React Hooks Overview
 
-The `@connectorkit/sdk` package provides a **focused set of essential React hooks** for Solana development. This MVP version contains only the hooks that are actively used and battle-tested in production applications.
+The `@connectorkit/sdk` package provides **7 production-ready React hooks** for Solana development. Built on React Query with intelligent caching, error recovery, and TypeScript safety.
 
-## 🎯 MVP Philosophy
+## 🎯 Core Features
 
-After analyzing real-world usage, we've streamlined the package to include only the **6 most essential hooks**:
-- **39% smaller bundle** (~55KB vs ~90KB)
-- **Zero maintenance overhead** - no unused code
-- **Production-ready** - all hooks are actively used in demo components
-- **Type-safe** - full TypeScript support
+Our hooks are built with enterprise-grade features:
+- **Connection Pooling** - Reduces 50+ RPC connections to 1-2 shared connections
+- **Intelligent Caching** - React Query integration with optimized cache strategies  
+- **Error Recovery** - 20+ classified error types with automatic retry logic
+- **TypeScript First** - Full type safety with exported interfaces
+- **Performance Optimized** - Bundle sizes from 15KB (core) to 90KB (full)
 
-## Essential Hooks
+## Available Hooks
 
 ### Wallet & Connection
 - **[`useWalletAddress`](/docs/solana/use-wallet-address)** - Get current wallet address

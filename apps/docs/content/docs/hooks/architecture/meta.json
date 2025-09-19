@@ -1,0 +1,4 @@
+{
+  "title": "Architecture",
+  "pages": ["core", "client", "transports", "utils"]
+}
