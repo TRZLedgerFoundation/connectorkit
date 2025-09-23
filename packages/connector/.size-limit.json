@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Main Bundle (ESM)",
+    "path": "dist/index.mjs",
+    "limit": "25 KB",
+    "gzip": true,
+    "webpack": false
+  },
+  {
+    "name": "Headless Bundle (ESM)", 
+    "path": "dist/headless.mjs",
+    "limit": "15 KB",
+    "gzip": true,
+    "webpack": false
+  },
+  {
+    "name": "React Bundle (ESM)",
+    "path": "dist/react.mjs", 
+    "limit": "30 KB",
+    "gzip": true,
+    "webpack": false
+  },
+  {
+    "name": "Main Bundle (CJS)",
+    "path": "dist/index.js",
+    "limit": "28 KB",
+    "gzip": true,
+    "webpack": false
+  }
+]

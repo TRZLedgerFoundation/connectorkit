@@ -28,8 +28,25 @@ export type { UseModalReturn } from './hooks'
 
 // UI exports  
 export { ConnectButton } from './ui/connect-button'
+export { ConnectButtonEnhanced } from './ui/connect-button-enhanced'
 export type { ConnectButtonProps } from './ui/connect-button'
+export type { ConnectButtonEnhancedProps } from './ui/connect-button-enhanced'
 export { ConnectModal } from './ui/connect-modal'
+export { ConnectModalEnhanced } from './ui/connect-modal-enhanced'
+
+// React 19 Enhanced Components
+export { ConnectorErrorBoundary, withErrorBoundary } from './components/ErrorBoundary'
+export { VirtualizedWalletList } from './components/VirtualizedWalletList'
+export type { WalletError, WalletErrorType } from './components/ErrorBoundary'
+
+// Enhanced Pages
+export { ProfilePage } from './pages/profile'
+export { AboutPage } from './pages/about'
+export { SettingsPage } from './pages/settings'
+
+// Enhanced Modal System
+export { ModalRouter, defaultModalRouter } from './lib/modal-router'
+export type { ModalState } from './lib/modal-router'
 
 // Pages for custom implementations
 export { WalletsPage } from './pages/wallets'

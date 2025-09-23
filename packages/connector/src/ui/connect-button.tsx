@@ -1,6 +1,16 @@
 "use client"
 
-import React, { memo, useEffect, useMemo, useState } from 'react'
+import React, { 
+  memo, 
+  useEffect, 
+  useMemo, 
+  useState, 
+  useTransition,
+  useDeferredValue,
+  useCallback,
+  startTransition,
+  useSyncExternalStore
+} from 'react'
 import { useConnector } from './connector-provider'
 import { useModal } from '../hooks'
 import {
@@ -35,6 +45,9 @@ export interface ConnectButtonProps {
 }
 
 export const ConnectButton = memo<ConnectButtonProps>(({ className, style, variant = 'default', theme = {}, label, options = {} }) => {
+  // React 19: Use transitions for non-blocking updates
+  const [isPending, startConnectTransition] = useTransition()
+  
   // SSR hydration safety - prevent hydration mismatches
   const [isMounted, setIsMounted] = useState(false)
   useEffect(() => {
@@ -99,24 +112,35 @@ export const ConnectButton = memo<ConnectButtonProps>(({ className, style, varia
   }, [theme])
   
   const t = normalizedTheme
-  const { wallets, connected, disconnect, selectedAccount, accounts, selectAccount, selectedWallet } = useConnector()
+  const connectorState = useConnector()
+  const { wallets, connected, disconnect, selectedAccount, accounts, selectAccount, selectedWallet } = connectorState
+  
+  // React 19: Defer non-critical updates for better performance
+  const deferredConnected = useDeferredValue(connected)
+  const deferredSelectedAccount = useDeferredValue(selectedAccount)
+  
   const modal = useModal()
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
-  useEffect(() => {
-    if (connected) {
-      // Respect autoCloseOnConnect option (default: true)
-      if (stableOptions.autoCloseOnConnect !== false) {
+  // React 19: Use callback for stable reference
+  const handleAutoClose = useCallback(() => {
+    if (deferredConnected && stableOptions.autoCloseOnConnect !== false) {
+      startTransition(() => {
         modal.close()
-      }
+      })
     }
-  }, [connected, stableOptions.autoCloseOnConnect, modal.close])
+  }, [deferredConnected, stableOptions.autoCloseOnConnect, modal.close])
+  
+  useEffect(() => {
+    handleAutoClose()
+  }, [handleAutoClose])
 
+  // React 19: Memoize expensive computations with deferred values
   const selectedDisplay = useMemo(() => {
-    if (!selectedAccount) return null
+    if (!deferredSelectedAccount) return null
     const truncateLength = stableOptions.truncateAddress ?? 4
-    return `${String(selectedAccount).slice(0, truncateLength)}...${String(selectedAccount).slice(-truncateLength)}`
-  }, [selectedAccount, stableOptions.truncateAddress])
+    return `${String(deferredSelectedAccount).slice(0, truncateLength)}...${String(deferredSelectedAccount).slice(-truncateLength)}`
+  }, [deferredSelectedAccount, stableOptions.truncateAddress])
 
   const isIconOnly = variant === 'icon-only'
 
@@ -156,12 +180,21 @@ export const ConnectButton = memo<ConnectButtonProps>(({ className, style, varia
     return (accounts ?? []).find((a: any) => a.address === selectedAccount) ?? null
   }, [accounts, selectedAccount])
 
+  // React 19: Create wallet map for O(1) lookups
+  const walletMap = useMemo(() => {
+    const map = new Map()
+    wallets?.forEach(w => map.set(w.wallet, w.icon))
+    return map
+  }, [wallets])
+
+  // React 19: Cache wallet icon lookups for better performance
   const selectedWalletIcon = useMemo(() => {
+    // Early return for most common case
     if (selectedAccountInfo?.icon) return selectedAccountInfo.icon
     if (!selectedWallet) return null
-    const match = (wallets ?? []).find((w: any) => w.wallet === selectedWallet)
-    return match?.icon ?? null
-  }, [selectedAccountInfo, selectedWallet, wallets])
+    
+    return walletMap.get(selectedWallet) ?? null
+  }, [selectedAccountInfo, selectedWallet, walletMap])
 
   // Prevent SSR hydration mismatches by not rendering until mounted
   if (!isMounted) {
@@ -207,28 +240,35 @@ export const ConnectButton = memo<ConnectButtonProps>(({ className, style, varia
     return (
       <DropdownRoot open={dropdownOpen} onOpenChange={setDropdownOpen}>
         <DropdownTrigger asChild>
-          <button
-            className={className}
-            style={{ ...buttonStyles, position: 'relative' }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => { setIsHovered(false); setIsPressed(false) }}
-            onMouseDown={() => setIsPressed(true)}
-            onMouseUp={() => setIsPressed(false)}
-            onFocus={() => setIsHovered(true)}
-            onBlur={() => setIsHovered(false)}
-            type="button"
-            aria-label={isIconOnly ? (selectedDisplay || label || 'Wallet') : undefined}
-          >
+            <button
+              className={className}
+              style={{ 
+                ...buttonStyles, 
+                position: 'relative',
+                // React 19: Add loading state for better UX
+                opacity: isPending ? 0.7 : 1,
+                cursor: isPending ? 'wait' : 'pointer'
+              }}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => { setIsHovered(false); setIsPressed(false) }}
+              onMouseDown={() => setIsPressed(true)}
+              onMouseUp={() => setIsPressed(false)}
+              onFocus={() => setIsHovered(true)}
+              onBlur={() => setIsHovered(false)}
+              type="button"
+              disabled={isPending}
+              aria-label={isIconOnly ? (selectedDisplay || label || 'Wallet') : undefined}
+            >
             {selectedWalletIcon ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={selectedWalletIcon} alt="Account" width={18} height={18} style={{ borderRadius: 9 }} />
             ) : (
-              icon
+              isPending ? <Spinner /> : icon
             )}
-            {!isIconOnly && (selectedDisplay || label || 'Wallet')}
+            {!isIconOnly && (isPending ? 'Connecting...' : (selectedDisplay || label || 'Wallet'))}
           </button>
         </DropdownTrigger>
-        <DropdownContent align="end">
+        <DropdownContent align="end" className="">
           <div
             style={{
               minWidth: 240,
@@ -272,13 +312,13 @@ export const ConnectButton = memo<ConnectButtonProps>(({ className, style, varia
               </div>
             ) : null}
             {selectedWallet?.name && (
-              <DropdownItem onSelect={() => modal.openWallets()}>
+              <DropdownItem onSelect={() => modal.openWallets()} className="">
                 <div style={{ padding: '8px 12px', fontSize: 13, color: '#111827', borderRadius: 6, cursor: 'pointer' }}>
                   Connect More
                 </div>
               </DropdownItem>
             )}
-              <DropdownItem onSelect={async (_e) => { 
+              <DropdownItem onSelect={async () => { 
                 try {
                     modal.close();
                     await disconnect()
@@ -288,7 +328,7 @@ export const ConnectButton = memo<ConnectButtonProps>(({ className, style, varia
                     // Consider showing a toast or notification to the user
                     console.error('Failed to disconnect wallet:', error);
                 }
-            }}>
+            }} className="">
               <div style={{ padding: '8px 12px', fontSize: 13, color: '#dc2626', borderRadius: 6, cursor: 'pointer' }}>
                 Disconnect
               </div>
@@ -303,8 +343,18 @@ export const ConnectButton = memo<ConnectButtonProps>(({ className, style, varia
     <>
       <button
         className={className}
-        style={buttonStyles}
-        onClick={() => modal.openWallets()}
+        style={{
+          ...buttonStyles,
+          // React 19: Loading state styling
+          opacity: isPending ? 0.7 : 1,
+          cursor: isPending ? 'wait' : 'pointer'
+        }}
+        onClick={() => {
+          // React 19: Use transition for smooth UX
+          startConnectTransition(() => {
+            modal.openWallets()
+          })
+        }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => { setIsHovered(false); setIsPressed(false) }}
         onMouseDown={() => setIsPressed(true)}
@@ -312,10 +362,11 @@ export const ConnectButton = memo<ConnectButtonProps>(({ className, style, varia
         onFocus={() => setIsHovered(true)}
         onBlur={() => setIsHovered(false)}
         type="button"
+        disabled={isPending}
         aria-label={isIconOnly ? (label || 'Connect Wallet') : undefined}
       >
-        {icon}
-        {!isIconOnly && (label || 'Connect Wallet')}
+        {isPending ? <Spinner /> : icon}
+        {!isIconOnly && (isPending ? 'Connecting...' : (label || 'Connect Wallet'))}
       </button>
       
       <ConnectModal options={stableOptions} />
