@@ -1,24 +1,69 @@
-let hasInjectedArcConnectorStyles = false
+let hasInjectedConnectorStyles = false
 
-function injectArcConnectorGlobalStyles() {
-  if (hasInjectedArcConnectorStyles) return
+function injectConnectorGlobalStyles() {
+  if (hasInjectedConnectorStyles) return
   if (typeof document === 'undefined') return
 
-  const style = document.createElement('style')
-  style.setAttribute('data-arc-connector-styles', 'true')
-  style.textContent = `
-@keyframes arc-spinner-enter { from { opacity: 0; transform: scale(0.5) } to { opacity: 1; transform: scale(1) } }
-@keyframes arc-spinner-rotate { to { transform: rotate(360deg) } }
+  // Import CSS styles - this will be handled by the build system
+  // The CSS files will be bundled and injected automatically
+  try {
+    // Require CSS - this enables CSS bundling
+    require('../styles/index.css')
+    hasInjectedConnectorStyles = true
+  } catch (error) {
+    console.warn('ConnectorKit: Failed to load styles', error)
+    
+    // Fallback: Inject minimal critical styles directly
+    const style = document.createElement('style')
+    style.setAttribute('data-connector-styles', 'true')
+    style.textContent = `
+/* ConnectorKit - Critical Styles Fallback */
+@keyframes connector-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes connector-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.connector-animate-spin {
+  animation: connector-spin 1s linear infinite;
+}
+
+.connector-animate-fade-in {
+  animation: connector-fade-in 0.3s ease-out;
+}
+
+/* Focus ring utilities */
+.connector-focus-ring {
+  outline: 2px solid #512da8;
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .connector-animate-spin,
+  .connector-animate-fade-in {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
 `
-  document.head.appendChild(style)
-  hasInjectedArcConnectorStyles = true
+    document.head.appendChild(style)
+    hasInjectedConnectorStyles = true
+  }
 }
 
 // Initialize immediately in the browser so animations are available
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-  injectArcConnectorGlobalStyles()
+  injectConnectorGlobalStyles()
 }
 
-export { injectArcConnectorGlobalStyles }
+export { injectConnectorGlobalStyles }
+
+// Legacy export for backwards compatibility
+export { injectConnectorGlobalStyles as injectArcConnectorGlobalStyles }
 
 

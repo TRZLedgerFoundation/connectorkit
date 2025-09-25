@@ -8,14 +8,15 @@ import type { ConnectorOptions } from '../../types'
 interface WalletsPageProps {
   options?: Partial<ConnectorOptions>
   onConnectError?: (error: string) => void
+  helpMode?: boolean
+  onHelpModeChange?: (helpMode: boolean) => void
 }
 
-export function WalletsPage({ options = {}, onConnectError }: WalletsPageProps) {
+export function WalletsPage({ options = {}, onConnectError, helpMode = false, onHelpModeChange }: WalletsPageProps) {
   const { wallets, connecting, select } = useConnector()
   const [connectingWalletName, setConnectingWalletName] = useState<string | null>(null)
   const [connectError, setConnectError] = useState<string | null>(null)
   const [unconnectableWalletName, setUnconnectableWalletName] = useState<string | null>(null)
-  const [currentStep, setCurrentStep] = useState<'list' | 'help'>('list')
 
   const connectableWallets = (wallets ?? []).filter((w: any) => w.connectable)
   const unconnectableWallets = (wallets ?? []).filter((w: any) => !w.connectable)
@@ -56,28 +57,11 @@ export function WalletsPage({ options = {}, onConnectError }: WalletsPageProps) 
     }
   }
 
-  if (currentStep === 'help') {
+  if (helpMode) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button 
-            aria-label="Back" 
-            type="button" 
-            onClick={() => setCurrentStep('list')} 
-            style={{ 
-              background: 'none', border: '1px solid transparent', width: 32, height: 32, 
-              borderRadius: 16, color: '#6b7280', cursor: 'pointer', display: 'flex', 
-              alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0
-            }}
-          >
-            ←
-          </button>
-          <div style={{ fontSize: 16, color: '#111827', fontWeight: 600 }}>
-            {unconnectableWalletName ? 'Wallet not connectable' : 'How to connect a wallet'}
-          </div>
-        </div>
         
-        <div style={{ paddingLeft: 44 }}>
+        <div style={{ padding: '0 20px' }}>
           {unconnectableWalletName ? (
             <div style={{ fontSize: 13, color: '#374151', lineHeight: 1.5 }}>
               {getUnconnectableReason((wallets ?? []).find((w: any) => w.name === unconnectableWalletName))}
@@ -96,24 +80,6 @@ export function WalletsPage({ options = {}, onConnectError }: WalletsPageProps) 
 
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-        <button 
-          aria-label="Help" 
-          type="button" 
-          onClick={() => setCurrentStep('help')} 
-          style={{ 
-            background: 'none', border: '1px solid transparent', width: 32, height: 32, 
-            borderRadius: 16, color: '#6b7280', cursor: 'pointer', display: 'flex', 
-            alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0
-          }}
-        >
-          ?
-        </button>
-        <div>
-          <div style={{ fontSize: 18, color: '#111827', fontWeight: 600 }}>Connect Your Wallet</div>
-          <div style={{ fontSize: 12, color: '#6b7280' }}>Select one of your available wallets.</div>
-        </div>
-      </div>
 
       {connectError && (
         <div style={{ 
@@ -163,7 +129,7 @@ export function WalletsPage({ options = {}, onConnectError }: WalletsPageProps) 
                   <span style={{ fontSize: 12, color: '#6b7280' }}>
                     {connecting && connectingWalletName === w.name ? (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                        <Spinner size={14} color="#9ca3af" speedMs={900} />
+                        <Spinner size="sm" color="primary" />
                         Connecting…
                       </span>
                     ) : (
@@ -187,7 +153,7 @@ export function WalletsPage({ options = {}, onConnectError }: WalletsPageProps) 
                   }}
                   onClick={() => { 
                     setUnconnectableWalletName(w.name) 
-                    setCurrentStep('help') 
+                    onHelpModeChange?.(true)
                   }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

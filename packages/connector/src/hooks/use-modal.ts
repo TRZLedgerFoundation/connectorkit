@@ -25,6 +25,10 @@ export interface UseModalReturn {
   openAccountSettings: () => void
   /** Open network settings modal */
   openNetworkSettings: () => void
+  /** Open settings modal */
+  openSettings: () => void
+  /** Open about modal */
+  openAbout: () => void
 }
 
 /**
@@ -95,6 +99,14 @@ export function useModal(): UseModalReturn {
     client?.openModal(modalRoutes.NETWORK_SETTINGS)
   }, [client])
   
+  const openSettings = useCallback(() => {
+    client?.openModal(modalRoutes.SETTINGS)
+  }, [client])
+  
+  const openAbout = useCallback(() => {
+    client?.openModal(modalRoutes.ABOUT)
+  }, [client])
+  
   return {
     isOpen: snapshot.modalOpen,
     route: snapshot.modalRoute as ModalRoute,
@@ -106,5 +118,7 @@ export function useModal(): UseModalReturn {
     openProfile,
     openAccountSettings,
     openNetworkSettings,
+    openSettings,
+    openAbout,
   }
 }

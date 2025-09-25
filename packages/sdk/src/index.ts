@@ -1,8 +1,8 @@
 /**
- * @connectorkit/solana - MVP Export
+ * @connectorkit/sdk - Enhanced Solana SDK with React 19 Performance
  * 
- * Lean MVP bundle with only the hooks used in demo components.
- * Bundle size: ~15KB (vs 90KB for full package)
+ * Ultra-optimized bundle with concurrent features and external state management.
+ * Bundle size: ~15KB MVP (~35KB full) with React 19 patterns
  * 
  * Used hooks based on demo component analysis:
  * - useBalance (used in all 3 demos)
@@ -20,7 +20,9 @@ export { useArcClient } from './core/arc-client-provider'
 
 // ===== ESSENTIAL HOOKS (MVP) =====
 export { useBalance } from './hooks/use-balance'
+export { useBalanceEnhanced } from './hooks/use-balance-enhanced'
 export type { UseBalanceOptions, UseBalanceReturn } from './hooks/use-balance'
+export type { UseBalanceEnhancedOptions, UseBalanceEnhancedReturn } from './hooks/use-balance-enhanced'
 
 export { useAirdrop } from './hooks/use-airdrop'
 export type { UseAirdropReturn } from './hooks/use-airdrop'
