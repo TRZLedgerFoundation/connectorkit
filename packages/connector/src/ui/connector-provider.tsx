@@ -4,6 +4,13 @@ import React, { createContext, useContext, useMemo, useRef, useSyncExternalStore
 import type { ReactNode } from 'react'
 import { ConnectorClient, type ConnectorConfig } from '../lib/connector-client'
 
+// Global connector client declaration for auto-detection
+declare global {
+  interface Window {
+    __connectorClient?: ConnectorClient
+  }
+}
+
 export type ConnectorSnapshot = ReturnType<ConnectorClient['getSnapshot']> & {
 	select: (walletName: string) => Promise<void>
 	disconnect: () => Promise<void>
@@ -37,9 +44,16 @@ export function ConnectorProvider({ children, config, mobile }: { children: Reac
 		ref.current = new ConnectorClient(config)
 	}
 
+	// Expose connector globally for auto-detection by other providers
 	React.useEffect(() => {
+		if (typeof window !== 'undefined' && ref.current) {
+			window.__connectorClient = ref.current
+		}
 		return () => {
-			// Cleanup on unmount if client has destroy method
+			// Cleanup global reference and client on unmount
+			if (typeof window !== 'undefined') {
+				window.__connectorClient = undefined
+			}
 			if (ref.current && typeof ref.current.destroy === 'function') {
 				ref.current.destroy()
 				ref.current = null
