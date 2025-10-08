@@ -32,10 +32,16 @@ export function getSolanaExplorerUrl(
 		return `https://explorer.solana.com/tx/${signature}?cluster=custom&customUrl=${encodeURIComponent(url)}`
 	}
 
+	// Map to valid gill cluster types (custom clusters default to devnet)
+	const validClusters = ['mainnet', 'devnet', 'testnet'] as const
+	const explorerCluster = validClusters.includes(normalizedCluster as any) 
+		? normalizedCluster as 'mainnet' | 'devnet' | 'testnet'
+		: 'devnet'
+
 	// Use gill's getExplorerLink for standard clusters
 	return getExplorerLink({ 
 		transaction: signature,
-		cluster: normalizedCluster
+		cluster: explorerCluster
 	})
 }
 

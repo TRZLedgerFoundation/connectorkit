@@ -84,9 +84,12 @@ export function getTransactionUrl(
   cluster: SolanaCluster
 ): string {
   const clusterType = getClusterType(cluster)
+  // Map cluster types to valid explorer cluster values
+  // Custom clusters default to devnet explorer
+  const explorerCluster = clusterType === 'custom' ? 'devnet' : clusterType
   return getExplorerLink({ 
     transaction: signature,
-    cluster: clusterType === 'mainnet' ? 'mainnet' : clusterType
+    cluster: explorerCluster === 'mainnet' ? 'mainnet' : explorerCluster
   })
 }
 
@@ -103,9 +106,12 @@ export function getAddressUrl(
   cluster: SolanaCluster
 ): string {
   const clusterType = getClusterType(cluster)
+  // Map cluster types to valid explorer cluster values
+  // Custom clusters default to devnet explorer
+  const explorerCluster = clusterType === 'custom' ? 'devnet' : clusterType
   return getExplorerLink({ 
     address,
-    cluster: clusterType === 'mainnet' ? 'mainnet' : clusterType
+    cluster: explorerCluster === 'mainnet' ? 'mainnet' : explorerCluster
   })
 }
 
