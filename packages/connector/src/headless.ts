@@ -62,13 +62,6 @@ export { createTransactionSigner, TransactionSignerError, isTransactionSignerErr
 export type { TransactionSigner } from './lib/transaction/transaction-signer';
 
 // ============================================================================
-// RPC Connection Pooling
-// ============================================================================
-export { ConnectionPool, getConnectionPool, createConnectionPool } from './lib/connection/connection-pool';
-
-export type { ConnectionLike, ConnectionPoolOptions, ConnectionPoolStats } from './lib/connection/connection-pool';
-
-// ============================================================================
 // Storage System
 // ============================================================================
 export {
