@@ -1,5 +1,5 @@
 /**
- * @connector-kit/connector - Enhanced Debug Panel Component
+ * @connector-kit/debugger - Enhanced Debug Panel Component
  * 
  * Comprehensive development-only debug panel with:
  * - Tabbed interface for organization
@@ -13,12 +13,8 @@
 'use client'
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { useConnector, useConnectorClient } from '../connector-provider'
-import { useAccount } from '../../hooks/use-account'
-import { useCluster } from '../../hooks/use-cluster'
-import { useTransactionSigner } from '../../hooks/use-transaction-signer'
-import { getConnectionPool } from '../../lib/connection-pool'
-import type { ConnectorEvent } from '../../types/events'
+import type { ConnectorEvent } from '@connector-kit/connector'
+import { useConnector, useConnectorClient, useAccount, useCluster, useTransactionSigner } from '@connector-kit/connector/react'
 
 import type { DebugPanelProps, TabId, TabConfig } from './types'
 import { 
@@ -62,14 +58,14 @@ const POSITION_STYLES: Record<string, React.CSSProperties> = {
  * 
  * @example
  * ```tsx
- * import { ConnectorDebugPanel } from '@connector-kit/connector/react'
+ * import { ConnectorDebugPanel } from '@connector-kit/debugger/react'
  * 
  * function App() {
  *   return (
- *     <ConnectorProvider config={config}>
+ *     <AppProvider connectorConfig={config}>
  *       {process.env.NODE_ENV === 'development' && <ConnectorDebugPanel />}
  *       <YourApp />
- *     </ConnectorProvider>
+ *     </AppProvider>
  *   )
  * }
  * ```
@@ -110,15 +106,6 @@ export function ConnectorDebugPanel({
 	// Get diagnostics
 	const health = (client as any).getHealth?.()
 	const metrics = (client as any).getDebugMetrics?.()
-	
-	// Get connection pool stats
-	const poolStats = useMemo(() => {
-		try {
-			return getConnectionPool().getStats()
-		} catch {
-			return null
-		}
-	}, [])
 	
 	// Subscribe to events
 	useEffect(() => {

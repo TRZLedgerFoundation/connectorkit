@@ -1,5 +1,5 @@
 /**
- * @connector-kit/connector - Enhanced Overview Tab Component
+ * @connector-kit/debugger - Enhanced Overview Tab Component
  * 
  * Combines Overview + Signer + Wallet information into a single comprehensive dashboard
  */
@@ -483,3 +483,4 @@ export function EnhancedOverviewTab({
 		</div>
 	)
 }
+

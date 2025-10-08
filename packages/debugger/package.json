@@ -1,0 +1,42 @@
+{
+  "name": "@connector-kit/debugger",
+  "version": "0.0.1",
+  "description": "Development debug panel for @connector-kit/connector",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    }
+  },
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit",
+    "lint": "biome lint src/",
+    "clean": "rm -rf dist"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "@connector-kit/connector": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  },
+  "license": "MIT"
+}
+

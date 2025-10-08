@@ -1,5 +1,5 @@
 /**
- * @connector-kit/connector - Debug Panel UI Components
+ * @connector-kit/debugger - Debug Panel UI Components
  */
 
 'use client'

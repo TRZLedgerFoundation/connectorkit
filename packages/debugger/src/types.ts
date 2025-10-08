@@ -1,5 +1,5 @@
 /**
- * @connector-kit/connector - Debug Panel Types
+ * @connector-kit/debugger - Debug Panel Types
  */
 
 import type React from 'react'

@@ -50,6 +50,11 @@
       "optional": true
     }
   },
+  "peerDependenciesMeta": {
+    "@connector-kit/debugger": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@nanostores/persistent": "^1.1.0",
     "@solana-mobile/wallet-standard-mobile": "^0.4.1",

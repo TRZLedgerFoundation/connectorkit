@@ -1,12 +1,12 @@
 /**
- * @connector-kit/connector - Events Tab Component
+ * @connector-kit/debugger - Events Tab Component
  */
 
 'use client'
 
+import type { ConnectorEvent } from '@connector-kit/connector'
 import { Button, EmptyState } from '../ui-components'
 import { PlayIcon, PauseIcon, TrashIcon } from '../icons'
-import type { ConnectorEvent } from '../../../types/events'
 
 interface EventsTabProps {
 	events: ConnectorEvent[]

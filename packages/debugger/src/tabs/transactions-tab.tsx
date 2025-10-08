@@ -1,23 +1,53 @@
 /**
- * @connector-kit/connector - Transactions Tab Component
+ * @connector-kit/debugger - Transactions Tab Component
  */
 
 'use client'
 
 import { useState } from 'react'
+import type { TransactionActivity } from '@connector-kit/connector'
 import { Button, EmptyState } from '../ui-components'
 import { ExternalLinkIcon } from '../icons'
-import {
-	getSolanaExplorerUrl,
-	getSolscanUrl,
-	getXrayUrl,
-	formatSignature
-} from '../../../lib/explorer-urls'
-import type { TransactionActivity } from '../../../types/transactions'
 
 interface TransactionsTabProps {
 	client: any
 	cluster: any
+}
+
+// Explorer URL utilities - duplicated here to avoid importing implementation details
+function getSolanaExplorerUrl(signature: string, options: { cluster?: string } = {}): string {
+	const { cluster = 'mainnet' } = options
+	const normalizedCluster = cluster === 'mainnet-beta' ? 'mainnet' : cluster
+	
+	if (normalizedCluster === 'localnet') {
+		return `https://explorer.solana.com/tx/${signature}?cluster=custom`
+	}
+	
+	return `https://explorer.solana.com/tx/${signature}${normalizedCluster !== 'mainnet' ? `?cluster=${normalizedCluster}` : ''}`
+}
+
+function getSolscanUrl(signature: string, options: { cluster?: string } = {}): string {
+	const { cluster = 'mainnet' } = options
+	const normalizedCluster = cluster === 'mainnet-beta' ? 'mainnet' : cluster
+
+	if (normalizedCluster === 'mainnet') {
+		return `https://solscan.io/tx/${signature}`
+	}
+
+	if (normalizedCluster === 'localnet') {
+		return `https://solscan.io/tx/${signature}?cluster=custom`
+	}
+
+	return `https://solscan.io/tx/${signature}?cluster=${normalizedCluster}`
+}
+
+function getXrayUrl(signature: string): string {
+	return `https://xray.helius.xyz/tx/${signature}`
+}
+
+function formatSignature(signature: string, chars = 8): string {
+	if (signature.length <= chars * 2) return signature
+	return `${signature.slice(0, chars)}...${signature.slice(-chars)}`
 }
 
 function getStatusColor(status: TransactionActivity['status']) {

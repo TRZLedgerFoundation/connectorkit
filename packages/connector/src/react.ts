@@ -13,8 +13,9 @@ export { UnifiedProvider, AppProvider } from './ui/unified-provider'
 export { ConnectorErrorBoundary, withErrorBoundary } from './ui/error-boundary'
 
 // Development tools
-export { ConnectorDebugPanel, DebugPanel } from './ui/debug-panel'
-export type { DebugPanelProps } from './ui/debug-panel'
+// Note: Debug panel has been moved to @connector-kit/debugger package
+// Import from '@connector-kit/debugger/react' instead
+// These re-exports are deprecated and will be removed in a future version
 
 // Enhanced React hooks
 export { useCluster } from './hooks/use-cluster'
