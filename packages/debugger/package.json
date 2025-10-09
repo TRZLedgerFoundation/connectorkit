@@ -28,6 +28,10 @@
         "lint": "prettier --check src/",
         "clean": "rm -rf dist"
     },
+    "dependencies": {
+        "@solana/web3.js": "^1.95.0",
+        "bs58": "^5.0.0"
+    },
     "peerDependencies": {
         "react": ">=18.0.0",
         "@connector-kit/connector": "workspace:*"

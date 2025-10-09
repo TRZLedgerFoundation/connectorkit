@@ -21,6 +21,11 @@
             "types": "./dist/react.d.ts",
             "import": "./dist/react.mjs",
             "require": "./dist/react.js"
+        },
+        "./compat": {
+            "types": "./dist/compat.d.ts",
+            "import": "./dist/compat.mjs",
+            "require": "./dist/compat.js"
         }
     },
     "files": [
@@ -38,13 +43,17 @@
         "perf": "npm run build:analyze && npm run size"
     },
     "peerDependencies": {
-        "react": ">=18.0.0"
+        "react": ">=18.0.0",
+        "@solana/web3.js": "^1.0.0"
     },
     "peerDependenciesMeta": {
         "react": {
             "optional": true
         },
         "@connector-kit/debugger": {
+            "optional": true
+        },
+        "@solana/web3.js": {
             "optional": true
         }
     },

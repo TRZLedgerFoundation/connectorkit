@@ -51,4 +51,5 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 /commerce-kit/
 /wallet-adapter-compat/
 /armadura/
+/explorer-master/
 **/local/

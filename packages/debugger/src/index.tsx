@@ -250,7 +250,7 @@ export function ConnectorDebugPanel({
                         </TabPanel>
 
                         <TabPanel isActive={activeTab === 'transactions'}>
-                            <TransactionsTab client={client} cluster={cluster} />
+                            <TransactionsTab client={client} cluster={cluster} rpcUrl={rpcUrl} />
                         </TabPanel>
 
                         <TabPanel isActive={activeTab === 'events'}>

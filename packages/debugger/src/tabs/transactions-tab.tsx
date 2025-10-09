@@ -4,14 +4,20 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import type { TransactionActivity } from '@connector-kit/connector';
+import type { ParsedTransactionWithMeta } from '@solana/web3.js';
 import { Button, EmptyState } from '../ui-components';
 import { ExternalLinkIcon } from '../icons';
+import { fetchTransactionDetails } from '../utils/fetch-transaction';
+import { parseProgramLogs, getTotalComputeUnits, type InstructionLogs } from '../utils/program-logs';
+import { decodeInstruction, type DecodedInstruction } from '../utils/instruction-decoder';
+import { getSimpleErrorMessage } from '../utils/transaction-errors';
 
 interface TransactionsTabProps {
     client: any;
     cluster: any;
+    rpcUrl?: string;
 }
 
 // Explorer URL utilities - duplicated here to avoid importing implementation details
@@ -74,7 +80,22 @@ function normalizeCluster(clusterLabel: string): string {
     return clusterLabel.toLowerCase().replace('-beta', '').replace(' ', '');
 }
 
-export function TransactionsTab({ client, cluster }: TransactionsTabProps) {
+function getRpcUrlFromCluster(clusterName: string): string {
+    const normalized = clusterName.toLowerCase();
+    
+    if (normalized.includes('mainnet')) {
+        return 'https://api.mainnet-beta.solana.com';
+    } else if (normalized.includes('devnet')) {
+        return 'https://api.devnet.solana.com';
+    } else if (normalized.includes('testnet')) {
+        return 'https://api.testnet.solana.com';
+    }
+    
+    // Default to mainnet
+    return 'https://api.mainnet-beta.solana.com';
+}
+
+export function TransactionsTab({ client, cluster, rpcUrl: customRpcUrl }: TransactionsTabProps) {
     const debugState = (client as any).getDebugState?.();
     const transactions = debugState?.transactions || [];
 
@@ -83,6 +104,9 @@ export function TransactionsTab({ client, cluster }: TransactionsTabProps) {
     };
 
     const clusterName = normalizeCluster(cluster?.label || 'mainnet');
+    
+    // Use custom RPC URL from env if available, otherwise fall back to cluster default
+    const effectiveRpcUrl = customRpcUrl || getRpcUrlFromCluster(clusterName);
 
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -180,7 +204,12 @@ export function TransactionsTab({ client, cluster }: TransactionsTabProps) {
                     />
                 ) : (
                     transactions.map((tx: TransactionActivity, i: number) => (
-                        <TransactionItem key={`${tx.signature}-${i}`} tx={tx} clusterName={clusterName} />
+                        <TransactionItem 
+                            key={`${tx.signature}-${i}`} 
+                            tx={tx} 
+                            clusterName={clusterName} 
+                            rpcUrl={effectiveRpcUrl}
+                        />
                     ))
                 )}
             </div>
@@ -188,10 +217,17 @@ export function TransactionsTab({ client, cluster }: TransactionsTabProps) {
     );
 }
 
-function TransactionItem({ tx, clusterName }: { tx: TransactionActivity; clusterName: string }) {
+function TransactionItem({ tx, clusterName, rpcUrl }: { tx: TransactionActivity; clusterName: string; rpcUrl: string }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
+    
+    // Transaction details state
+    const [showLogs, setShowLogs] = useState(false);
+    const [showInstructions, setShowInstructions] = useState(false);
+    const [transactionDetails, setTransactionDetails] = useState<ParsedTransactionWithMeta | null>(null);
+    const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+    const [loadError, setLoadError] = useState<string | null>(null);
 
     const handleCopySignature = async () => {
         try {
@@ -202,10 +238,62 @@ function TransactionItem({ tx, clusterName }: { tx: TransactionActivity; cluster
             console.error('Failed to copy signature:', err);
         }
     };
+    
+    // Fetch transaction details when user wants to view logs or instructions
+    const fetchDetails = useCallback(async (rpcUrl: string) => {
+        if (transactionDetails || isLoadingDetails) return;
+        
+        setIsLoadingDetails(true);
+        setLoadError(null);
+        
+        const result = await fetchTransactionDetails(tx.signature, rpcUrl);
+        
+        if (result.transaction) {
+            setTransactionDetails(result.transaction);
+        } else {
+            setLoadError(result.error || 'Failed to fetch transaction details');
+        }
+        
+        setIsLoadingDetails(false);
+    }, [tx.signature, transactionDetails, isLoadingDetails]);
+    
+    const handleToggleLogs = async () => {
+        const newShowLogs = !showLogs;
+        setShowLogs(newShowLogs);
+        
+        // Fetch details if needed using the provided RPC URL
+        if (newShowLogs && !transactionDetails && !isLoadingDetails) {
+            await fetchDetails(rpcUrl);
+        }
+    };
+    
+    const handleToggleInstructions = async () => {
+        const newShowInstructions = !showInstructions;
+        setShowInstructions(newShowInstructions);
+        
+        // Fetch details if needed using the provided RPC URL
+        if (newShowInstructions && !transactionDetails && !isLoadingDetails) {
+            await fetchDetails(rpcUrl);
+        }
+    };
 
     // Extract metadata if available
     const metadata = tx.metadata || {};
     const hasMetadata = Object.keys(metadata).length > 0;
+    
+    // Parse logs if transaction details are available
+    let programLogs: InstructionLogs[] | null = null;
+    let decodedInstructions: DecodedInstruction[] | null = null;
+    
+    if (transactionDetails) {
+        const logs = transactionDetails.meta?.logMessages || [];
+        const error = transactionDetails.meta?.err || null;
+        programLogs = parseProgramLogs(logs, error, clusterName);
+        
+        // Decode instructions
+        const instructions = transactionDetails.transaction.message.instructions;
+        decodedInstructions = instructions.map((ix: any, idx: number) => decodeInstruction(ix, idx));
+    }
 
     return (
         <div
@@ -492,7 +580,7 @@ function TransactionItem({ tx, clusterName }: { tx: TransactionActivity; cluster
                         )}
                     </>
 
-                    {/* Error Message */}
+                    {/* Error Message - Enhanced */}
                     {tx.error && (
                         <>
                             <Divider />
@@ -510,10 +598,157 @@ function TransactionItem({ tx, clusterName }: { tx: TransactionActivity; cluster
                                 }}
                             >
                                 <div style={{ fontWeight: 600, marginBottom: 4 }}>❌ Error</div>
-                                {tx.error}
+                                {transactionDetails?.meta?.err 
+                                    ? getSimpleErrorMessage(transactionDetails.meta.err) 
+                                    : tx.error}
                             </div>
                         </>
                     )}
+                    
+                    {/* Program Logs Section */}
+                    <>
+                        <Divider />
+                        <div>
+                            <div
+                                onClick={handleToggleLogs}
+                                style={{
+                                    width: '100%',
+                                    padding: '6px 8px',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: 4,
+                                    cursor: 'pointer',
+                                    fontSize: 10,
+                                    fontWeight: 500,
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    transition: 'all 0.2s ease',
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                                }}
+                            >
+                                <span>
+                                    {showLogs ? '▼' : '▶'} Program Logs
+                                    {programLogs && ` (${getTotalComputeUnits(programLogs)} CU)`}
+                                </span>
+                            </div>
+                            
+                            {showLogs && (
+                                <div style={{ marginTop: 8 }}>
+                                    {isLoadingDetails && (
+                                        <div style={{ 
+                                            padding: 12, 
+                                            textAlign: 'center', 
+                                            fontSize: 9, 
+                                            opacity: 0.6 
+                                        }}>
+                                            Loading transaction details...
+                                        </div>
+                                    )}
+                                    
+                                    {loadError && (
+                                        <div style={{
+                                            padding: 8,
+                                            backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                                            borderRadius: 6,
+                                            border: '1px solid rgba(255, 165, 0, 0.3)',
+                                            fontSize: 9,
+                                            color: '#ffaa00',
+                                        }}>
+                                            ⚠️ {loadError}
+                                        </div>
+                                    )}
+                                    
+                                    {programLogs && programLogs.length > 0 && (
+                                        <ProgramLogsView logs={programLogs} />
+                                    )}
+                                    
+                                    {programLogs && programLogs.length === 0 && (
+                                        <div style={{ 
+                                            padding: 12, 
+                                            textAlign: 'center', 
+                                            fontSize: 9, 
+                                            opacity: 0.5 
+                                        }}>
+                                            No logs available
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </>
+                    
+                    {/* Instructions Section */}
+                    <>
+                        <Divider />
+                        <div>
+                            <div
+                                onClick={handleToggleInstructions}
+                                style={{
+                                    width: '100%',
+                                    padding: '6px 8px',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: 4,
+                                    cursor: 'pointer',
+                                    fontSize: 10,
+                                    fontWeight: 500,
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    transition: 'all 0.2s ease',
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                                }}
+                            >
+                                <span>
+                                    {showInstructions ? '▼' : '▶'} Instructions
+                                    {decodedInstructions && ` (${decodedInstructions.length})`}
+                                </span>
+                            </div>
+                            
+                            {showInstructions && (
+                                <div style={{ marginTop: 8 }}>
+                                    {isLoadingDetails && (
+                                        <div style={{ 
+                                            padding: 12, 
+                                            textAlign: 'center', 
+                                            fontSize: 9, 
+                                            opacity: 0.6 
+                                        }}>
+                                            Loading transaction details...
+                                        </div>
+                                    )}
+                                    
+                                    {loadError && (
+                                        <div style={{
+                                            padding: 8,
+                                            backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                                            borderRadius: 6,
+                                            border: '1px solid rgba(255, 165, 0, 0.3)',
+                                            fontSize: 9,
+                                            color: '#ffaa00',
+                                        }}>
+                                            ⚠️ {loadError}
+                                        </div>
+                                    )}
+                                    
+                                    {decodedInstructions && decodedInstructions.length > 0 && (
+                                        <InstructionsView instructions={decodedInstructions} />
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </>
                 </div>
             )}
         </div>
@@ -578,5 +813,151 @@ function ExplorerLink({ href, label }: { href: string; label: string }) {
             {label}
             <ExternalLinkIcon size={10} color="rgba(255, 255, 255, 0.6)" />
         </a>
+    );
+}
+
+/**
+ * Program Logs Viewer Component
+ */
+function ProgramLogsView({ logs }: { logs: InstructionLogs[] }) {
+    return (
+        <div
+            style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                borderRadius: 6,
+                padding: 8,
+                fontFamily: 'monospace',
+                fontSize: 9,
+                maxHeight: 400,
+                overflowY: 'auto',
+            }}
+        >
+            {logs.map((instructionLog, idx) => (
+                <div key={idx} style={{ marginBottom: 12 }}>
+                    {/* Instruction header */}
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginBottom: 4,
+                            paddingBottom: 4,
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                        }}
+                    >
+                        <div
+                            style={{
+                                fontWeight: 600,
+                                color: instructionLog.failed ? '#ff6b6b' : '#0f0',
+                            }}
+                        >
+                            {instructionLog.failed ? '❌' : '✅'} Instruction #{idx + 1}
+                            {instructionLog.invokedProgram && (
+                                <span style={{ opacity: 0.7, fontWeight: 400, marginLeft: 4 }}>
+                                    ({instructionLog.invokedProgram.slice(0, 8)}...)
+                                </span>
+                            )}
+                        </div>
+                        {instructionLog.computeUnits > 0 && (
+                            <div style={{ opacity: 0.6, fontSize: 8 }}>
+                                {instructionLog.computeUnits.toLocaleString()} CU
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Logs */}
+                    {instructionLog.logs.map((log, logIdx) => {
+                        const getLogColor = () => {
+                            switch (log.style) {
+                                case 'success':
+                                    return '#0f0';
+                                case 'warning':
+                                    return '#ffaa00';
+                                case 'info':
+                                    return '#6cb4ee';
+                                case 'muted':
+                                default:
+                                    return 'rgba(255, 255, 255, 0.7)';
+                            }
+                        };
+
+                        return (
+                            <div
+                                key={logIdx}
+                                style={{
+                                    color: getLogColor(),
+                                    whiteSpace: 'pre-wrap',
+                                    wordBreak: 'break-word',
+                                    lineHeight: 1.4,
+                                }}
+                            >
+                                <span style={{ opacity: 0.5 }}>{log.prefix}</span>
+                                {log.text}
+                            </div>
+                        );
+                    })}
+
+                    {instructionLog.truncated && (
+                        <div style={{ color: '#ffaa00', marginTop: 4, fontStyle: 'italic' }}>
+                            ⚠️ Log truncated
+                        </div>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+}
+
+/**
+ * Instructions Viewer Component
+ */
+function InstructionsView({ instructions }: { instructions: DecodedInstruction[] }) {
+    return (
+        <div
+            style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                borderRadius: 6,
+                padding: 8,
+            }}
+        >
+            {instructions.map((instruction, idx) => (
+                <div
+                    key={idx}
+                    style={{
+                        padding: 8,
+                        marginBottom: idx < instructions.length - 1 ? 6 : 0,
+                        backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                        borderRadius: 4,
+                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                    }}
+                >
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginBottom: 4,
+                        }}
+                    >
+                        <div style={{ fontSize: 10, fontWeight: 600 }}>
+                            #{instruction.index} {instruction.instructionName}
+                        </div>
+                    </div>
+                    <div style={{ fontSize: 9, opacity: 0.7 }}>
+                        {instruction.programName}
+                    </div>
+                    <div
+                        style={{
+                            fontSize: 8,
+                            opacity: 0.5,
+                            fontFamily: 'monospace',
+                            marginTop: 4,
+                        }}
+                    >
+                        {instruction.programId.slice(0, 8)}...{instruction.programId.slice(-8)}
+                    </div>
+                </div>
+            ))}
+        </div>
     );
 }

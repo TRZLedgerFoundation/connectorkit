@@ -97,7 +97,7 @@ export class ConnectionManager {
             // Prefer a never-before-seen account when reconnecting
             const state = this.stateManager.getSnapshot();
             const previouslySelected = state.selectedAccount;
-            const previousAddresses = new Set(state.accounts.map(a => a.address));
+            const previousAddresses = new Set(state.accounts.map((a: AccountInfo) => a.address));
             const firstNew = accounts.find(a => !previousAddresses.has(a.address));
             const selected = firstNew?.address ?? previouslySelected ?? accounts[0]?.address ?? null;
 
@@ -312,7 +312,7 @@ export class ConnectionManager {
             try {
                 const state = this.stateManager.getSnapshot();
                 const walletAccounts = wallet.accounts;
-                const nextAccounts = walletAccounts.map(a => this.toAccountInfo(a));
+                const nextAccounts = walletAccounts.map((a: WalletAccount) => this.toAccountInfo(a));
 
                 // Only update if we don't have accounts yet or they actually changed
                 if (state.accounts.length === 0 && nextAccounts.length > 0) {

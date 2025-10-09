@@ -5,6 +5,7 @@ export default defineConfig({
         index: 'src/index.ts',
         headless: 'src/headless.ts',
         react: 'src/react.ts',
+        compat: 'src/compat.ts',
     },
     format: ['esm', 'cjs'],
     dts: true,

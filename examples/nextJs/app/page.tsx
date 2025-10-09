@@ -5,7 +5,9 @@ import { useConnector, useAccount, useCluster, useWalletInfo } from '@connector-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Wallet, Network, User, Info } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Wallet, Network, User, Info, ArrowRight, TestTube2 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Home() {
     const { connected, connecting, selectedWallet, selectedAccount } = useConnector();
@@ -127,6 +129,31 @@ export default function Home() {
                                     </div>
                                 </>
                             )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Transaction Testing Card */}
+                    <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <TestTube2 className="h-5 w-5" />
+                                Transaction Testing Lab
+                            </CardTitle>
+                            <CardDescription>
+                                Test real SOL transfers with legacy and modern Solana approaches
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <p className="text-sm text-muted-foreground">
+                                Try out our interactive transaction testing environment. Compare legacy @solana/web3.js
+                                with modern @solana/kit, test the wallet adapter compat layer, and see the debugger in action.
+                            </p>
+                            <Link href="/transactions">
+                                <Button className="w-full sm:w-auto">
+                                    Go to Transaction Testing
+                                    <ArrowRight className="ml-2 h-4 w-4" />
+                                </Button>
+                            </Link>
                         </CardContent>
                     </Card>
                 </div>
