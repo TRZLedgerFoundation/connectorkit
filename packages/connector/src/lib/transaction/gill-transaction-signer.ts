@@ -20,6 +20,8 @@ import {
     address as createAddress,
     getBase58Decoder,
     getTransactionDecoder,
+    getSignatureFromBytes,
+    type SignatureBytes,
 } from 'gill';
 import { isWeb3jsTransaction } from '../../utils/transaction-format';
 
@@ -424,10 +426,12 @@ export function createGillTransactionSigner<TAddress extends string = string>(
 
                     // Wallet didn't modify - use original messageBytes with wallet signature
                     const signatureBytes = extractSignature(signedTxBytes);
+                    const signatureBase58 = getSignatureFromBytes(signatureBytes as SignatureBytes);
 
                     console.log('✅ Gill: Extracted signature from wallet (unmodified)', {
                         signerAddress,
                         signatureLength: signatureBytes.length,
+                        signatureBase58, // Human-readable signature for debugging/logging
                     });
 
                     const signedTransaction = {
