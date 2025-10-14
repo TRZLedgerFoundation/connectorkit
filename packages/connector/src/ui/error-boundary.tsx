@@ -6,6 +6,7 @@
 'use client';
 
 import React, { Component, ErrorInfo, ReactNode, useCallback, useState, useTransition, useMemo } from 'react';
+import { isConnectorError, getUserFriendlyMessage, type ConnectorError } from '../lib/errors';
 
 // Error types specific to wallet connections
 export enum WalletErrorType {
@@ -74,12 +75,34 @@ class ErrorLogger {
 
 // Error classification utility
 function classifyError(error: Error): WalletError {
+    // Check if it's already a ConnectorError
+    if (isConnectorError(error)) {
+        // Map ConnectorError codes to WalletErrorType
+        const typeMapping: Record<string, WalletErrorType> = {
+            WALLET_NOT_CONNECTED: WalletErrorType.CONNECTION_FAILED,
+            WALLET_NOT_FOUND: WalletErrorType.WALLET_NOT_FOUND,
+            CONNECTION_FAILED: WalletErrorType.CONNECTION_FAILED,
+            USER_REJECTED: WalletErrorType.USER_REJECTED,
+            RPC_ERROR: WalletErrorType.NETWORK_ERROR,
+            NETWORK_TIMEOUT: WalletErrorType.NETWORK_ERROR,
+            SIGNING_FAILED: WalletErrorType.TRANSACTION_FAILED,
+            SEND_FAILED: WalletErrorType.TRANSACTION_FAILED,
+        };
+
+        return {
+            ...error,
+            type: typeMapping[error.code] || WalletErrorType.UNKNOWN_ERROR,
+            recoverable: error.recoverable,
+            context: error.context,
+        };
+    }
+
     const walletError = error as WalletError;
 
-    // Already classified
+    // Already classified as WalletError
     if (walletError.type) return walletError;
 
-    // Classify based on message patterns
+    // Classify based on message patterns (legacy fallback)
     let type = WalletErrorType.UNKNOWN_ERROR;
     let recoverable = false;
 

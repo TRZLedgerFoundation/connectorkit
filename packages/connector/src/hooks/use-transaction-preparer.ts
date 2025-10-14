@@ -15,6 +15,7 @@ import {
     type TransactionMessageWithBlockhashLifetime,
 } from 'gill';
 import { useGillSolanaClient } from './use-gill-solana-client';
+import { NetworkError } from '../lib/errors';
 
 /**
  * Options for transaction preparation
@@ -153,7 +154,10 @@ export function useTransactionPreparer(): UseTransactionPreparerReturn {
             options: TransactionPrepareOptions = {},
         ): Promise<TMessage & TransactionMessageWithBlockhashLifetime> => {
             if (!client) {
-                throw new Error('Solana client not available. Cannot prepare transaction.');
+                throw new NetworkError(
+                    'RPC_ERROR',
+                    'Solana client not available. Cannot prepare transaction.',
+                );
             }
 
             return prepareTransaction({

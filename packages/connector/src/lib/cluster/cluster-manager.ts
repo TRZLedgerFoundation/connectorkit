@@ -2,6 +2,7 @@ import type { SolanaCluster, SolanaClusterId } from '@wallet-ui/core';
 import type { StorageAdapter } from '../../types/storage';
 import type { ConnectorConfig } from '../../types/connector';
 import { BaseCollaborator } from '../core/base-collaborator';
+import { Errors } from '../errors';
 
 /**
  * ClusterManager - Handles network/cluster management
@@ -43,8 +44,9 @@ export class ClusterManager extends BaseCollaborator {
         const cluster = state.clusters.find((c: SolanaCluster) => c.id === clusterId);
 
         if (!cluster) {
-            throw new Error(
-                `Cluster ${clusterId} not found. Available clusters: ${state.clusters.map((c: SolanaCluster) => c.id).join(', ')}`,
+            throw Errors.clusterNotFound(
+                clusterId,
+                state.clusters.map((c: SolanaCluster) => c.id),
             );
         }
 

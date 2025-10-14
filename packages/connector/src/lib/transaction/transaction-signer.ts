@@ -17,6 +17,7 @@ import type {
 import { prepareTransactionForWallet, convertSignedTransaction } from '../../utils/transaction-format';
 import { TransactionValidator } from './transaction-validator';
 import { createLogger } from '../utils/secure-logger';
+import { TransactionError, ValidationError, Errors } from '../errors';
 
 const logger = createLogger('TransactionSigner');
 
@@ -173,20 +174,14 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
 
         async signTransaction(transaction: SolanaTransaction): Promise<SolanaTransaction> {
             if (!capabilities.canSign) {
-                throw new TransactionSignerError(
-                    'Wallet does not support transaction signing',
-                    'FEATURE_NOT_SUPPORTED',
-                );
+                throw Errors.featureNotSupported('transaction signing');
             }
 
             // Validate transaction before signing
             const validation = TransactionValidator.validate(transaction);
             if (!validation.valid) {
                 logger.error('Transaction validation failed', { errors: validation.errors });
-                throw new TransactionSignerError(
-                    `Invalid transaction: ${validation.errors.join(', ')}`,
-                    'SIGNING_FAILED',
-                );
+                throw Errors.invalidTransaction(validation.errors.join(', '));
             }
 
             if (validation.warnings.length > 0) {
@@ -280,13 +275,12 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
                     constructor: signedTx?.constructor?.name,
                 });
 
-                throw new Error('Wallet returned unexpected format - not a Transaction or Uint8Array');
-            } catch (error) {
-                throw new TransactionSignerError(
-                    `Failed to sign transaction: ${error instanceof Error ? error.message : 'Unknown error'}`,
-                    'SIGNING_FAILED',
-                    error as Error,
+                throw new ValidationError(
+                    'INVALID_FORMAT',
+                    'Wallet returned unexpected format - not a Transaction or Uint8Array',
                 );
+            } catch (error) {
+                throw Errors.signingFailed(error as Error);
             }
         },
 
@@ -315,19 +309,17 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
                         ),
                     );
                 } catch (error) {
-                    throw new TransactionSignerError(
-                        `Failed to sign transactions in batch: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                    throw new TransactionError(
                         'SIGNING_FAILED',
+                        `Failed to sign transactions in batch`,
+                        { count: transactions.length },
                         error as Error,
                     );
                 }
             }
 
             if (!capabilities.canSign) {
-                throw new TransactionSignerError(
-                    'Wallet does not support transaction signing',
-                    'FEATURE_NOT_SUPPORTED',
-                );
+                throw Errors.featureNotSupported('transaction signing');
             }
 
             const signed: SolanaTransaction[] = [];
@@ -336,9 +328,10 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
                     const signedTx = await signer.signTransaction(transactions[i]);
                     signed.push(signedTx);
                 } catch (error) {
-                    throw new TransactionSignerError(
-                        `Failed to sign transaction ${i + 1} of ${transactions.length}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                    throw new TransactionError(
                         'SIGNING_FAILED',
+                        `Failed to sign transaction ${i + 1} of ${transactions.length}`,
+                        { index: i, total: transactions.length },
                         error as Error,
                     );
                 }
@@ -352,10 +345,7 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
             options?: { skipPreflight?: boolean; maxRetries?: number },
         ): Promise<string> {
             if (!capabilities.canSend) {
-                throw new TransactionSignerError(
-                    'Wallet does not support sending transactions',
-                    'FEATURE_NOT_SUPPORTED',
-                );
+                throw Errors.featureNotSupported('sending transactions');
             }
 
             try {
@@ -414,9 +404,10 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
 
                 return signature;
             } catch (error) {
-                throw new TransactionSignerError(
-                    `Failed to send transaction: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                throw new TransactionError(
                     'SEND_FAILED',
+                    'Failed to send transaction',
+                    undefined,
                     error as Error,
                 );
             }
@@ -431,10 +422,7 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
             }
 
             if (!capabilities.canSend) {
-                throw new TransactionSignerError(
-                    'Wallet does not support sending transactions',
-                    'FEATURE_NOT_SUPPORTED',
-                );
+                throw Errors.featureNotSupported('sending transactions');
             }
 
             const signatures: string[] = [];
@@ -444,9 +432,10 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
                     const sig = await signer.signAndSendTransaction(transactions[i], options);
                     signatures.push(sig);
                 } catch (error) {
-                    throw new TransactionSignerError(
-                        `Failed to send transaction ${i + 1} of ${transactions.length}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                    throw new TransactionError(
                         'SEND_FAILED',
+                        `Failed to send transaction ${i + 1} of ${transactions.length}`,
+                        { index: i, total: transactions.length },
                         error as Error,
                     );
                 }
@@ -466,9 +455,10 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
                     })) as { signature: Uint8Array };
                     return result.signature;
                 } catch (error) {
-                    throw new TransactionSignerError(
-                        `Failed to sign message: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                    throw new TransactionError(
                         'SIGNING_FAILED',
+                        'Failed to sign message',
+                        undefined,
                         error as Error,
                     );
                 }
@@ -484,70 +474,31 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
 }
 
 /**
+ * @deprecated Use TransactionError from '../errors' instead
+ * Kept for backward compatibility
+ *
  * Custom error class for transaction signer operations
  * Provides structured error information for better error handling
- *
- * @example
- * ```ts
- * try {
- *   await signer.signTransaction(tx)
- * } catch (error) {
- *   if (error instanceof TransactionSignerError) {
- *     switch (error.code) {
- *       case 'WALLET_NOT_CONNECTED':
- *         showConnectWalletPrompt()
- *         break
- *       case 'FEATURE_NOT_SUPPORTED':
- *         showUnsupportedFeatureMessage()
- *         break
- *       case 'SIGNING_FAILED':
- *         showSigningErrorMessage(error.message)
- *         break
- *       case 'SEND_FAILED':
- *         showSendErrorMessage(error.message)
- *         break
- *     }
- *   }
- * }
- * ```
  */
-export class TransactionSignerError extends Error {
-    /**
-     * @param message - Human-readable error message
-     * @param code - Error code for programmatic handling
-     * @param originalError - The underlying error that caused this failure
-     */
+export class TransactionSignerError extends TransactionError {
     constructor(
         message: string,
-        public readonly code: 'WALLET_NOT_CONNECTED' | 'FEATURE_NOT_SUPPORTED' | 'SIGNING_FAILED' | 'SEND_FAILED',
-        public readonly originalError?: Error,
+        code: 'WALLET_NOT_CONNECTED' | 'FEATURE_NOT_SUPPORTED' | 'SIGNING_FAILED' | 'SEND_FAILED',
+        originalError?: Error,
     ) {
-        super(message);
+        // Map old codes to new system
+        const newCode = code === 'WALLET_NOT_CONNECTED' ? 'FEATURE_NOT_SUPPORTED' : code;
+        super(newCode, message, undefined, originalError);
         this.name = 'TransactionSignerError';
-
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, TransactionSignerError);
-        }
     }
 }
 
 /**
+ * @deprecated Use isTransactionError from '../errors' instead
+ * Kept for backward compatibility
+ *
  * Type guard to check if an error is a TransactionSignerError
- *
- * @param error - The error to check
- * @returns True if error is a TransactionSignerError
- *
- * @example
- * ```ts
- * try {
- *   await signer.signTransaction(tx)
- * } catch (error) {
- *   if (isTransactionSignerError(error)) {
- *     console.error('Signing error code:', error.code)
- *   }
- * }
- * ```
  */
 export function isTransactionSignerError(error: unknown): error is TransactionSignerError {
-    return error instanceof TransactionSignerError;
+    return error instanceof TransactionSignerError || error instanceof TransactionError;
 }

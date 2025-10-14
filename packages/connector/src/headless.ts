@@ -84,6 +84,32 @@ export {
 export { WalletErrorType } from './ui/error-boundary';
 export type { WalletError } from './ui/error-boundary';
 
+// Unified Error System
+export {
+    ConnectorError,
+    ConnectionError,
+    ValidationError,
+    ConfigurationError,
+    NetworkError,
+    TransactionError,
+    Errors,
+    isConnectorError,
+    isConnectionError,
+    isValidationError,
+    isConfigurationError,
+    isNetworkError,
+    isTransactionError,
+    toConnectorError,
+    getUserFriendlyMessage,
+} from './lib/errors';
+export type {
+    ConnectionErrorCode,
+    ValidationErrorCode,
+    ConfigurationErrorCode,
+    NetworkErrorCode,
+    TransactionErrorCode,
+} from './lib/errors';
+
 // ============================================================================
 // Wallet-UI Integration
 // ============================================================================
