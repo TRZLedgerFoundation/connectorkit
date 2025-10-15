@@ -3,7 +3,7 @@
  */
 
 import type { Wallet, WalletAccount } from './wallets';
-import type { SolanaCluster } from '@wallet-ui/core';
+import type { SolanaCluster, SolanaClusterId } from '@wallet-ui/core';
 import type { Address, Signature, TransactionMessage } from 'gill';
 import type { Transaction, VersionedTransaction } from '@solana/web3.js';
 
@@ -12,6 +12,40 @@ import type { Transaction, VersionedTransaction } from '@solana/web3.js';
  * Supports both legacy (@solana/web3.js) and modern (gill) transaction types
  */
 export type SolanaTransaction = Transaction | VersionedTransaction | TransactionMessage | Uint8Array;
+
+/**
+ * Transaction status during its lifecycle
+ */
+export type TransactionActivityStatus = 'pending' | 'confirmed' | 'failed';
+
+/**
+ * Methods used to send/sign transactions
+ */
+export type TransactionMethod =
+    | 'signTransaction'
+    | 'signAllTransactions'
+    | 'signAndSendTransaction'
+    | 'signAndSendTransactions'
+    | 'sendTransaction'
+    | 'sendRawTransaction';
+
+/**
+ * Transaction metadata for additional context
+ */
+export interface TransactionMetadata {
+    /** Transaction size in bytes */
+    size?: number;
+    /** Compute units requested */
+    computeUnits?: number;
+    /** Priority fee in lamports */
+    priorityFee?: number;
+    /** Number of signatures required */
+    numSignatures?: number;
+    /** Whether preflight was skipped */
+    skipPreflight?: boolean;
+    /** Custom metadata fields */
+    [key: string]: unknown;
+}
 
 /**
  * Configuration for creating a transaction signer
@@ -63,15 +97,15 @@ export interface TransactionActivity {
     /** When the transaction was sent */
     timestamp: string;
     /** Transaction status */
-    status: 'pending' | 'confirmed' | 'failed';
+    status: TransactionActivityStatus;
     /** Error message if failed */
     error?: string;
     /** Cluster where transaction was sent */
-    cluster: string;
+    cluster: SolanaClusterId;
     /** Fee payer address */
     feePayer?: Address;
     /** Method used (signAndSendTransaction, sendTransaction, etc) */
-    method: string;
+    method: TransactionMethod;
     /** Additional metadata */
-    metadata?: Record<string, unknown>;
+    metadata?: TransactionMetadata;
 }

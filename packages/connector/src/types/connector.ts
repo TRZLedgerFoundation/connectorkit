@@ -7,6 +7,7 @@ import type { StorageAdapter } from './storage';
 import type { WalletInfo } from './wallets';
 import type { AccountInfo } from './accounts';
 import type { Wallet } from './wallets';
+import type { Address } from 'gill';
 
 /**
  * Core connector state
@@ -17,7 +18,7 @@ export interface ConnectorState {
     connected: boolean;
     connecting: boolean;
     accounts: AccountInfo[];
-    selectedAccount: string | null;
+    selectedAccount: Address | null;
     cluster: SolanaCluster | null;
     clusters: SolanaCluster[];
 }

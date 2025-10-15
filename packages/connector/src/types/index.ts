@@ -5,7 +5,8 @@
  */
 
 // Wallet types
-export type { Wallet, WalletAccount, WalletInfo } from './wallets';
+export type { Wallet, WalletAccount, WalletInfo, WalletName, AccountAddress } from './wallets';
+export { isWalletName, isAccountAddress } from './wallets';
 
 // Account types
 export type { AccountInfo } from './accounts';
@@ -27,6 +28,9 @@ export type {
     SignedTransaction,
     TransactionSignerCapabilities,
     TransactionActivity,
+    TransactionActivityStatus,
+    TransactionMethod,
+    TransactionMetadata,
 } from './transactions';
 
 // Event system types

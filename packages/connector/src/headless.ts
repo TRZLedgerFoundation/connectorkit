@@ -20,7 +20,8 @@ export type { DefaultConfigOptions, ExtendedConnectorConfig, UnifiedConfigOption
 // ============================================================================
 // Essential Types
 // ============================================================================
-export type { Wallet, WalletAccount, WalletInfo } from './types/wallets';
+export type { Wallet, WalletAccount, WalletInfo, WalletName, AccountAddress } from './types/wallets';
+export { isWalletName, isAccountAddress } from './types/wallets';
 
 export type { AccountInfo } from './types/accounts';
 
@@ -39,6 +40,9 @@ export type {
     SignedTransaction,
     TransactionSignerCapabilities,
     TransactionActivity,
+    TransactionActivityStatus,
+    TransactionMethod,
+    TransactionMetadata,
 } from './types/transactions';
 
 export type { ConnectorEvent, ConnectorEventListener } from './types/events';

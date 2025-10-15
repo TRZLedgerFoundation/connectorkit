@@ -2,7 +2,10 @@
  * Event system types for connector
  */
 
-import type { TransactionActivity } from './transactions';
+import type { TransactionActivity, TransactionActivityStatus } from './transactions';
+import type { WalletName } from './wallets';
+import type { SolanaClusterId } from '@wallet-ui/core';
+import type { Address, Signature } from 'gill';
 
 /**
  * Event types emitted by the connector
@@ -11,38 +14,38 @@ import type { TransactionActivity } from './transactions';
 export type ConnectorEvent =
     | {
           type: 'wallet:connected';
-          wallet: string;
-          account: string;
+          wallet: WalletName;
+          account: Address;
           timestamp: string;
       }
     | { type: 'wallet:disconnected'; timestamp: string }
-    | { type: 'wallet:changed'; wallet: string; timestamp: string }
-    | { type: 'account:changed'; account: string; timestamp: string }
+    | { type: 'wallet:changed'; wallet: WalletName; timestamp: string }
+    | { type: 'account:changed'; account: Address; timestamp: string }
     | {
           type: 'cluster:changed';
-          cluster: string;
-          previousCluster: string | null;
+          cluster: SolanaClusterId;
+          previousCluster: SolanaClusterId | null;
           timestamp: string;
       }
     | { type: 'wallets:detected'; count: number; timestamp: string }
     | { type: 'error'; error: Error; context: string; timestamp: string }
-    | { type: 'connecting'; wallet: string; timestamp: string }
+    | { type: 'connecting'; wallet: WalletName; timestamp: string }
     | {
           type: 'connection:failed';
-          wallet: string;
+          wallet: WalletName;
           error: string;
           timestamp: string;
       }
     | {
           type: 'transaction:tracked';
-          signature: string;
-          status: TransactionActivity['status'];
+          signature: Signature;
+          status: TransactionActivityStatus;
           timestamp: string;
       }
     | {
           type: 'transaction:updated';
-          signature: string;
-          status: TransactionActivity['status'];
+          signature: Signature;
+          status: TransactionActivityStatus;
           timestamp: string;
       }
     | {
@@ -63,7 +66,7 @@ export type ConnectorEvent =
       }
     | {
           type: 'transaction:sent';
-          signature: string;
+          signature: Signature;
           timestamp: string;
       }
     | {

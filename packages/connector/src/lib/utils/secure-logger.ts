@@ -160,9 +160,10 @@ export class SecureLogger {
         const processedData = this.config.redactSensitive ? this.redact(data) : data;
 
         // Format message with data
-        const fullMessage = processedData !== undefined
-            ? `${message} ${typeof processedData === 'object' ? JSON.stringify(processedData, null, 2) : processedData}`
-            : message;
+        const fullMessage =
+            processedData !== undefined
+                ? `${message} ${typeof processedData === 'object' ? JSON.stringify(processedData, null, 2) : processedData}`
+                : message;
 
         // Use gill's debug system if enabled, otherwise fall back to console.*
         if (this.config.useGillDebug && gillDebugEnabled) {
