@@ -12,6 +12,9 @@ import { toClusterId } from '../utils/network';
 import type React from 'react';
 import { isAddress } from 'gill';
 import { DEFAULT_MAX_RETRIES } from '../lib/constants';
+import { createLogger } from '../lib/utils/secure-logger';
+
+const logger = createLogger('DefaultConfig');
 
 export interface DefaultConfigOptions {
     /** Application name shown in wallet connection prompts */
@@ -105,7 +108,7 @@ export function getDefaultConfig(options: DefaultConfigOptions): ExtendedConnect
         },
         onError: error => {
             if (debug) {
-                console.error('[Account Storage]', error);
+                logger.error('Account Storage error', { error });
             }
             if (onError) {
                 onError(error, {
@@ -121,7 +124,7 @@ export function getDefaultConfig(options: DefaultConfigOptions): ExtendedConnect
         validClusters: persistClusterSelection ? validClusterIds : undefined,
         onError: error => {
             if (debug) {
-                console.error('[Cluster Storage]', error);
+                logger.error('Cluster Storage error', { error });
             }
             if (onError) {
                 onError(error, {
@@ -134,7 +137,7 @@ export function getDefaultConfig(options: DefaultConfigOptions): ExtendedConnect
     const walletStorage = createEnhancedStorageWallet({
         onError: error => {
             if (debug) {
-                console.error('[Wallet Storage]', error);
+                logger.error('Wallet Storage error', { error });
             }
             if (onError) {
                 onError(error, {

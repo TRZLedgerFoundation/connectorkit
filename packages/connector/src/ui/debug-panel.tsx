@@ -13,10 +13,14 @@
  *    - TO:   import { ConnectorDebugPanel } from '@connector-kit/debugger/react'
  */
 
-if (typeof console !== 'undefined' && process.env.NODE_ENV === 'development') {
-    console.warn(
-        '[@connector-kit/connector] Importing ConnectorDebugPanel from @connector-kit/connector is deprecated.\n' +
-            'Please install @connector-kit/debugger and import from @connector-kit/debugger/react instead.\n' +
+import { createLogger } from '../lib/utils/secure-logger';
+
+const logger = createLogger('DebugPanel');
+
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    logger.warn(
+        'Importing ConnectorDebugPanel from @connector-kit/connector is deprecated. ' +
+            'Please install @connector-kit/debugger and import from @connector-kit/debugger/react instead. ' +
             'This export will be removed in the next major version.',
     );
 }

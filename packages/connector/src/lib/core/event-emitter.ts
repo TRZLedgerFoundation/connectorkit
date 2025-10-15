@@ -1,4 +1,7 @@
 import type { ConnectorEvent, ConnectorEventListener } from '../../types/events';
+import { createLogger } from '../utils/secure-logger';
+
+const logger = createLogger('EventEmitter');
 
 /**
  * EventEmitter - Handles event system for connector
@@ -50,7 +53,7 @@ export class EventEmitter {
 
         // Log events in debug mode
         if (this.debug) {
-            console.log('[Connector Event]', eventWithTimestamp.type, eventWithTimestamp);
+            logger.debug('Event emitted', { type: eventWithTimestamp.type, event: eventWithTimestamp });
         }
 
         // Call all event listeners
@@ -59,7 +62,7 @@ export class EventEmitter {
                 listener(eventWithTimestamp);
             } catch (error) {
                 // Don't let listener errors crash the connector
-                console.error('[Connector] Event listener error:', error);
+                logger.error('Event listener error', { error });
             }
         });
     }

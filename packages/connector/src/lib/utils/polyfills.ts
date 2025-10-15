@@ -10,6 +10,9 @@
  */
 
 import { install } from '@solana/webcrypto-ed25519-polyfill';
+import { createLogger } from './secure-logger';
+
+const logger = createLogger('Polyfills');
 
 /**
  * Tracks whether polyfills have been installed
@@ -49,12 +52,12 @@ export function installPolyfills(): void {
         installed = true;
 
         if (process.env.NODE_ENV === 'development') {
-            console.log('[Connector] ✓ Browser compatibility polyfills installed');
+            logger.info('Browser compatibility polyfills installed');
         }
     } catch (error) {
         // Polyfill installation failed, but don't crash
         // Most modern browsers won't need the polyfill anyway
-        console.warn('[Connector] Failed to install polyfills:', error);
+        logger.warn('Failed to install polyfills', { error });
 
         // Mark as installed anyway to prevent retry loops
         installed = true;

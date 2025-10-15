@@ -24,6 +24,9 @@ import {
     type SignatureBytes,
 } from 'gill';
 import { isWeb3jsTransaction } from '../../utils/transaction-format';
+import { createLogger } from '../utils/secure-logger';
+
+const logger = createLogger('GillTransactionSigner');
 
 /**
  * Interface for transactions that can be serialized to bytes
@@ -194,7 +197,7 @@ function extractSignatureAtIndex(
         }
 
         if (numSignatures !== expectedNumSigners) {
-            console.warn(`⚠️ Gill: Signature count mismatch - expected ${expectedNumSigners}, found ${numSignatures}`);
+            logger.warn(`Signature count mismatch - expected ${expectedNumSigners}, found ${numSignatures}`);
         }
 
         if (signerIndex >= numSignatures) {
@@ -341,7 +344,7 @@ export function createGillTransactionSigner<TAddress extends string = string>(
                 // Create full transaction wire format for wallet
                 const wireFormat = createTransactionBytesForSigning(messageBytes, numSigners);
 
-                console.log('🔍 Gill: Preparing wire format for wallet', {
+                logger.debug('Preparing wire format for wallet', {
                     signerAddress,
                     messageBytesLength: messageBytes.length,
                     wireFormatLength: wireFormat.length,
@@ -384,7 +387,7 @@ export function createGillTransactionSigner<TAddress extends string = string>(
                         throw new Error('Unknown signed transaction format');
                     }
 
-                    console.log('🔍 Gill: Wallet returned signed transaction', {
+                    logger.debug('Wallet returned signed transaction', {
                         returnedLength: signedTxBytes.length,
                         sentLength: wireFormat.length,
                         lengthsMatch: signedTxBytes.length === wireFormat.length,
@@ -395,7 +398,7 @@ export function createGillTransactionSigner<TAddress extends string = string>(
                     // If wallet modified the transaction (different length), we MUST use the wallet's version
                     // because the signature is computed over the MODIFIED messageBytes
                     if (signedTxBytes.length !== wireFormat.length) {
-                        console.warn('⚠️ Gill: Wallet modified transaction! Using wallet version.', {
+                        logger.warn('Wallet modified transaction! Using wallet version', {
                             originalLength: wireFormat.length,
                             modifiedLength: signedTxBytes.length,
                             difference: signedTxBytes.length - wireFormat.length,
@@ -416,7 +419,7 @@ export function createGillTransactionSigner<TAddress extends string = string>(
                                 : {}),
                         } as T;
 
-                        console.log('✅ Gill: Using modified transaction from wallet', {
+                        logger.debug('Using modified transaction from wallet', {
                             modifiedMessageBytesLength: walletTransaction.messageBytes.length,
                             signatures: Object.keys(walletTransaction.signatures),
                         });
@@ -428,7 +431,7 @@ export function createGillTransactionSigner<TAddress extends string = string>(
                     const signatureBytes = extractSignature(signedTxBytes);
                     const signatureBase58 = getSignatureFromBytes(signatureBytes as SignatureBytes);
 
-                    console.log('✅ Gill: Extracted signature from wallet (unmodified)', {
+                    logger.debug('Extracted signature from wallet (unmodified)', {
                         signerAddress,
                         signatureLength: signatureBytes.length,
                         signatureBase58, // Human-readable signature for debugging/logging
@@ -444,7 +447,7 @@ export function createGillTransactionSigner<TAddress extends string = string>(
 
                     return signedTransaction;
                 } catch (error) {
-                    console.error('❌ Gill: Failed to decode signed transaction:', error);
+                    logger.error('Failed to decode signed transaction', { error });
                     // Return original transaction with no signatures if decode fails
                     return originalTransaction as T;
                 }

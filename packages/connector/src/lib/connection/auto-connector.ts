@@ -4,6 +4,9 @@ import type { WalletDetector, LegacyPublicKey } from './wallet-detector';
 import type { ConnectionManager } from './connection-manager';
 import type { StateManager } from '../core/state-manager';
 import { getWalletsRegistry } from '../adapters/wallet-standard-shim';
+import { createLogger } from '../utils/secure-logger';
+
+const logger = createLogger('AutoConnector');
 
 /**
  * Minimum length for a valid Solana public key address string (base58 encoded).
@@ -69,7 +72,7 @@ export class AutoConnector {
         if (!directWallet) return false;
 
         if (this.debug) {
-            console.log('⚡ Instant auto-connect: found', storedWalletName, 'directly in window');
+            logger.info('Instant auto-connect: found wallet directly in window', { walletName: storedWalletName });
         }
 
         try {
@@ -82,8 +85,8 @@ export class AutoConnector {
                         const result = await directWallet.connect!(options);
 
                         if (this.debug) {
-                            console.log('🔍 Direct wallet connect result:', result);
-                            console.log('🔍 Direct wallet publicKey property:', directWallet.publicKey);
+                            logger.debug('Direct wallet connect result', { result });
+                            logger.debug('Direct wallet publicKey property', { publicKey: directWallet.publicKey });
                         }
 
                         // Strategy 1: Check if result has proper wallet standard format
@@ -117,7 +120,7 @@ export class AutoConnector {
                         if (directWallet.publicKey && typeof directWallet.publicKey.toString === 'function') {
                             const address = directWallet.publicKey.toString();
                             if (this.debug) {
-                                console.log('🔧 Using legacy wallet pattern - publicKey from wallet object');
+                                logger.debug('Using legacy wallet pattern - publicKey from wallet object');
                             }
                             return {
                                 accounts: [
@@ -155,7 +158,7 @@ export class AutoConnector {
                         }
 
                         if (this.debug) {
-                            console.error('❌ Legacy wallet: No valid publicKey found in any expected location');
+                            logger.error('Legacy wallet: No valid publicKey found in any expected location');
                         }
                         return { accounts: [] };
                     },
@@ -224,13 +227,13 @@ export class AutoConnector {
             );
 
             if (this.debug) {
-                console.log('🔄 Attempting to connect to', storedWalletName, 'via instant auto-connect');
+                logger.info('Attempting to connect via instant auto-connect', { walletName: storedWalletName });
             }
 
             await this.connectionManager.connect(wallet, storedWalletName);
 
             if (this.debug) {
-                console.log('✅ Instant auto-connect successful for', storedWalletName);
+                logger.info('Instant auto-connect successful', { walletName: storedWalletName });
             }
 
             setTimeout(() => {
@@ -238,7 +241,7 @@ export class AutoConnector {
                 const ws = walletsApi.get();
 
                 if (this.debug) {
-                    console.log('🔍 Checking for wallet standard update:', {
+                    logger.debug('Checking for wallet standard update', {
                         wsLength: ws.length,
                         currentWalletsLength: this.stateManager.getSnapshot().wallets.length,
                         shouldUpdate: ws.length > 1,
@@ -253,11 +256,10 @@ export class AutoConnector {
             return true;
         } catch (error) {
             if (this.debug) {
-                console.error(
-                    '❌ Instant auto-connect failed for',
-                    storedWalletName + ':',
-                    error instanceof Error ? error.message : error,
-                );
+                logger.error('Instant auto-connect failed', {
+                    walletName: storedWalletName,
+                    error: error instanceof Error ? error.message : error,
+                });
             }
             return false;
         }
@@ -270,18 +272,17 @@ export class AutoConnector {
         try {
             if (this.stateManager.getSnapshot().connected) {
                 if (this.debug) {
-                    console.log('🔄 Auto-connect: Already connected, skipping fallback auto-connect');
+                    logger.info('Auto-connect: Already connected, skipping fallback auto-connect');
                 }
                 return;
             }
 
             const storedWalletName = this.walletStorage?.get();
             if (this.debug) {
-                console.log('🔄 Auto-connect: stored wallet =', storedWalletName);
-                console.log(
-                    '🔄 Auto-connect: available wallets =',
-                    this.stateManager.getSnapshot().wallets.map((w: WalletInfo) => w.wallet.name),
-                );
+                logger.debug('Auto-connect: stored wallet', { storedWalletName });
+                logger.debug('Auto-connect: available wallets', {
+                    wallets: this.stateManager.getSnapshot().wallets.map((w: WalletInfo) => w.wallet.name),
+                });
             }
 
             if (!storedWalletName) return;
@@ -291,7 +292,7 @@ export class AutoConnector {
 
             if (walletInfo) {
                 if (this.debug) {
-                    console.log('✅ Auto-connect: Found stored wallet, connecting');
+                    logger.info('Auto-connect: Found stored wallet, connecting');
                 }
                 await this.connectionManager.connect(walletInfo.wallet, storedWalletName);
             } else {
@@ -300,15 +301,17 @@ export class AutoConnector {
                     const retryWallet = retryWallets.find((w: WalletInfo) => w.wallet.name === storedWalletName);
                     if (retryWallet) {
                         if (this.debug) {
-                            console.log('✅ Auto-connect: Retry successful');
+                            logger.info('Auto-connect: Retry successful');
                         }
-                        this.connectionManager.connect(retryWallet.wallet, storedWalletName).catch(console.error);
+                        this.connectionManager.connect(retryWallet.wallet, storedWalletName).catch(err => {
+                            logger.error('Auto-connect retry connection failed', { error: err });
+                        });
                     }
                 }, 1000);
             }
         } catch (e) {
             if (this.debug) {
-                console.error('❌ Auto-connect failed:', e);
+                logger.error('Auto-connect failed', { error: e });
             }
             this.walletStorage?.set(undefined);
         }

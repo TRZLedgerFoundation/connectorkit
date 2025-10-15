@@ -5,6 +5,7 @@
 
 import type { StateManager } from './state-manager';
 import type { EventEmitter } from './event-emitter';
+import { createLogger } from '../utils/secure-logger';
 
 /**
  * Configuration for base collaborator
@@ -23,28 +24,30 @@ export abstract class BaseCollaborator {
     protected readonly stateManager: StateManager;
     protected readonly eventEmitter: EventEmitter;
     protected readonly debug: boolean;
+    protected readonly logger: ReturnType<typeof createLogger>;
 
-    constructor(config: BaseCollaboratorConfig) {
+    constructor(config: BaseCollaboratorConfig, loggerPrefix: string) {
         this.stateManager = config.stateManager;
         this.eventEmitter = config.eventEmitter;
         this.debug = config.debug ?? false;
+        this.logger = createLogger(loggerPrefix);
     }
 
     /**
      * Log debug message if debug mode is enabled
      */
-    protected log(message: string, ...args: unknown[]): void {
+    protected log(message: string, data?: unknown): void {
         if (this.debug) {
-            console.log(message, ...args);
+            this.logger.debug(message, data);
         }
     }
 
     /**
      * Log error message if debug mode is enabled
      */
-    protected error(message: string, ...args: unknown[]): void {
+    protected error(message: string, data?: unknown): void {
         if (this.debug) {
-            console.error(message, ...args);
+            this.logger.error(message, data);
         }
     }
 

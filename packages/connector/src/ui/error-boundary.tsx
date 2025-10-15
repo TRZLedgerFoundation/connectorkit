@@ -7,6 +7,9 @@
 
 import React, { Component, ErrorInfo, ReactNode, useCallback, useState, useTransition, useMemo } from 'react';
 import { isConnectorError, getUserFriendlyMessage, type ConnectorError } from '../lib/errors';
+import { createLogger } from '../lib/utils/secure-logger';
+
+const logger = createLogger('ErrorBoundary');
 
 // Error types specific to wallet connections
 export enum WalletErrorType {
@@ -46,7 +49,7 @@ interface ErrorBoundaryProps {
 class ErrorLogger {
     static log(error: Error, errorInfo: ErrorInfo, context?: Record<string, unknown>) {
         if (process.env.NODE_ENV === 'development') {
-            console.error('[ConnectorErrorBoundary]', error.message, {
+            logger.error(error.message, {
                 error,
                 errorInfo,
                 context,

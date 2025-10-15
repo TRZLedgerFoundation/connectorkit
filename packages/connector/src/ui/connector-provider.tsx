@@ -7,6 +7,9 @@ import type { ConnectorConfig } from '../types/connector';
 import type { ExtendedConnectorConfig } from '../config/default-config';
 import { ConnectorErrorBoundary } from './error-boundary';
 import { installPolyfills } from '../lib/utils/polyfills';
+import { createLogger } from '../lib/utils/secure-logger';
+
+const logger = createLogger('ConnectorProvider');
 
 // Install browser compatibility polyfills immediately when module loads
 // This ensures crypto operations work across all browser environments
@@ -67,11 +70,11 @@ function ConnectorProviderInternal({
 
                 // Log successful initialization in debug mode
                 if (config?.debug) {
-                    console.log('[Connector] ✓ Client initialized successfully');
+                    logger.info('Client initialized successfully');
                 }
             } catch (error) {
                 const err = error as Error;
-                console.error('[Connector] ✗ Failed to initialize client:', err);
+                logger.error('Failed to initialize client', { error: err });
 
                 // Call config error handler if provided
                 const extendedConfig = config as ExtendedConnectorConfig;

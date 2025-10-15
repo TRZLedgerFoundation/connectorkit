@@ -21,6 +21,9 @@ import { TransactionTracker } from '../transaction/transaction-tracker';
 import { HealthMonitor } from '../health/health-monitor';
 import { getClusterRpcUrl } from '../../utils/cluster';
 import { AUTO_CONNECT_DELAY_MS, DEFAULT_MAX_TRACKED_TRANSACTIONS } from '../constants';
+import { createLogger } from '../utils/secure-logger';
+
+const logger = createLogger('ConnectorClient');
 
 /**
  * ConnectorClient - Lean coordinator that delegates to specialized collaborators
@@ -118,7 +121,7 @@ export class ConnectorClient {
                 setTimeout(() => {
                     this.autoConnector.attemptAutoConnect().catch(err => {
                         if (this.config.debug) {
-                            console.error('Auto-connect error:', err);
+                            logger.error('Auto-connect error', { error: err });
                         }
                     });
                 }, AUTO_CONNECT_DELAY_MS);
@@ -127,7 +130,7 @@ export class ConnectorClient {
             this.initialized = true;
         } catch (e) {
             if (this.config.debug) {
-                console.error('Connector initialization failed:', e);
+                logger.error('Connector initialization failed', { error: e });
             }
         }
     }
@@ -193,7 +196,7 @@ export class ConnectorClient {
             return getClusterRpcUrl(cluster);
         } catch (error) {
             if (this.config.debug) {
-                console.error('Failed to get RPC URL:', error);
+                logger.error('Failed to get RPC URL', { error });
             }
             return null;
         }
@@ -233,7 +236,7 @@ export class ConnectorClient {
      */
     resetStorage(): void {
         if (this.config.debug) {
-            console.log('[Connector] Resetting all storage to initial values');
+            logger.info('Resetting all storage to initial values');
         }
 
         // Reset each storage adapter
@@ -246,11 +249,11 @@ export class ConnectorClient {
                 try {
                     storage.reset();
                     if (this.config.debug) {
-                        console.log(`[Connector] Reset ${key} storage`);
+                        logger.debug('Reset storage', { key });
                     }
                 } catch (error) {
                     if (this.config.debug) {
-                        console.error(`[Connector] Failed to reset ${key} storage:`, error);
+                        logger.error('Failed to reset storage', { key, error });
                     }
                 }
             }

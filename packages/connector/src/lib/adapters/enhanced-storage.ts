@@ -19,6 +19,9 @@ import type {
     EnhancedStorageClusterOptions,
     EnhancedStorageWalletOptions,
 } from '../../types/storage';
+import { createLogger } from '../utils/secure-logger';
+
+const logger = createLogger('EnhancedStorage');
 
 /**
  * Storage version for migration support
@@ -58,7 +61,7 @@ export class EnhancedStorage<T> extends WalletUiStorage<T> {
     override set(value: T): boolean {
         try {
             if (!this.validate(value)) {
-                console.warn(`[EnhancedStorage] Validation failed for key: ${this.key}`);
+                logger.warn('Validation failed', { key: this.key });
                 return false;
             }
 
@@ -204,12 +207,12 @@ export class EnhancedStorage<T> extends WalletUiStorage<T> {
     }
 
     private handleError(error: Error): void {
-        console.error(`[EnhancedStorage] Error for key "${this.key}":`, error);
+        logger.error('Storage error', { key: this.key, error });
         this.errorHandlers.forEach(handler => {
             try {
                 handler(error);
             } catch (err) {
-                console.error('[EnhancedStorage] Error in error handler:', err);
+                logger.error('Error in error handler', { error: err });
             }
         });
     }

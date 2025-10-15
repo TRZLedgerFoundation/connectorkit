@@ -11,6 +11,9 @@ import type { TransactionSigner } from './lib/transaction/transaction-signer';
 import type { SolanaTransaction } from './types/transactions';
 import type { Connection, SendOptions } from '@solana/web3.js';
 import { isWeb3jsTransaction } from './utils/transaction-format';
+import { createLogger } from './lib/utils/secure-logger';
+
+const logger = createLogger('WalletAdapterCompat');
 
 /**
  * Wallet adapter compatible interface that libraries expect
@@ -82,7 +85,7 @@ export function createWalletAdapterCompat(
         if (onError) {
             onError(error, operation);
         } else {
-            console.error(`Wallet adapter compat error in ${operation}:`, error);
+            logger.error('Wallet adapter compat error', { operation, error });
         }
     };
 

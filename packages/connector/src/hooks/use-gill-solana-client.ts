@@ -12,6 +12,9 @@ import { createSolanaClient, type SolanaClient, type ModifiedClusterUrl } from '
 import { useCluster } from './use-cluster';
 import { useConnectorClient } from '../ui/connector-provider';
 import type { ClusterType } from '../utils/cluster';
+import { createLogger } from '../lib/utils/secure-logger';
+
+const logger = createLogger('useGillSolanaClient');
 
 /**
  * Return value from useGillSolanaClient hook
@@ -131,7 +134,7 @@ export function useGillSolanaClient(): UseGillSolanaClientReturn {
                 urlOrMoniker: rpcUrl as ModifiedClusterUrl,
             });
         } catch (error) {
-            console.error('Failed to create Gill Solana client:', error);
+            logger.error('Failed to create Gill Solana client', { error });
             return null;
         }
     }, [type, connectorClient]);

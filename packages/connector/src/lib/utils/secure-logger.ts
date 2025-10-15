@@ -3,7 +3,21 @@
  *
  * Production-safe logger that redacts sensitive information
  * Prevents accidental exposure of addresses, keys, and other PII in logs
+ *
+ * Integrates with gill's debug system:
+ * - Respects `__GILL_DEBUG__` flag (enable/disable logging globally)
+ * - Respects `__GILL_DEBUG_LEVEL__` (set minimum log level)
+ * - Extends gill's debug with sensitive data redaction
+ * - Provides unified logging API across connector and gill
+ *
+ * Enable gill debug:
+ * ```ts
+ * window.__GILL_DEBUG__ = true
+ * window.__GILL_DEBUG_LEVEL__ = 'debug' // or 'info', 'warn', 'error'
+ * ```
  */
+
+import { isDebugEnabled, debug as gillDebug, type LogLevel as GillLogLevel } from 'gill';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -16,6 +30,8 @@ export interface SecureLoggerConfig {
     redactSensitive?: boolean;
     /** Custom prefix for all log messages */
     prefix?: string;
+    /** Use gill's debug system for logging (respects __GILL_DEBUG__ flags) */
+    useGillDebug?: boolean;
 }
 
 /**
@@ -52,13 +68,18 @@ const LOG_LEVELS: Record<LogLevel, number> = {
  * SecureLogger - Production-safe logging with automatic redaction
  *
  * Features:
+ * - Integrates with gill's debug system (respects __GILL_DEBUG__ flags)
  * - Automatic redaction of sensitive data (addresses, keys, URLs)
- * - Configurable log levels
+ * - Configurable log levels (respects __GILL_DEBUG_LEVEL__)
  * - Environment-aware defaults
  * - Deep object traversal for nested sensitive data
  *
  * @example
  * ```ts
+ * // Enable gill debug (affects all logging across connector + gill)
+ * window.__GILL_DEBUG__ = true
+ * window.__GILL_DEBUG_LEVEL__ = 'info' // Optional: filter by level
+ *
  * const logger = new SecureLogger({ prefix: 'Connector' });
  *
  * logger.debug('User connected', {
@@ -80,6 +101,7 @@ export class SecureLogger {
             level: config.level ?? 'debug',
             redactSensitive: config.redactSensitive ?? !isDevelopment,
             prefix: config.prefix ?? 'Connector',
+            useGillDebug: config.useGillDebug ?? true, // Default to using gill's debug system
         };
     }
 
@@ -113,31 +135,54 @@ export class SecureLogger {
 
     /**
      * Internal log method that handles level filtering and redaction
+     * Integrates with gill's debug system when enabled
      */
     private log(level: LogLevel, message: string, data?: unknown): void {
-        if (!this.config.enabled) return;
+        // Check if logging is enabled (either via config or gill's debug system)
+        const gillDebugEnabled = this.config.useGillDebug ? isDebugEnabled() : false;
+        if (!this.config.enabled && !gillDebugEnabled) return;
+
+        // Get effective log level (prefer gill's debug level if set)
+        let effectiveLevel = this.config.level;
+        if (this.config.useGillDebug && typeof globalThis !== 'undefined') {
+            const gillLevel = (globalThis as { __GILL_DEBUG_LEVEL__?: string }).__GILL_DEBUG_LEVEL__;
+            if (gillLevel && ['debug', 'info', 'warn', 'error'].includes(gillLevel)) {
+                effectiveLevel = gillLevel as LogLevel;
+            }
+        }
 
         // Check if this log level should be output
-        if (LOG_LEVELS[level] < LOG_LEVELS[this.config.level]) {
+        if (LOG_LEVELS[level] < LOG_LEVELS[effectiveLevel]) {
             return;
         }
 
+        // Process data (redact if enabled)
         const processedData = this.config.redactSensitive ? this.redact(data) : data;
-        const prefix = `[${this.config.prefix}]`;
 
-        switch (level) {
-            case 'debug':
-                console.debug(prefix, message, processedData !== undefined ? processedData : '');
-                break;
-            case 'info':
-                console.info(prefix, message, processedData !== undefined ? processedData : '');
-                break;
-            case 'warn':
-                console.warn(prefix, message, processedData !== undefined ? processedData : '');
-                break;
-            case 'error':
-                console.error(prefix, message, processedData !== undefined ? processedData : '');
-                break;
+        // Format message with data
+        const fullMessage = processedData !== undefined
+            ? `${message} ${typeof processedData === 'object' ? JSON.stringify(processedData, null, 2) : processedData}`
+            : message;
+
+        // Use gill's debug system if enabled, otherwise fall back to console.*
+        if (this.config.useGillDebug && gillDebugEnabled) {
+            gillDebug(fullMessage, level as GillLogLevel, this.config.prefix);
+        } else {
+            const prefix = `[${this.config.prefix}]`;
+            switch (level) {
+                case 'debug':
+                    console.debug(prefix, message, processedData !== undefined ? processedData : '');
+                    break;
+                case 'info':
+                    console.info(prefix, message, processedData !== undefined ? processedData : '');
+                    break;
+                case 'warn':
+                    console.warn(prefix, message, processedData !== undefined ? processedData : '');
+                    break;
+                case 'error':
+                    console.error(prefix, message, processedData !== undefined ? processedData : '');
+                    break;
+            }
         }
     }
 
