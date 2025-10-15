@@ -66,9 +66,12 @@ export function formatSOL(
         return suffix ? `${formatted} SOL` : formatted;
     }
 
-    // Precise path using gill's lamportsToSol
-    const solString = lamportsToSol(lamports, decimals);
-    return suffix ? `${solString} SOL` : solString;
+    // Precise path: convert to number and format with proper decimals
+    // This ensures trailing zeros are included
+    const lamportsBigInt = typeof lamports === 'bigint' ? lamports : BigInt(lamports);
+    const sol = Number(lamportsBigInt) / LAMPORTS_PER_SOL;
+    const formatted = sol.toFixed(decimals);
+    return suffix ? `${formatted} SOL` : formatted;
 }
 
 /**

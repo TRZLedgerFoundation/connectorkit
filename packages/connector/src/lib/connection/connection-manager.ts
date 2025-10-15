@@ -219,15 +219,22 @@ export class ConnectionManager extends BaseCollaborator {
         const current = state.selectedWallet;
         if (!current) throw new Error('No wallet connected');
 
+        // Basic address validation: check for empty or obviously invalid addresses
+        // Note: We use a lenient check to support test addresses
+        if (!address || address.length < 5) {
+            throw new Error(`Invalid address format: ${address}`);
+        }
+
         let target = state.accounts.find((acc: AccountInfo) => acc.address === address)?.raw ?? null;
 
         if (!target) {
+            // Try to reconnect and refetch accounts
             try {
                 const connect = getConnectFeature(current);
                 if (connect) {
                     const res = await connect();
                     const accounts = res.accounts.map(a => this.toAccountInfo(a));
-                    target = accounts.find((acc: AccountInfo) => acc.address === address)?.raw ?? res.accounts[0];
+                    target = accounts.find((acc: AccountInfo) => acc.address === address)?.raw ?? null;
                     this.stateManager.updateState({ accounts });
                 }
             } catch (error) {
@@ -235,8 +242,17 @@ export class ConnectionManager extends BaseCollaborator {
             }
         }
 
-        if (!target) throw new Error('Requested account not available');
+        if (!target) throw new Error(`Requested account not available: ${address}`);
+
+        // Update selected account
         this.stateManager.updateState({ selectedAccount: target.address as string });
+
+        // Emit account-changed event
+        this.eventEmitter.emit({
+            type: 'account-changed',
+            account: target.address as string,
+            timestamp: new Date().toISOString(),
+        });
     }
 
     /**

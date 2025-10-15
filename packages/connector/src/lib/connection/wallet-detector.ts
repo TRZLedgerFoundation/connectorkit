@@ -84,7 +84,7 @@ export class WalletDetector extends BaseCollaborator {
         eventEmitter: import('../core/event-emitter').EventEmitter,
         debug = false,
     ) {
-        super({ stateManager, eventEmitter, debug });
+        super({ stateManager, eventEmitter, debug }, 'WalletDetector');
     }
 
     /**
