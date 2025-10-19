@@ -90,3 +90,12 @@ export function getWalletsRegistry(): WalletsRegistry {
         },
     };
 }
+
+/**
+ * Reset wallet registry cache
+ * ⚠️ FOR TESTING ONLY - Do not use in production code
+ * @internal
+ */
+export function __resetWalletRegistryForTesting(): void {
+    registry = null;
+}

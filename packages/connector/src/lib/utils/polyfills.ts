@@ -51,13 +51,15 @@ export function installPolyfills(): void {
         install();
         installed = true;
 
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === 'development' && logger) {
             logger.info('Browser compatibility polyfills installed');
         }
     } catch (error) {
         // Polyfill installation failed, but don't crash
         // Most modern browsers won't need the polyfill anyway
-        logger.warn('Failed to install polyfills', { error });
+        if (logger) {
+            logger.warn('Failed to install polyfills', { error });
+        }
 
         // Mark as installed anyway to prevent retry loops
         installed = true;
@@ -133,4 +135,13 @@ export function getPolyfillStatus(): {
         cryptoAvailable: isCryptoAvailable(),
         environment: typeof window !== 'undefined' ? 'browser' : 'server',
     };
+}
+
+/**
+ * Reset polyfill installation state
+ * ⚠️ FOR TESTING ONLY - Do not use in production code
+ * @internal
+ */
+export function __resetPolyfillsForTesting(): void {
+    installed = false;
 }

@@ -172,7 +172,7 @@ export class WalletAuthenticityVerifier {
                 'solana:signMessage',
                 'solana:signAllTransactions',
             ];
-            const presentSolanaFeatures = solanaFeatures.filter(feature => feature in (wallet.features || {}));
+            const presentSolanaFeatures = solanaFeatures.filter(feature => feature in wallet.features!);
 
             score += (presentSolanaFeatures.length / solanaFeatures.length) * 0.3;
 
@@ -303,8 +303,9 @@ export class WalletAuthenticityVerifier {
             'backdoor',
         ];
 
+        const lowerCaseKeys = Object.keys(walletObj).map(k => k.toLowerCase());
         for (const prop of explicitlyMaliciousProps) {
-            if (prop.toLowerCase() in Object.keys(walletObj).map(k => k.toLowerCase())) {
+            if (lowerCaseKeys.includes(prop.toLowerCase())) {
                 score = 0; // Instant fail
                 warnings.push(`Explicitly malicious property detected: ${prop}`);
             }

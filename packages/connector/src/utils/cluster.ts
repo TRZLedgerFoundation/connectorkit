@@ -21,8 +21,28 @@ export type ClusterType = 'mainnet' | 'devnet' | 'testnet' | 'localnet' | 'custo
  * getClusterRpcUrl(devnetCluster) // Returns: 'https://api.devnet.solana.com'
  */
 export function getClusterRpcUrl(cluster: SolanaCluster): string {
-    // Safely extract url property with type validation
-    const url = 'url' in cluster && typeof cluster.url === 'string' ? cluster.url : String(cluster ?? '');
+    // Handle null/undefined cluster
+    if (!cluster) {
+        throw new Error('Invalid cluster configuration: unable to determine RPC URL for cluster unknown');
+    }
+
+    // Safely extract url/rpcUrl property with type validation
+    // Try both 'url' and 'rpcUrl' properties for compatibility
+    let url: string;
+    if (typeof cluster === 'string') {
+        // Handle string cluster names directly (e.g., 'mainnet-beta')
+        url = cluster;
+    } else if (typeof cluster === 'object' && cluster !== null) {
+        if ('url' in cluster && typeof cluster.url === 'string') {
+            url = cluster.url;
+        } else if ('rpcUrl' in cluster && typeof (cluster as any).rpcUrl === 'string') {
+            url = (cluster as any).rpcUrl;
+        } else {
+            url = '';
+        }
+    } else {
+        url = '';
+    }
 
     // If it's already a full URL, return it
     if (url?.startsWith('http://') || url?.startsWith('https://')) {
@@ -57,9 +77,16 @@ export function getClusterRpcUrl(cluster: SolanaCluster): string {
  * getClusterExplorerUrl(mainnetCluster) // Returns: 'https://explorer.solana.com'
  */
 export function getClusterExplorerUrl(cluster: SolanaCluster, path?: string): string {
-    // Defensively extract cluster segment from id (format: 'solana:cluster')
+    // Handle null/undefined cluster
+    if (!cluster || !cluster.id) {
+        const base = 'https://explorer.solana.com?cluster=devnet';
+        return path ? `https://explorer.solana.com/${path}?cluster=devnet` : base;
+    }
+
+    // Defensively extract cluster segment from id (format: 'solana:cluster' or 'solana:cluster:extra')
     const parts = cluster.id.split(':');
-    const clusterSegment = parts.length === 2 && parts[1] ? parts[1] : 'devnet';
+    // Handle cases with multiple colons by taking the second part, or default to 'devnet' if not present
+    const clusterSegment = parts.length >= 2 && parts[1] ? parts[1] : 'devnet';
 
     // Strict mainnet check: exact match or post-colon segment equals 'mainnet' or 'mainnet-beta'
     const isMainnet =
@@ -70,7 +97,12 @@ export function getClusterExplorerUrl(cluster: SolanaCluster, path?: string): st
 
     const base = isMainnet ? 'https://explorer.solana.com' : `https://explorer.solana.com?cluster=${clusterSegment}`;
 
-    return path ? `${base}/${path}` : base;
+    // Handle path properly - if mainnet, no cluster param; otherwise include cluster in path
+    if (path) {
+        return isMainnet ? `https://explorer.solana.com/${path}` : `https://explorer.solana.com/${path}?cluster=${clusterSegment}`;
+    }
+
+    return base;
 }
 
 /**
@@ -83,8 +115,8 @@ export function getClusterExplorerUrl(cluster: SolanaCluster, path?: string): st
 export function getTransactionUrl(signature: string, cluster: SolanaCluster): string {
     const clusterType = getClusterType(cluster);
     // Map cluster types to valid explorer cluster values
-    // Custom clusters default to devnet explorer
-    const explorerCluster = clusterType === 'custom' ? 'devnet' : clusterType;
+    // Custom and local clusters default to devnet explorer (since explorer doesn't support them)
+    const explorerCluster = clusterType === 'custom' || clusterType === 'localnet' ? 'devnet' : clusterType;
     return getExplorerLink({
         transaction: signature,
         cluster: explorerCluster === 'mainnet' ? 'mainnet' : explorerCluster,
@@ -102,8 +134,8 @@ export function getTransactionUrl(signature: string, cluster: SolanaCluster): st
 export function getAddressUrl(address: string, cluster: SolanaCluster): string {
     const clusterType = getClusterType(cluster);
     // Map cluster types to valid explorer cluster values
-    // Custom clusters default to devnet explorer
-    const explorerCluster = clusterType === 'custom' ? 'devnet' : clusterType;
+    // Custom and local clusters default to devnet explorer (since explorer doesn't support them)
+    const explorerCluster = clusterType === 'custom' || clusterType === 'localnet' ? 'devnet' : clusterType;
     return getExplorerLink({
         address,
         cluster: explorerCluster === 'mainnet' ? 'mainnet' : explorerCluster,
@@ -152,8 +184,13 @@ export function isTestnetCluster(cluster: SolanaCluster): boolean {
  * Check if a cluster is running locally
  */
 export function isLocalCluster(cluster: SolanaCluster): boolean {
-    // Safely extract url property with type validation
-    const url = 'url' in cluster && typeof cluster.url === 'string' ? cluster.url : '';
+    // Safely extract url/rpcUrl property with type validation
+    let url: string = '';
+    if ('url' in cluster && typeof cluster.url === 'string') {
+        url = cluster.url;
+    } else if ('rpcUrl' in cluster && typeof (cluster as any).rpcUrl === 'string') {
+        url = (cluster as any).rpcUrl;
+    }
 
     return cluster.id === 'solana:localnet' || url.includes('localhost') || url.includes('127.0.0.1');
 }
@@ -162,11 +199,19 @@ export function isLocalCluster(cluster: SolanaCluster): boolean {
  * Get a user-friendly name for the cluster
  */
 export function getClusterName(cluster: SolanaCluster): string {
+    // Check for both label and name properties for compatibility
     if (cluster.label) return cluster.label;
+    if ('name' in cluster && typeof (cluster as any).name === 'string') {
+        return (cluster as any).name;
+    }
 
     // Defensively extract cluster segment from id
+    // For IDs with multiple colons (e.g., 'solana:mainnet:extra'), join all parts after the first
     const parts = cluster.id.split(':');
-    return parts.length === 2 && parts[1] ? parts[1] : 'Unknown';
+    if (parts.length >= 2 && parts[1]) {
+        return parts.slice(1).join(':');
+    }
+    return 'Unknown';
 }
 
 /**

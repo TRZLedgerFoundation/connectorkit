@@ -1,14 +1,25 @@
 /**
  * Global test setup for @connector-kit/connector
- * 
+ *
  * This file runs before all tests to set up the testing environment,
  * including global mocks and polyfills.
  */
 
+// Polyfill globalThis for older Node.js versions or test environments
+// This must be done before any other imports
+if (typeof globalThis === 'undefined') {
+    (global as any).globalThis = global;
+}
+
+// Also ensure it's available in the global scope
+if (typeof (global as any).globalThis === 'undefined') {
+    (global as any).globalThis = global;
+}
+
 import { beforeAll, afterEach, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 
 // Mock console methods to reduce noise during tests
-// You can remove these if you want to see console output
 const originalConsoleError = console.error;
 const originalConsoleWarn = console.warn;
 
@@ -46,4 +57,3 @@ afterEach(() => {
 export const flushPromises = () => new Promise((resolve) => setImmediate(resolve));
 
 export const waitFor = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-

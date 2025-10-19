@@ -129,7 +129,12 @@ function formatValue(value: string, options: CopyOptions): string {
     const { format = 'full', customFormatter, shortFormatChars = 4 } = options;
 
     if (format === 'custom' && customFormatter) {
-        return customFormatter(value);
+        try {
+            return customFormatter(value);
+        } catch {
+            // If custom formatter throws, fall back to original value
+            return value;
+        }
     }
 
     if (format === 'short') {
