@@ -80,13 +80,16 @@ export class AutoConnector {
 
                         const legacyResult = result as LegacyConnectResult | undefined;
                         if (legacyResult?.publicKey && typeof legacyResult.publicKey.toString === 'function') {
+                            const address = legacyResult.publicKey.toString();
+                            const publicKeyBytes = legacyResult.publicKey.toBytes
+                                ? legacyResult.publicKey.toBytes()
+                                : new Uint8Array();
+                            
                             return {
                                 accounts: [
                                     {
-                                        address: legacyResult.publicKey.toString(),
-                                        publicKey: legacyResult.publicKey.toBytes
-                                            ? legacyResult.publicKey.toBytes()
-                                            : new Uint8Array(),
+                                        address,
+                                        publicKey: publicKeyBytes,
                                         chains: ['solana:mainnet', 'solana:devnet', 'solana:testnet'] as const,
                                         features: [],
                                     },
@@ -96,6 +99,10 @@ export class AutoConnector {
 
                         if (directWallet.publicKey && typeof directWallet.publicKey.toString === 'function') {
                             const address = directWallet.publicKey.toString();
+                            const publicKeyBytes = directWallet.publicKey.toBytes
+                                ? directWallet.publicKey.toBytes()
+                                : new Uint8Array();
+                            
                             if (this.debug) {
                                 logger.debug('Using legacy wallet pattern - publicKey from wallet object');
                             }
@@ -103,9 +110,7 @@ export class AutoConnector {
                                 accounts: [
                                     {
                                         address,
-                                        publicKey: directWallet.publicKey.toBytes
-                                            ? directWallet.publicKey.toBytes()
-                                            : new Uint8Array(),
+                                        publicKey: publicKeyBytes,
                                         chains: ['solana:mainnet', 'solana:devnet', 'solana:testnet'] as const,
                                         features: [],
                                     },
@@ -119,13 +124,16 @@ export class AutoConnector {
                             typeof publicKeyResult.toString === 'function' &&
                             publicKeyResult.toString().length > MIN_ADDRESS_LENGTH
                         ) {
+                            const address = publicKeyResult.toString();
+                            const publicKeyBytes = publicKeyResult.toBytes
+                                ? publicKeyResult.toBytes()
+                                : new Uint8Array();
+                            
                             return {
                                 accounts: [
                                     {
-                                        address: publicKeyResult.toString(),
-                                        publicKey: publicKeyResult.toBytes
-                                            ? publicKeyResult.toBytes()
-                                            : new Uint8Array(),
+                                        address,
+                                        publicKey: publicKeyBytes,
                                         chains: ['solana:mainnet', 'solana:devnet', 'solana:testnet'] as const,
                                         features: [],
                                     },
@@ -202,18 +210,27 @@ export class AutoConnector {
                 true,
             );
 
+            // Check if wallet is already in registry - use that instead for better compatibility
+            const walletsApi = getWalletsRegistry();
+            const standardWallets = walletsApi.get();
+            const registryWallet = standardWallets.find(w => w.name === storedWalletName);
+
+            const walletToUse = registryWallet || wallet;
+
             if (this.debug) {
-                logger.info('Attempting to connect via instant auto-connect', { walletName: storedWalletName });
+                logger.info('Attempting to connect via instant auto-connect', {
+                    walletName: storedWalletName,
+                    usingRegistry: !!registryWallet,
+                });
             }
 
-            await this.connectionManager.connect(wallet, storedWalletName);
+            await this.connectionManager.connect(walletToUse, storedWalletName);
 
             if (this.debug) {
                 logger.info('Instant auto-connect successful', { walletName: storedWalletName });
             }
 
             setTimeout(() => {
-                const walletsApi = getWalletsRegistry();
                 const ws = walletsApi.get();
 
                 if (this.debug) {
