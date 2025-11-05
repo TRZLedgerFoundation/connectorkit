@@ -22,7 +22,6 @@ export function WalletModal({ open, onOpenChange }: WalletModalProps) {
     // Ensure we're on client before rendering wallet list
     useEffect(() => {
         setIsClient(true);
-        console.log('🔍 WalletModal mounted on client');
     }, []);
 
     // Debug wallet detection

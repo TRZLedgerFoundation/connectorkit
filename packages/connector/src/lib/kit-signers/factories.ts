@@ -73,12 +73,6 @@ export function createMessageSignerFromWallet(
                 // Sign the message
                 const signature = await signMessageFn(content);
 
-                console.log('Signature received from wallet:', {
-                    signatureLength: signature?.length,
-                    signatureType: signature?.constructor?.name,
-                    walletAddress,
-                });
-
                 // Update signatures (handle potential message modification)
                 // Note: Message content doesn't change in signMessage operations
                 const signatures = updateSignatureDictionary(
@@ -88,11 +82,6 @@ export function createMessageSignerFromWallet(
                     walletAddress,
                     signature,
                 );
-
-                console.log('Signatures after update:', {
-                    signaturesKeys: Object.keys(signatures),
-                    signaturesValues: Object.values(signatures).map(s => ({ length: s?.length, type: s?.constructor?.name })),
-                });
 
                 // Return signed message
                 return [

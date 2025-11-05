@@ -133,19 +133,16 @@ export function createKitSignersFromWallet(
 
                   try {
                       const signFeature = features['solana:signMessage'];
+                      
+                      // Ensure message is a Uint8Array
+                      const messageBytes = message instanceof Uint8Array ? message : new Uint8Array(message);
+                      
                       // Wallet Standard returns an array of signed messages
                       const results = (await signFeature.signMessage({
                           account,
-                          message,
+                          message: messageBytes,
                           ...(chain ? { chain } : {}),
                       })) as Array<{ signature: Uint8Array; signedMessage?: Uint8Array }>;
-
-                      console.log('Wallet signMessage result:', {
-                          isArray: Array.isArray(results),
-                          length: results?.length,
-                          firstResult: results?.[0],
-                          firstSignature: results?.[0]?.signature,
-                      });
 
                       if (!Array.isArray(results) || results.length === 0) {
                           throw new Error('Wallet returned empty results array');
