@@ -610,6 +610,71 @@ const mobile = getDefaultMobileConfig({
 
 ## Security Considerations
 
+### RPC API Key Protection
+
+If you're using a paid RPC provider (Helius, QuickNode, etc.), avoid exposing your API key client-side. Anyone can grab it from the browser's network tab.
+
+**Solution: RPC Proxy Route**
+
+Create an API route that proxies RPC requests, keeping the API key server-side:
+
+```typescript
+// app/api/rpc/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+
+// Server-side only - not exposed to client
+const RPC_URL = process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com';
+
+export async function POST(request: NextRequest) {
+    try {
+        const body = await request.json();
+
+        const response = await fetch(RPC_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+
+        const data = await response.json();
+        return NextResponse.json(data);
+    } catch (error) {
+        return NextResponse.json({ error: 'RPC request failed' }, { status: 500 });
+    }
+}
+```
+
+Then configure the connector to use the proxy:
+
+```typescript
+'use client';
+
+import { getDefaultConfig } from '@solana/connector/headless';
+
+// Get origin for absolute URL (Kit requires full URLs)
+const getOrigin = () => {
+    if (typeof window !== 'undefined') return window.location.origin;
+    return 'http://localhost:3000';
+};
+
+const config = getDefaultConfig({
+    appName: 'My App',
+    clusters: [
+        {
+            id: 'solana:mainnet' as const,
+            label: 'Mainnet',
+            name: 'mainnet-beta' as const,
+            url: `${getOrigin()}/api/rpc`, // Proxy URL
+        },
+        // ... other clusters
+    ],
+});
+```
+
+Your `.env` file (no `NEXT_PUBLIC_` prefix):
+```
+SOLANA_RPC_URL=https://mainnet.helius-rpc.com/?api-key=your-key
+```
+
 ### Token Image Privacy
 
 When using `useTokens()` or `useTransactions()`, token metadata (including logo URLs) is fetched from external APIs. By default, these image URLs are returned directly, which means when your users' browsers fetch these images, the image host can see:
