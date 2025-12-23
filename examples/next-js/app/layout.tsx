@@ -61,7 +61,7 @@ const inter = localFont({
 });
 
 export const metadata: Metadata = {
-    title: 'Connector Kit',
+    title: 'ConnectorKit',
     description: 'Production-ready wallet connection package for Solana. Pre-built, composable blocks built with modern standards.',
 };
 
