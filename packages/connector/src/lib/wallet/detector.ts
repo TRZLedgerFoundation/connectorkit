@@ -1,7 +1,7 @@
-import { getWalletsRegistry } from '../adapters/wallet-standard-shim';
+import { getWalletsRegistry, ready } from './standard-shim';
 import type { Wallet, WalletInfo } from '../../types/wallets';
 import { BaseCollaborator } from '../core/base-collaborator';
-import { WalletAuthenticityVerifier } from './wallet-authenticity-verifier';
+import { WalletAuthenticityVerifier } from './authenticity-verifier';
 import { createLogger } from '../utils/secure-logger';
 
 const logger = createLogger('WalletDetector');
@@ -88,7 +88,14 @@ export class WalletDetector extends BaseCollaborator {
     }
 
     /**
-     * Initialize wallet detection
+     * Initialize wallet detection (synchronous)
+     *
+     * Sets up registry listeners immediately. Due to the async nature of registry initialization,
+     * the initial call to `get()` may return an empty array if called before the registry is ready.
+     * Event listeners will fire as wallets register, providing eventual consistency.
+     *
+     * For deterministic detection where you need all wallets available immediately,
+     * use `initializeAsync()` instead.
      */
     initialize(): void {
         if (typeof window === 'undefined') return;
@@ -130,6 +137,31 @@ export class WalletDetector extends BaseCollaborator {
                 }
             }, 1000);
         } catch {}
+    }
+
+    /**
+     * Initialize wallet detection with deterministic registry availability (async)
+     *
+     * Awaits the registry `ready` Promise before performing initial detection,
+     * ensuring all registered wallets are available on the first `get()` call.
+     *
+     * Use this when you need guaranteed wallet availability before proceeding
+     * (e.g., auto-reconnect logic, checking if a specific wallet is installed).
+     *
+     * @example
+     * ```ts
+     * await walletDetector.initializeAsync();
+     * const wallets = walletDetector.getDetectedWallets(); // Guaranteed populated
+     * ```
+     */
+    async initializeAsync(): Promise<void> {
+        if (typeof window === 'undefined') return;
+
+        // Wait for registry to be ready before initial detection
+        await ready;
+
+        // Now initialize with guaranteed registry availability
+        this.initialize();
     }
 
     /**
