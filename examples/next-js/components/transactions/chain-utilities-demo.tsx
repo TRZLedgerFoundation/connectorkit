@@ -7,17 +7,17 @@
  * Shows bidirectional conversion between Wallet Standard chain IDs and cluster types.
  */
 
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 import {
     getChainIdFromCluster,
     getChainIdFromClusterId,
     getChainIdFromClusterType,
     getClusterTypeFromChainId,
     getClusterIdFromChainId,
-    isSolanaChain,
-    isKnownSolanaChain,
-    SOLANA_CHAIN_IDS,
-} from '@solana/connector/headless';
+    isTrezoaChain,
+    isKnownTrezoaChain,
+    TREZOA_CHAIN_IDS,
+} from '@trezoa/connector/headless';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert } from '@/components/ui/alert';
@@ -31,7 +31,7 @@ export function ChainUtilitiesDemo() {
     const currentClusterType = currentChainId ? getClusterTypeFromChainId(currentChainId) : null;
 
     // Show all chain IDs
-    const allChainIds = Object.values(SOLANA_CHAIN_IDS);
+    const allChainIds = Object.values(TREZOA_CHAIN_IDS);
 
     return (
         <Card>
@@ -65,7 +65,7 @@ export function ChainUtilitiesDemo() {
 
                 <div className="space-y-2">
                     <p className="text-xs text-muted-foreground">Standard Chain IDs:</p>
-                    {Object.entries(SOLANA_CHAIN_IDS).map(([network, chainId]) => (
+                    {Object.entries(TREZOA_CHAIN_IDS).map(([network, chainId]) => (
                         <div key={network} className="flex items-center justify-between text-xs p-2 bg-muted rounded">
                             <span className="capitalize font-medium">{network}</span>
                             <code className="text-[10px]">{chainId.slice(-12)}</code>

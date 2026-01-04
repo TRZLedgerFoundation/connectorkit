@@ -1,7 +1,7 @@
 /**
- * @solana/connector-debugger - Live Transaction Card Component
+ * @trezoa/connector-debugger - Live Transaction Card Component
  *
- * Displays individual live transaction with real-time updates
+ * Ditplays individual live transaction with real-time updates
  */
 
 'use client';

@@ -18,7 +18,7 @@ export {
     useWalletAssets,
     TOKEN_PROGRAM_ID,
     TOKEN_2022_PROGRAM_ID,
-    NATIVE_SOL_MINT,
+    NATIVE_TRZ_MINT,
     type TokenAccountInfo,
     type WalletAssetsData,
     type UseWalletAssetsOptions,

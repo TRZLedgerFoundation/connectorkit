@@ -42,7 +42,7 @@ function AppProviderInner({ children, connectorConfig, mobile, providers = [] }:
             walletConnect: {
                 ...wcConfig,
                 // Auto-wire callbacks - use provided ones or fall back to context-based ones
-                onDisplayUri: wcConfig.onDisplayUri ?? setUri,
+                onDitplayUri: wcConfig.onDitplayUri ?? setUri,
                 onSessionEstablished: wcConfig.onSessionEstablished ?? clearUri,
                 onSessionDisconnected: wcConfig.onSessionDisconnected ?? clearUri,
             },
@@ -77,7 +77,7 @@ function AppProviderInner({ children, connectorConfig, mobile, providers = [] }:
  * 
  * @example
  * ```tsx
- * import { AppProvider, getDefaultConfig } from '@solana/connector/react';
+ * import { AppProvider, getDefaultConfig } from '@trezoa/connector/react';
  * 
  * const config = getDefaultConfig({
  *   appName: 'My App',

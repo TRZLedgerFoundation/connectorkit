@@ -1,11 +1,11 @@
 /**
- * @solana/connector-debugger - Transactions Tab Component
+ * @trezoa/connector-debugger - Transactions Tab Component
  */
 
 'use client';
 
 import { useState, useCallback } from 'react';
-import type { TransactionActivity, SolanaCluster, ConnectorClient } from '@solana/connector';
+import type { TransactionActivity, TrezoaCluster, ConnectorClient } from '@trezoa/connector';
 import { Button, EmptyState } from '../ui-components';
 import { ExternalLinkIcon, PassedIcon, FailedIcon } from '../icons';
 import { Spinner } from './spinner';
@@ -23,23 +23,23 @@ import { OptimizationSection } from '../components/optimization-section';
 
 interface TransactionsTabProps {
     client: ConnectorClient;
-    cluster: SolanaCluster | null;
+    cluster: TrezoaCluster | null;
     rpcUrl?: string;
 }
 
 // Explorer URL utilities - duplicated here to avoid importing implementation details
-function getSolanaExplorerUrl(signature: string, options: { cluster?: string } = {}): string {
+function getTrezoaExplorerUrl(signature: string, options: { cluster?: string } = {}): string {
     const { cluster = 'mainnet' } = options;
     const normalizedCluster = cluster === 'mainnet-beta' ? 'mainnet' : cluster;
 
     if (normalizedCluster === 'localnet') {
-        return `https://explorer.solana.com/tx/${signature}?cluster=custom`;
+        return `https://explorer.trezoa.com/tx/${signature}?cluster=custom`;
     }
 
-    return `https://explorer.solana.com/tx/${signature}${normalizedCluster !== 'mainnet' ? `?cluster=${normalizedCluster}` : ''}`;
+    return `https://explorer.trezoa.com/tx/${signature}${normalizedCluster !== 'mainnet' ? `?cluster=${normalizedCluster}` : ''}`;
 }
 
-function getSolscanUrl(signature: string, options: { cluster?: string } = {}): string {
+function getTrzscanUrl(signature: string, options: { cluster?: string } = {}): string {
     const { cluster = 'mainnet' } = options;
     const normalizedCluster = cluster === 'mainnet-beta' ? 'mainnet' : cluster;
 
@@ -91,15 +91,15 @@ function getRpcUrlFromCluster(clusterName: string): string {
     const normalized = clusterName.toLowerCase();
 
     if (normalized.includes('mainnet')) {
-        return 'https://api.mainnet-beta.solana.com';
+        return 'https://api.mainnet-beta.trezoa.com';
     } else if (normalized.includes('devnet')) {
-        return 'https://api.devnet.solana.com';
+        return 'https://api.devnet.trezoa.com';
     } else if (normalized.includes('testnet')) {
-        return 'https://api.testnet.solana.com';
+        return 'https://api.testnet.trezoa.com';
     }
 
     // Default to mainnet
-    return 'https://api.mainnet-beta.solana.com';
+    return 'https://api.mainnet-beta.trezoa.com';
 }
 
 export function TransactionsTab({ client, cluster, rpcUrl: customRpcUrl }: TransactionsTabProps) {
@@ -561,12 +561,12 @@ function TransactionItem({
                         }}
                     >
                         <ExplorerLink
-                            href={getSolanaExplorerUrl(tx.signature, {
+                            href={getTrezoaExplorerUrl(tx.signature, {
                                 cluster: clusterName,
                             })}
-                            label="Solana Explorer"
+                            label="Trezoa Explorer"
                         />
-                        <ExplorerLink href={getSolscanUrl(tx.signature, { cluster: clusterName })} label="Solscan" />
+                        <ExplorerLink href={getTrzscanUrl(tx.signature, { cluster: clusterName })} label="Solscan" />
                         <ExplorerLink href={getXrayUrl(tx.signature)} label="XRAY" />
                     </div>
                     <Divider />
@@ -617,7 +617,7 @@ function TransactionItem({
                                 {metadata.fee !== undefined && metadata.fee !== null && (
                                     <DetailRow
                                         label="Fee"
-                                        value={`${((metadata.fee as number) / 1_000_000_000).toFixed(6)} SOL`}
+                                        value={`${((metadata.fee as number) / 1_000_000_000).toFixed(6)} TRZ`}
                                     />
                                 )}
                                 {metadata.computeUnits !== undefined && metadata.computeUnits !== null && (

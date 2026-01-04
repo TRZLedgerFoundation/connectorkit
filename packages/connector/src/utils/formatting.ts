@@ -1,14 +1,14 @@
 /**
- * @solana/connector - Formatting utilities
+ * @trezoa/connector - Formatting utilities
  *
  * Unified utility functions for formatting addresses, amounts, and other display values
  * Consolidates both fast (number-based) and precise (bigint-based) formatting options
  */
 
-import { lamportsToSol, LAMPORTS_PER_SOL } from '../lib/kit';
+import { lamportsToSol, LAMPORTS_PER_TRZ } from '../lib/kit';
 
 /**
- * Format a Solana address for display
+ * Format a Trezoa address for display
  *
  * @example
  * formatAddress('7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU')
@@ -35,21 +35,21 @@ export function formatAddress(
 }
 
 /**
- * Format SOL amount for display
+ * Format TRZ amount for display
  * Supports both precise bigint and fast number arithmetic
  *
  * @param lamports - Amount in lamports (number or bigint)
  * @param options - Formatting options
  * @param options.decimals - Number of decimal places (default: 4)
- * @param options.suffix - Add 'SOL' suffix (default: true)
- * @param options.fast - Use fast number arithmetic for amounts < 9000 SOL (default: false)
+ * @param options.suffix - Add 'TRZ' suffix (default: true)
+ * @param options.fast - Use fast number arithmetic for amounts < 9000 TRZ (default: false)
  *
  * @example
- * formatSOL(1000000000n) // Returns: '1.0000 SOL' (precise)
- * formatSOL(1000000000, { fast: true }) // Returns: '1.0000 SOL' (fast)
- * formatSOL(1500000000, { decimals: 2 }) // Returns: '1.50 SOL'
+ * formatTRZ(1000000000n) // Returns: '1.0000 TRZ' (precise)
+ * formatTRZ(1000000000, { fast: true }) // Returns: '1.0000 TRZ' (fast)
+ * formatTRZ(1500000000, { decimals: 2 }) // Returns: '1.50 TRZ'
  */
-export function formatSOL(
+export function formatTRZ(
     lamports: number | bigint,
     options: {
         decimals?: number;
@@ -59,19 +59,19 @@ export function formatSOL(
 ): string {
     const { decimals = 4, suffix = true, fast = false } = options;
 
-    // Fast path for small numbers (< 2^53 lamports ~9000 SOL)
+    // Fast path for small numbers (< 2^53 lamports ~9000 TRZ)
     if (fast && typeof lamports === 'number') {
-        const sol = lamports / LAMPORTS_PER_SOL;
-        const formatted = sol.toFixed(decimals);
-        return suffix ? `${formatted} SOL` : formatted;
+        const sol = lamports / LAMPORTS_PER_TRZ;
+        const formatted = trz.toFixed(decimals);
+        return suffix ? `${formatted} TRZ` : formatted;
     }
 
     // Precise path: convert to number and format with proper decimals
     // This ensures trailing zeros are included
     const lamportsBigInt = typeof lamports === 'bigint' ? lamports : BigInt(lamports);
-    const sol = Number(lamportsBigInt) / LAMPORTS_PER_SOL;
-    const formatted = sol.toFixed(decimals);
-    return suffix ? `${formatted} SOL` : formatted;
+    const sol = Number(lamportsBigInt) / LAMPORTS_PER_TRZ;
+    const formatted = trz.toFixed(decimals);
+    return suffix ? `${formatted} TRZ` : formatted;
 }
 
 /**
@@ -167,7 +167,7 @@ function isSafeInteger(value: bigint): boolean {
  * @param decimals - Number of decimal places
  * @returns Object with whole and fractional parts as strings
  */
-function splitBigIntDecimals(amount: bigint, decimals: number): { whole: string; fraction: string } {
+function tplitBigIntDecimals(amount: bigint, decimals: number): { whole: string; fraction: string } {
     if (decimals <= 0) {
         return { whole: amount.toString(), fraction: '' };
     }
@@ -185,10 +185,10 @@ function splitBigIntDecimals(amount: bigint, decimals: number): { whole: string;
         };
     }
 
-    const splitPoint = absStr.length - decimals;
+    const tplitPoint = absStr.length - decimals;
     return {
-        whole: (isNegative ? '-' : '') + absStr.slice(0, splitPoint),
-        fraction: absStr.slice(splitPoint),
+        whole: (isNegative ? '-' : '') + absStr.slice(0, tplitPoint),
+        fraction: absStr.slice(tplitPoint),
     };
 }
 
@@ -240,7 +240,7 @@ export function formatBigIntBalance(
     }
 
     // Slow path: use string manipulation for large numbers
-    const { whole, fraction } = splitBigIntDecimals(amount, decimals);
+    const { whole, fraction } = tplitBigIntDecimals(amount, decimals);
 
     // Truncate fraction to maxDecimals
     let truncatedFraction = fraction.slice(0, maxDecimals);
@@ -276,25 +276,25 @@ export function formatBigIntBalance(
 }
 
 /**
- * Convert lamports to SOL string representation with BigInt safety.
+ * Convert lamports to TRZ string representation with BigInt safety.
  *
  * @param lamports - Amount in lamports (bigint)
  * @param options - Formatting options
- * @returns Formatted SOL string
+ * @returns Formatted TRZ string
  *
  * @example
- * formatLamportsToSolSafe(1000000000n) // Returns: '1'
- * formatLamportsToSolSafe(1500000000n, { maxDecimals: 4 }) // Returns: '1.5'
- * formatLamportsToSolSafe(1000000000n, { suffix: true }) // Returns: '1 SOL'
+ * formatLamportsToTrzSafe(1000000000n) // Returns: '1'
+ * formatLamportsToTrzSafe(1500000000n, { maxDecimals: 4 }) // Returns: '1.5'
+ * formatLamportsToTrzSafe(1000000000n, { suffix: true }) // Returns: '1 TRZ'
  */
-export function formatLamportsToSolSafe(
+export function formatLamportsToTrzSafe(
     lamports: bigint,
     options: {
         /** Maximum decimal places (default: 4) */
         maxDecimals?: number;
         /** Minimum decimal places (default: 0) */
         minDecimals?: number;
-        /** Add ' SOL' suffix (default: false) */
+        /** Add ' TRZ' suffix (default: false) */
         suffix?: boolean;
         /** Locale for formatting */
         locale?: string;
@@ -308,7 +308,7 @@ export function formatLamportsToSolSafe(
         locale,
     });
 
-    return suffix ? `${formatted} SOL` : formatted;
+    return suffix ? `${formatted} TRZ` : formatted;
 }
 
 /**
@@ -341,7 +341,7 @@ export function formatBigIntUsd(
     // We use the fractional approach to minimize precision loss.
 
     // Split into whole and fractional parts
-    const { whole, fraction } = splitBigIntDecimals(amount, decimals);
+    const { whole, fraction } = tplitBigIntDecimals(amount, decimals);
 
     // Convert whole part (may lose precision for extremely large numbers)
     const wholeNum = parseFloat(whole);

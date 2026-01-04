@@ -1,7 +1,7 @@
 /**
- * @solana/connector-debugger - Code Snippet Component
+ * @trezoa/connector-debugger - Code Snippet Component
  *
- * Displays code snippets with syntax highlighting and copy functionality
+ * Ditplays code snippets with syntax highlighting and copy functionality
  */
 
 'use client';

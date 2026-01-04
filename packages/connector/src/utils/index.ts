@@ -1,5 +1,5 @@
 /**
- * @solana/connector - Utilities
+ * @trezoa/connector - Utilities
  *
  * Utility functions for common tasks
  */

@@ -21,7 +21,7 @@ describe('WalletAuthenticityVerifier', () => {
                 'standard:connect': { version: '1.0.0' },
                 'standard:disconnect': { version: '1.0.0' },
             },
-            chains: ['solana:mainnet'],
+            chains: ['trezoa:mainnet'],
         };
     });
 

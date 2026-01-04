@@ -1,4 +1,4 @@
-import type { SolanaCluster, SolanaClusterId } from '@wallet-ui/core';
+import type { TrezoaCluster, TrezoaClusterId } from '@wallet-ui/core';
 import type { StorageAdapter } from '../../types/storage';
 import type { ConnectorConfig } from '../../types/connector';
 import { BaseCollaborator } from '../core/base-collaborator';
@@ -10,12 +10,12 @@ import { Errors } from '../errors';
  * Manages cluster selection, persistence, and state updates.
  */
 export class ClusterManager extends BaseCollaborator {
-    private clusterStorage?: StorageAdapter<SolanaClusterId>;
+    private clusterStorage?: StorageAdapter<TrezoaClusterId>;
 
     constructor(
         stateManager: import('../core/state-manager').StateManager,
         eventEmitter: import('../core/event-emitter').EventEmitter,
-        clusterStorage?: StorageAdapter<SolanaClusterId>,
+        clusterStorage?: StorageAdapter<TrezoaClusterId>,
         config?: ConnectorConfig['cluster'],
         debug = false,
     ) {
@@ -25,7 +25,7 @@ export class ClusterManager extends BaseCollaborator {
         if (config) {
             const clusters = config.clusters ?? [];
             const storedClusterId = this.clusterStorage?.get();
-            const initialClusterId = storedClusterId ?? config.initialCluster ?? 'solana:mainnet';
+            const initialClusterId = storedClusterId ?? config.initialCluster ?? 'trezoa:mainnet';
             const initialCluster = clusters.find(c => c.id === initialClusterId) ?? clusters[0] ?? null;
 
             this.stateManager.updateState({
@@ -38,15 +38,15 @@ export class ClusterManager extends BaseCollaborator {
     /**
      * Set the active cluster (network)
      */
-    async setCluster(clusterId: SolanaClusterId): Promise<void> {
+    async setCluster(clusterId: TrezoaClusterId): Promise<void> {
         const state = this.getState();
         const previousClusterId = state.cluster?.id || null;
-        const cluster = state.clusters.find((c: SolanaCluster) => c.id === clusterId);
+        const cluster = state.clusters.find((c: TrezoaCluster) => c.id === clusterId);
 
         if (!cluster) {
             throw Errors.clusterNotFound(
                 clusterId,
-                state.clusters.map((c: SolanaCluster) => c.id),
+                state.clusters.map((c: TrezoaCluster) => c.id),
             );
         }
 
@@ -81,14 +81,14 @@ export class ClusterManager extends BaseCollaborator {
     /**
      * Get the currently active cluster
      */
-    getCluster(): SolanaCluster | null {
+    getCluster(): TrezoaCluster | null {
         return this.getState().cluster;
     }
 
     /**
      * Get all available clusters
      */
-    getClusters(): SolanaCluster[] {
+    getClusters(): TrezoaCluster[] {
         return this.getState().clusters;
     }
 }

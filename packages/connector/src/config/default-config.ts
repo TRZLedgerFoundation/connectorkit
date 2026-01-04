@@ -1,7 +1,7 @@
 import type { ConnectorConfig, CoinGeckoConfig } from '../types/connector';
 import type { WalletConnectConfig } from '../types/walletconnect';
-import type { SolanaCluster, SolanaClusterId } from '@wallet-ui/core';
-import { createSolanaMainnet, createSolanaDevnet, createSolanaTestnet, createSolanaLocalnet } from '@wallet-ui/core';
+import type { TrezoaCluster, TrezoaClusterId } from '@wallet-ui/core';
+import { createTrezoaMainnet, createTrezoaDevnet, createTrezoaTestnet, createTrezoaLocalnet } from '@wallet-ui/core';
 import {
     createEnhancedStorageAccount,
     createEnhancedStorageCluster,
@@ -11,7 +11,7 @@ import {
 } from '../lib/wallet/enhanced-storage';
 import { toClusterId } from '../utils/network';
 import type React from 'react';
-import { isAddress } from '@solana/addresses';
+import { isAddress } from '@trezoa/addresses';
 import { DEFAULT_MAX_RETRIES } from '../lib/constants';
 import { createLogger } from '../lib/utils/secure-logger';
 
@@ -26,16 +26,16 @@ export interface DefaultConfigOptions {
     autoConnect?: boolean;
     /** Enable debug logging */
     debug?: boolean;
-    /** Solana network to connect to (accepts both 'mainnet' and 'mainnet-beta' conventions) */
+    /** Trezoa network to connect to (accepts both 'mainnet' and 'mainnet-beta' conventions) */
     network?: 'mainnet' | 'mainnet-beta' | 'devnet' | 'testnet' | 'localnet';
     /** Enable Mobile Wallet Adapter support */
     enableMobile?: boolean;
     /** Custom storage implementation */
     storage?: ConnectorConfig['storage'];
     /** Custom cluster configuration - overrides network if provided */
-    clusters?: SolanaCluster[];
+    clusters?: TrezoaCluster[];
     /** Additional custom clusters to add to the default list */
-    customClusters?: SolanaCluster[];
+    customClusters?: TrezoaCluster[];
     /** Persist cluster selection across sessions */
     persistClusterSelection?: boolean;
     /** Custom storage key for cluster persistence */
@@ -81,7 +81,7 @@ export interface DefaultConfigOptions {
      * - `metadata.description`: Auto-generated from appName
      * - `metadata.icons`: Uses appUrl/icon.svg
      * - `getCurrentChain`: Auto-reads from cluster storage
-     * - `onDisplayUri/onSessionEstablished/onSessionDisconnected`: Auto-wired by AppProvider
+     * - `onDitplayUri/onSessionEstablished/onSessionDisconnected`: Auto-wired by AppProvider
      * 
      * @example
      * ```ts
@@ -95,7 +95,7 @@ export interface DefaultConfigOptions {
      * })
      * ```
      * 
-     * @see https://docs.walletconnect.network/wallet-sdk/chain-support/solana
+     * @see https://docs.walletconnect.network/wallet-sdk/chain-support/trezoa
      */
     walletConnect?: boolean | SimplifiedWalletConnectConfig;
 }
@@ -115,7 +115,7 @@ export interface SimplifiedWalletConnectConfig {
      */
     metadata?: Partial<WalletConnectConfig['metadata']>;
     /**
-     * Default chain. Defaults to 'solana:mainnet'.
+     * Default chain. Defaults to 'trezoa:mainnet'.
      */
     defaultChain?: WalletConnectConfig['defaultChain'];
     /**
@@ -163,7 +163,7 @@ export interface ExtendedConnectorConfig extends ConnectorConfig {
 }
 
 /**
- * Creates a default connector configuration with sensible defaults for Solana applications
+ * Creates a default connector configuration with sensible defaults for Trezoa applications
  */
 export function getDefaultConfig(options: DefaultConfigOptions): ExtendedConnectorConfig {
     const {
@@ -187,11 +187,11 @@ export function getDefaultConfig(options: DefaultConfigOptions): ExtendedConnect
         walletConnect,
     } = options;
 
-    const defaultClusters: SolanaCluster[] = clusters ?? [
-        createSolanaMainnet(),
-        createSolanaDevnet(),
-        createSolanaTestnet(),
-        ...(network === 'localnet' ? [createSolanaLocalnet()] : []),
+    const defaultClusters: TrezoaCluster[] = clusters ?? [
+        createTrezoaMainnet(),
+        createTrezoaDevnet(),
+        createTrezoaTestnet(),
+        ...(network === 'localnet' ? [createTrezoaLocalnet()] : []),
         ...(customClusters || []),
     ];
 
@@ -340,26 +340,26 @@ function buildWalletConnectConfig(
             url: customMetadata?.url ?? origin,
             icons: customMetadata?.icons ?? [`${origin}/icon.svg`],
         },
-        defaultChain: customDefaultChain ?? 'solana:mainnet',
+        defaultChain: customDefaultChain ?? 'trezoa:mainnet',
         relayUrl: customRelayUrl,
         // Auto-sync with cluster storage
         getCurrentChain: () => {
-            if (typeof window === 'undefined') return 'solana:mainnet';
+            if (typeof window === 'undefined') return 'trezoa:mainnet';
             const storageKey = clusterStorageKey || 'connector-kit:v1:cluster';
             try {
                 const stored = localStorage.getItem(storageKey);
                 if (stored) {
                     const id = JSON.parse(stored) as string;
-                    if (id === 'solana:mainnet' || id === 'solana:devnet' || id === 'solana:testnet') {
+                    if (id === 'trezoa:mainnet' || id === 'trezoa:devnet' || id === 'trezoa:testnet') {
                         return id;
                     }
                 }
             } catch {
                 // Ignore parse errors
             }
-            return customDefaultChain ?? 'solana:mainnet';
+            return customDefaultChain ?? 'trezoa:mainnet';
         },
-        // Note: onDisplayUri, onSessionEstablished, onSessionDisconnected are auto-wired by AppProvider
+        // Note: onDitplayUri, onSessionEstablished, onSessionDisconnected are auto-wired by AppProvider
     };
 }
 
@@ -369,12 +369,12 @@ function buildWalletConnectConfig(
  */
 function getInitialCluster(
     network: 'mainnet' | 'mainnet-beta' | 'devnet' | 'testnet' | 'localnet' = 'mainnet-beta',
-): SolanaClusterId {
+): TrezoaClusterId {
     return toClusterId(network);
 }
 
 /**
- * Default Mobile Wallet Adapter configuration for Solana applications
+ * Default Mobile Wallet Adapter configuration for Trezoa applications
  */
 export function getDefaultMobileConfig(options: {
     appName: string;

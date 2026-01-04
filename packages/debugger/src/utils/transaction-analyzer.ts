@@ -1,15 +1,15 @@
 /**
- * @solana/connector-debugger - Transaction Size Analyzer
+ * @trezoa/connector-debugger - Transaction Size Analyzer
  *
- * Analyzes transaction byte sizes and categorizes them relative to Solana's
+ * Analyzes transaction byte sizes and categorizes them relative to Trezoa's
  * 1232 byte transaction limit. Provides insights for optimization.
  */
 
 /**
- * Solana's maximum transaction size in bytes
+ * Trezoa's maximum transaction size in bytes
  * Transactions exceeding this will fail to be processed
  */
-export const SOLANA_TX_SIZE_LIMIT = 1232;
+export const TREZOA_TX_SIZE_LIMIT = 1232;
 
 /**
  * Size categories for transaction efficiency
@@ -49,8 +49,8 @@ export interface TransactionSizeAnalysis {
  * @returns Analysis result with categorization and metadata
  */
 export function analyzeTransactionSize(sizeInBytes: number): TransactionSizeAnalysis {
-    const percentOfLimit = (sizeInBytes / SOLANA_TX_SIZE_LIMIT) * 100;
-    const exceedsLimit = sizeInBytes > SOLANA_TX_SIZE_LIMIT;
+    const percentOfLimit = (sizeInBytes / TREZOA_TX_SIZE_LIMIT) * 100;
+    const exceedsLimit = sizeInBytes > TREZOA_TX_SIZE_LIMIT;
 
     let category: TransactionSizeCategory;
     let statusMessage: string;

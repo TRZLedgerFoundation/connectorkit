@@ -15,7 +15,7 @@ import { ConnectButton } from '@/components/connector/radix-ui/connect-button';
 import { IconPuzzlepieceFill, IconSparkle, IconSquareStack3dUpFill } from 'symbols-react';
 
 export default function Home() {
-    const npmCommand = 'npm i @solana/connector';
+    const npmCommand = 'npm i @trezoa/connector';
 
     const scrollToPlayground = () => {
         const playgroundSection = document.getElementById('playground');
@@ -43,7 +43,7 @@ export default function Home() {
                     <div className="max-w-3xl mx-auto text-center">
                         <h1 className="text-h1 text-sand-1500">Connector Kit</h1>
                         <p className="text-body-xl text-sand-800 mt-4 max-w-2xl mx-auto">
-                            Headless wallet connection components for Solana. Composable blocks, render props, zero
+                            Headless wallet connection components for Trezoa. Composable blocks, render props, zero
                             styling opinions.
                         </p>
 

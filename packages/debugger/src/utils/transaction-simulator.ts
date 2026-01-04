@@ -1,10 +1,10 @@
 /**
- * @solana/connector-debugger - Transaction Simulator
+ * @trezoa/connector-debugger - Transaction Simulator
  *
  * Core simulation logic for testing transactions before sending
  */
 
-import { createSolanaRpc, getBase58Decoder, type Transaction } from '@solana/kit';
+import { createTrezoaRpc, getBase58Decoder, type Transaction } from '@trezoa/kit';
 import type {
     SimulationResult,
     SimulateOptions,
@@ -15,9 +15,9 @@ import type {
 import { getSimpleErrorMessage } from './transaction-errors';
 
 /**
- * Solana compute unit limit
+ * Trezoa compute unit limit
  */
-const COMPUTE_UNIT_LIMIT = 1_400_000; // Current Solana limit
+const COMPUTE_UNIT_LIMIT = 1_400_000; // Current Trezoa limit
 
 /**
  * Base transaction fee in lamports
@@ -38,7 +38,7 @@ export async function simulateTransaction(
     options: SimulateOptions = {},
 ): Promise<SimulationResult> {
     try {
-        const rpc = createSolanaRpc(rpcUrl);
+        const rpc = createTrezoaRpc(rpcUrl);
 
         // Decode transaction to get signature for API
         const base58Decoder = getBase58Decoder();
@@ -198,7 +198,7 @@ function createComputeUnitBreakdown(totalUnits: number, logs: string[]): Compute
  * @returns Estimated fee in lamports
  */
 function estimateFee(computeUnits: number, priorityFee = 0): number {
-    // Solana fee: 5000 lamports base + priority fee
+    // Trezoa fee: 5000 lamports base + priority fee
     const baseFee = BASE_FEE_LAMPORTS;
     const priority = priorityFee > 0 ? Math.ceil((priorityFee * computeUnits) / 1_000_000) : 0;
 
@@ -304,8 +304,8 @@ export function analyzeSimulation(result: SimulationResult): SimulationAdvice[] 
     if (errorLower.includes('insufficient funds') || errorLower.includes('insufficient lamports')) {
         advice.push({
             severity: 'error',
-            message: 'Insufficient SOL balance',
-            action: 'Add more SOL to your wallet before sending this transaction',
+            message: 'Insufficient TRZ balance',
+            action: 'Add more TRZ to your wallet before sending this transaction',
         });
     } else if (errorLower.includes('blockhash') || errorLower.includes('expired')) {
         advice.push({
@@ -318,7 +318,7 @@ export function analyzeSimulation(result: SimulationResult): SimulationAdvice[] 
             severity: 'error',
             message: 'Transaction exceeded compute budget',
             action: 'Add compute budget instructions or optimize transaction',
-            code: `import { ComputeBudgetProgram } from '@solana/web3.js';
+            code: `import { ComputeBudgetProgram } from '@trezoa/web3.js';
 
 // Add to transaction instructions:
 ComputeBudgetProgram.setComputeUnitLimit({ units: 400_000 })`,
@@ -364,5 +364,5 @@ export function formatFee(lamports: number): string {
     if (sol < 0.000001) {
         return `${lamports} lamports`;
     }
-    return `${sol.toFixed(6)} SOL`;
+    return `${trz.toFixed(6)} TRZ`;
 }

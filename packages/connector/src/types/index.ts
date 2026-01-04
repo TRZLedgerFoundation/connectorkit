@@ -1,5 +1,5 @@
 /**
- * Central type exports for @solana/connector
+ * Central type exports for @trezoa/connector
  *
  * Domain-organized types for wallets, accounts, transactions, events, storage, and connector state.
  */
@@ -24,7 +24,7 @@ export type {
 
 // Transaction and signer types
 export type {
-    SolanaTransaction,
+    TrezoaTransaction,
     TransactionSignerConfig,
     SignedTransaction,
     TransactionSignerCapabilities,
@@ -51,7 +51,7 @@ export type {
     WalletConnectConfig,
     WalletConnectMetadata,
     WalletConnectTransport,
-    WalletConnectSolanaAccount,
+    WalletConnectTrezoaAccount,
     WalletConnectSignMessageParams,
     WalletConnectSignMessageResult,
     WalletConnectSignTransactionParams,

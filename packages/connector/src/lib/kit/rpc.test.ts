@@ -1,34 +1,34 @@
 import { describe, it, expect } from 'vitest';
-import { getPublicSolanaRpcUrl, getWebSocketUrl, localnet } from './rpc';
+import { getPublicTrezoaRpcUrl, getWebSocketUrl, localnet } from './rpc';
 
 describe('RPC Utilities', () => {
-    describe('getPublicSolanaRpcUrl', () => {
+    describe('getPublicTrezoaRpcUrl', () => {
         it('should return devnet URL', () => {
-            expect(getPublicSolanaRpcUrl('devnet')).toBe('https://api.devnet.solana.com');
+            expect(getPublicTrezoaRpcUrl('devnet')).toBe('https://api.devnet.trezoa.com');
         });
 
         it('should return testnet URL', () => {
-            expect(getPublicSolanaRpcUrl('testnet')).toBe('https://api.testnet.solana.com');
+            expect(getPublicTrezoaRpcUrl('testnet')).toBe('https://api.testnet.trezoa.com');
         });
 
         it('should return mainnet URL', () => {
-            expect(getPublicSolanaRpcUrl('mainnet')).toBe('https://api.mainnet-beta.solana.com');
+            expect(getPublicTrezoaRpcUrl('mainnet')).toBe('https://api.mainnet-beta.trezoa.com');
         });
 
         it('should return mainnet-beta URL', () => {
-            expect(getPublicSolanaRpcUrl('mainnet-beta')).toBe('https://api.mainnet-beta.solana.com');
+            expect(getPublicTrezoaRpcUrl('mainnet-beta')).toBe('https://api.mainnet-beta.trezoa.com');
         });
 
         it('should return localnet URL', () => {
-            expect(getPublicSolanaRpcUrl('localnet')).toBe('http://127.0.0.1:8899');
+            expect(getPublicTrezoaRpcUrl('localnet')).toBe('http://127.0.0.1:8899');
         });
 
         it('should return localhost URL', () => {
-            expect(getPublicSolanaRpcUrl('localhost')).toBe('http://127.0.0.1:8899');
+            expect(getPublicTrezoaRpcUrl('localhost')).toBe('http://127.0.0.1:8899');
         });
 
         it('should throw for invalid cluster', () => {
-            expect(() => getPublicSolanaRpcUrl('invalid' as 'devnet')).toThrow('Invalid cluster moniker');
+            expect(() => getPublicTrezoaRpcUrl('invalid' as 'devnet')).toThrow('Invalid cluster moniker');
         });
     });
 

@@ -1,11 +1,11 @@
 /**
- * @solana/connector - Enhanced Clipboard Utilities
+ * @trezoa/connector - Enhanced Clipboard Utilities
  *
  * Comprehensive clipboard functionality with validation, formatting, fallbacks,
- * and detailed error reporting for Solana addresses and transaction signatures.
+ * and detailed error reporting for Trezoa addresses and transaction signatures.
  */
 
-import { isAddress } from '@solana/addresses';
+import { isAddress } from '@trezoa/addresses';
 import { formatAddress } from './formatting';
 
 /**
@@ -101,7 +101,7 @@ export function isClipboardAvailable(): {
 }
 
 /**
- * Validate a Solana address
+ * Validate a Trezoa address
  */
 function validateAddress(address: string): boolean {
     try {
@@ -116,7 +116,7 @@ function validateAddress(address: string): boolean {
  */
 function validateSignature(signature: string): boolean {
     if (!signature || typeof signature !== 'string') return false;
-    // Solana signatures are 64 bytes encoded in base58 (typically 87-88 chars)
+    // Trezoa signatures are 64 bytes encoded in base58 (typically 87-88 chars)
     if (signature.length < 87 || signature.length > 88) return false;
     // Check base58 alphabet
     return /^[1-9A-HJ-NP-Za-km-z]+$/.test(signature);
@@ -239,7 +239,7 @@ export async function copyToClipboard(text: string, options: CopyOptions = {}): 
     // Built-in validation based on type
     if (validateType === 'address' && !validateAddress(text)) {
         const error = ClipboardErrorType.INVALID_VALUE;
-        const message = 'Invalid Solana address format';
+        const message = 'Invalid Trezoa address format';
         onError?.(error, message);
         return { success: false, error, errorMessage: message };
     }
@@ -321,9 +321,9 @@ export async function copyToClipboard(text: string, options: CopyOptions = {}): 
 }
 
 /**
- * Copy a Solana wallet address to clipboard with automatic validation
+ * Copy a Trezoa wallet address to clipboard with automatic validation
  *
- * @param address - Solana wallet address (base58 encoded public key)
+ * @param address - Trezoa wallet address (base58 encoded public key)
  * @param options - Copy options (validateType will be set to 'address' automatically)
  * @returns Promise resolving to result object
  *
@@ -363,7 +363,7 @@ export async function copyAddressToClipboard(
 /**
  * Copy a transaction signature to clipboard with automatic validation
  *
- * @param signature - Solana transaction signature (base58 encoded, 64 bytes)
+ * @param signature - Trezoa transaction signature (base58 encoded, 64 bytes)
  * @param options - Copy options (validateType will be set to 'signature' automatically)
  * @returns Promise resolving to result object
  *

@@ -1,53 +1,53 @@
 import { describe, it, expect, vi } from 'vitest';
 
-vi.mock('@solana/kit', () => ({
-    createSolanaRpc: vi.fn(url => ({ url, __type: 'rpc' })),
-    createSolanaRpcSubscriptions: vi.fn(url => ({ url, __type: 'rpcSubscriptions' })),
+vi.mock('@trezoa/kit', () => ({
+    createTrezoaRpc: vi.fn(url => ({ url, __type: 'rpc' })),
+    createTrezoaRpcSubscriptions: vi.fn(url => ({ url, __type: 'rpcSubscriptions' })),
 }));
 
-import { createSolanaClient } from './client';
+import { createTrezoaClient } from './client';
 
 describe('Kit Client Factory', () => {
-    describe('createSolanaClient', () => {
+    describe('createTrezoaClient', () => {
         it('should create client from devnet moniker', () => {
-            const client = createSolanaClient({ urlOrMoniker: 'devnet' });
+            const client = createTrezoaClient({ urlOrMoniker: 'devnet' });
             expect(client.rpc).toBeDefined();
             expect(client.rpcSubscriptions).toBeDefined();
-            expect(client.urlOrMoniker).toContain('devnet.solana.com');
+            expect(client.urlOrMoniker).toContain('devnet.trezoa.com');
         });
 
         it('should create client from mainnet moniker', () => {
-            const client = createSolanaClient({ urlOrMoniker: 'mainnet' });
-            expect(client.urlOrMoniker).toContain('mainnet-beta.solana.com');
+            const client = createTrezoaClient({ urlOrMoniker: 'mainnet' });
+            expect(client.urlOrMoniker).toContain('mainnet-beta.trezoa.com');
         });
 
         it('should create client from testnet moniker', () => {
-            const client = createSolanaClient({ urlOrMoniker: 'testnet' });
-            expect(client.urlOrMoniker).toContain('testnet.solana.com');
+            const client = createTrezoaClient({ urlOrMoniker: 'testnet' });
+            expect(client.urlOrMoniker).toContain('testnet.trezoa.com');
         });
 
         it('should create client from localnet moniker', () => {
-            const client = createSolanaClient({ urlOrMoniker: 'localnet' });
+            const client = createTrezoaClient({ urlOrMoniker: 'localnet' });
             expect(client.urlOrMoniker).toContain('127.0.0.1');
         });
 
         it('should create client from URL string', () => {
-            const client = createSolanaClient({ urlOrMoniker: 'https://custom-rpc.example.com' });
+            const client = createTrezoaClient({ urlOrMoniker: 'https://custom-rpc.example.com' });
             expect(client.urlOrMoniker).toBe('https://custom-rpc.example.com/');
         });
 
         it('should throw for missing urlOrMoniker', () => {
-            expect(() => createSolanaClient({ urlOrMoniker: '' })).toThrow('Cluster url or moniker is required');
+            expect(() => createTrezoaClient({ urlOrMoniker: '' })).toThrow('Cluster url or moniker is required');
         });
 
         it('should throw for invalid moniker', () => {
-            expect(() => createSolanaClient({ urlOrMoniker: 'invalid-moniker' })).toThrow(
+            expect(() => createTrezoaClient({ urlOrMoniker: 'invalid-moniker' })).toThrow(
                 'Invalid URL or cluster moniker',
             );
         });
 
         it('should apply custom RPC port', () => {
-            const client = createSolanaClient({
+            const client = createTrezoaClient({
                 urlOrMoniker: 'https://custom-rpc.example.com',
                 rpcConfig: { port: 9999 },
             });

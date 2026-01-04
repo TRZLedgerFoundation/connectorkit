@@ -1,13 +1,13 @@
 /**
- * @solana/connector - Kit RPC Utilities
+ * @trezoa/connector - Kit RPC Utilities
  *
- * RPC URL helpers for Solana clusters.
+ * RPC URL helpers for Trezoa clusters.
  */
 
-import type { DevnetUrl, MainnetUrl, TestnetUrl } from '@solana/kit';
+import type { DevnetUrl, MainnetUrl, TestnetUrl } from '@trezoa/kit';
 
-/** Solana cluster moniker */
-export type SolanaClusterMoniker = 'devnet' | 'localnet' | 'mainnet' | 'testnet';
+/** Trezoa cluster moniker */
+export type TrezoaClusterMoniker = 'devnet' | 'localnet' | 'mainnet' | 'testnet';
 
 /** Localnet URL type */
 export type LocalnetUrl = string & { '~cluster': 'localnet' };
@@ -18,8 +18,8 @@ export type GenericUrl = string & {};
 /** Union of all cluster URL types */
 export type ModifiedClusterUrl = DevnetUrl | GenericUrl | LocalnetUrl | MainnetUrl | TestnetUrl;
 
-/** URL or moniker that can be used to create a Solana client */
-export type SolanaClientUrlOrMoniker = ModifiedClusterUrl | SolanaClusterMoniker | URL;
+/** URL or moniker that can be used to create a Trezoa client */
+export type TrezoaClientUrlOrMoniker = ModifiedClusterUrl | TrezoaClusterMoniker | URL;
 
 /**
  * Helper to create a localnet URL type
@@ -29,7 +29,7 @@ export function localnet(putativeString: string): LocalnetUrl {
 }
 
 /**
- * Get a public Solana RPC endpoint for a cluster based on its moniker
+ * Get a public Trezoa RPC endpoint for a cluster based on its moniker
  *
  * Note: These RPC URLs are rate limited and not suitable for production applications.
  * For production, use a dedicated RPC provider like Triton, Helius, QuickNode, or Alchemy.
@@ -37,17 +37,17 @@ export function localnet(putativeString: string): LocalnetUrl {
  * @param cluster - Cluster moniker
  * @returns Public RPC URL for the cluster
  */
-export function getPublicSolanaRpcUrl(
-    cluster: SolanaClusterMoniker | 'mainnet-beta' | 'localhost',
+export function getPublicTrezoaRpcUrl(
+    cluster: TrezoaClusterMoniker | 'mainnet-beta' | 'localhost',
 ): ModifiedClusterUrl {
     switch (cluster) {
         case 'devnet':
-            return 'https://api.devnet.solana.com' as DevnetUrl;
+            return 'https://api.devnet.trezoa.com' as DevnetUrl;
         case 'testnet':
-            return 'https://api.testnet.solana.com' as TestnetUrl;
+            return 'https://api.testnet.trezoa.com' as TestnetUrl;
         case 'mainnet-beta':
         case 'mainnet':
-            return 'https://api.mainnet-beta.solana.com' as MainnetUrl;
+            return 'https://api.mainnet-beta.trezoa.com' as MainnetUrl;
         case 'localnet':
         case 'localhost':
             return 'http://127.0.0.1:8899' as LocalnetUrl;

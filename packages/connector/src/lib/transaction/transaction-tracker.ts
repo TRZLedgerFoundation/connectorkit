@@ -1,5 +1,5 @@
 import type { TransactionActivity } from '../../types/transactions';
-import type { SolanaClusterId } from '@wallet-ui/core';
+import type { TrezoaClusterId } from '@wallet-ui/core';
 import { BaseCollaborator } from '../core/base-collaborator';
 
 /**
@@ -27,7 +27,7 @@ export class TransactionTracker extends BaseCollaborator {
      */
     trackTransaction(activity: Omit<TransactionActivity, 'timestamp' | 'cluster'>): void {
         const state = this.getState();
-        const fallbackClusterId: SolanaClusterId = 'solana:devnet';
+        const fallbackClusterId: TrezoaClusterId = 'trezoa:devnet';
         const clusterId = state.cluster?.id ?? fallbackClusterId;
         const fullActivity: TransactionActivity = {
             ...activity,

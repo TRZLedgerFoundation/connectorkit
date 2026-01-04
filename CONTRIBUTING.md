@@ -74,7 +74,7 @@ When working with wallet integration:
 
 - Follow [Wallet Standard](https://github.com/wallet-standard/wallet-standard) best practices
 - Ensure compatibility with all compliant wallets
-- Test with multiple wallets (Phantom, Solflare, Backpack, etc.)
+- Test with multiple wallets (Phantom, Trzflare, Backpack, etc.)
 - Test on devnet before mainnet
 
 ## Bug Reports

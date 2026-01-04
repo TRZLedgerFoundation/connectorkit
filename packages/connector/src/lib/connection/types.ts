@@ -1,4 +1,4 @@
-import type { Connection } from '@solana/web3.js';
+import type { Connection } from '@trezoa/web3.js';
 
 export type Commitment = 'processed' | 'confirmed' | 'finalized';
 

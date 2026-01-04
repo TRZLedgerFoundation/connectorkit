@@ -1,3 +1,3 @@
 module.exports = {
-    ...require('@solana/prettier-config-solana'),
+    ...require('@trezoa/prettier-config-trezoa'),
 };

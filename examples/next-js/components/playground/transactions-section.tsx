@@ -1,8 +1,8 @@
 'use client';
 
 import {
-    LegacySolTransfer,
-    ModernSolTransfer,
+    LegacyTrzTransfer,
+    ModernTrzTransfer,
     KitSignerDemo,
     ChainUtilitiesDemo,
     ConnectionAbstractionDemo,
@@ -11,24 +11,24 @@ import { ExampleCard, type ExampleConfig } from './example-card';
 
 const transactionExamples: ExampleConfig[] = [
     {
-        id: 'legacy-sol-transfer',
+        id: 'legacy-trz-transfer',
         name: 'Legacy Self Transfer',
         description:
-            'Self-transfer 1 lamport using @solana/web3.js v1 with the wallet adapter compatibility layer.',
-        fileName: 'components/transactions/legacy-sol-transfer.tsx',
+            'Self-transfer 1 lamport using @trezoa/web3.js v1 with the wallet adapter compatibility layer.',
+        fileName: 'components/transactions/legacy-trz-transfer.tsx',
         code: `'use client';
 
 import { useCallback, useMemo } from 'react';
-import { Connection, Transaction, SystemProgram, PublicKey } from '@solana/web3.js';
-import { signature as createSignature, address } from '@solana/kit';
-import { useWalletAdapterCompat } from '@solana/connector/compat';
-import { useTransactionSigner, useConnector, useCluster, useConnectorClient } from '@solana/connector';
+import { Connection, Transaction, SystemProgram, PublicKey } from '@trezoa/web3.js';
+import { signature as createSignature, address } from '@trezoa/kit';
+import { useWalletAdapterCompat } from '@trezoa/connector/compat';
+import { useTransactionSigner, useConnector, useCluster, useConnectorClient } from '@trezoa/connector';
 import { PipelineHeaderButton, PipelineVisualization } from '@/components/pipeline';
 import { VisualPipeline } from '@/lib/visual-pipeline';
 import { waitForSignatureConfirmation } from './rpc-utils';
 import { useExampleCardHeaderActions } from '@/components/playground/example-card-actions';
 
-export function LegacySolTransfer() {
+export function LegacyTrzTransfer() {
     const { signer } = useTransactionSigner();
     const { disconnect } = useConnector();
     const { cluster } = useCluster();
@@ -48,11 +48,11 @@ export function LegacySolTransfer() {
 
     const getExplorerUrl = useCallback(
         (sig: string) => {
-            const clusterSlug = cluster?.id?.replace('solana:', '');
+            const clusterSlug = cluster?.id?.replace('trezoa:', '');
             if (!clusterSlug || clusterSlug === 'mainnet' || clusterSlug === 'mainnet-beta') {
-                return 'https://explorer.solana.com/tx/' + sig;
+                return 'https://explorer.trezoa.com/tx/' + sig;
             }
-            return 'https://explorer.solana.com/tx/' + sig + '?cluster=' + clusterSlug;
+            return 'https://explorer.trezoa.com/tx/' + sig + '?cluster=' + clusterSlug;
         },
         [cluster?.id],
     );
@@ -128,19 +128,19 @@ export function LegacySolTransfer() {
         <PipelineVisualization visualPipeline={visualPipeline} strategy="sequential" getExplorerUrl={getExplorerUrl} />
     );
 }`,
-        render: () => <LegacySolTransfer />,
+        render: () => <LegacyTrzTransfer />,
     },
     {
-        id: 'modern-sol-transfer',
+        id: 'modern-trz-transfer',
         name: 'Modern Self Transfer',
         description:
-            'Self-transfer 1 lamport using @solana/kit with a kit-compatible signer.',
-        fileName: 'components/transactions/modern-sol-transfer.tsx',
+            'Self-transfer 1 lamport using @trezoa/kit with a kit-compatible signer.',
+        fileName: 'components/transactions/modern-trz-transfer.tsx',
         code: `'use client';
 
 import { useCallback, useMemo } from 'react';
 import {
-    createSolanaRpc,
+    createTrezoaRpc,
     pipe,
     createTransactionMessage,
     setTransactionMessageFeePayerSigner,
@@ -148,14 +148,14 @@ import {
     appendTransactionMessageInstructions,
     sendAndConfirmTransactionFactory,
     signTransactionMessageWithSigners,
-    createSolanaRpcSubscriptions,
+    createTrezoaRpcSubscriptions,
     lamports,
     assertIsTransactionWithBlockhashLifetime,
     signature as createSignature,
     type TransactionSigner,
-} from '@solana/kit';
-import { getTransferSolInstruction } from '@solana-program/system';
-import { useKitTransactionSigner, useCluster, useConnectorClient } from '@solana/connector';
+} from '@trezoa/kit';
+import { getTransferTrzInstruction } from '@trezoa-program/system';
+import { useKitTransactionSigner, useCluster, useConnectorClient } from '@trezoa/connector';
 import { PipelineHeaderButton, PipelineVisualization } from '@/components/pipeline';
 import { VisualPipeline } from '@/lib/visual-pipeline';
 import { useExampleCardHeaderActions } from '@/components/playground/example-card-actions';
@@ -167,7 +167,7 @@ import {
     waitForSignatureConfirmation,
 } from './rpc-utils';
 
-export function ModernSolTransfer() {
+export function ModernTrzTransfer() {
     const { signer, ready } = useKitTransactionSigner();
     const { cluster } = useCluster();
     const client = useConnectorClient();
@@ -183,11 +183,11 @@ export function ModernSolTransfer() {
 
     const getExplorerUrl = useCallback(
         (sig: string) => {
-            const clusterSlug = cluster?.id?.replace('solana:', '');
+            const clusterSlug = cluster?.id?.replace('trezoa:', '');
             if (!clusterSlug || clusterSlug === 'mainnet' || clusterSlug === 'mainnet-beta') {
-                return 'https://explorer.solana.com/tx/' + sig;
+                return 'https://explorer.trezoa.com/tx/' + sig;
             }
-            return 'https://explorer.solana.com/tx/' + sig + '?cluster=' + clusterSlug;
+            return 'https://explorer.trezoa.com/tx/' + sig + '?cluster=' + clusterSlug;
         },
         [cluster?.id],
     );
@@ -197,7 +197,7 @@ export function ModernSolTransfer() {
 
         const rpcUrl = client.getRpcUrl();
         if (!rpcUrl) throw new Error('No RPC endpoint configured');
-        const rpc = createSolanaRpc(rpcUrl);
+        const rpc = createTrezoaRpc(rpcUrl);
 
         let signatureBase58: string | null = null;
 
@@ -206,7 +206,7 @@ export function ModernSolTransfer() {
             visualPipeline.setStepState('Self transfer', { type: 'building' });
 
             const { value: latestBlockhash } = await rpc.getLatestBlockhash().send();
-            const transferInstruction = getTransferSolInstruction({
+            const transferInstruction = getTransferTrzInstruction({
                 source: signer as TransactionSigner,
                 destination: signer.address,
                 amount: lamports(1n),
@@ -239,7 +239,7 @@ export function ModernSolTransfer() {
                         await rpc.getSignatureStatuses([createSignature(sig)]).send(),
                 });
             } else {
-                const rpcSubscriptions = createSolanaRpcSubscriptions(getWebSocketUrlForRpcUrl(rpcUrl));
+                const rpcSubscriptions = createTrezoaRpcSubscriptions(getWebSocketUrlForRpcUrl(rpcUrl));
                 await sendAndConfirmTransactionFactory({ rpc, rpcSubscriptions })(signedTransaction, {
                     commitment: 'confirmed',
                 });
@@ -257,7 +257,7 @@ export function ModernSolTransfer() {
         <PipelineVisualization visualPipeline={visualPipeline} strategy="sequential" getExplorerUrl={getExplorerUrl} />
     );
 }`,
-        render: () => <ModernSolTransfer />,
+        render: () => <ModernTrzTransfer />,
     },
     {
         id: 'kit-signer',
@@ -268,8 +268,8 @@ export function ModernSolTransfer() {
     createKitSignersFromWallet, 
     createMessageSignerFromWallet, 
     createSignableMessage 
-} from '@solana/connector/headless';
-import { useConnector, useConnectorClient } from '@solana/connector';
+} from '@trezoa/connector/headless';
+import { useConnector, useConnectorClient } from '@trezoa/connector';
 
 function KitSignerDemo() {
     const { selectedWallet, accounts, selectedAccount, cluster } = useConnector();
@@ -308,15 +308,15 @@ function KitSignerDemo() {
         name: 'Chain Utilities',
         description:
             'Convert between Wallet Standard chain IDs and cluster types. Bidirectional utilities for working with different network identifiers.',
-        code: `import { useConnector } from '@solana/connector';
+        code: `import { useConnector } from '@trezoa/connector';
 import {
     getChainIdFromCluster,
     getClusterTypeFromChainId,
     getClusterIdFromChainId,
-    isSolanaChain,
-    isKnownSolanaChain,
-    SOLANA_CHAIN_IDS,
-} from '@solana/connector/headless';
+    isTrezoaChain,
+    isKnownTrezoaChain,
+    TREZOA_CHAIN_IDS,
+} from '@trezoa/connector/headless';
 
 function ChainUtilitiesDemo() {
     const { cluster, clusters } = useConnector();
@@ -330,14 +330,14 @@ function ChainUtilitiesDemo() {
         : null;
 
     // All standard chain IDs
-    const allChainIds = Object.values(SOLANA_CHAIN_IDS);
-    // { mainnet: 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp', devnet: '...', testnet: '...' }
+    const allChainIds = Object.values(TREZOA_CHAIN_IDS);
+    // { mainnet: 'trezoa:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp', devnet: '...', testnet: '...' }
 
     return (
         <div>
             <p>Current Chain: {currentChainId}</p>
             <p>Cluster Type: {currentClusterType}</p>
-            <p>Is Solana Chain: {isSolanaChain(currentChainId)}</p>
+            <p>Is Trezoa Chain: {isTrezoaChain(currentChainId)}</p>
         </div>
     );
 }`,
@@ -347,11 +347,11 @@ function ChainUtilitiesDemo() {
         id: 'connection-abstraction',
         name: 'Connection Abstraction',
         description:
-            'Dual-architecture helpers that work with both legacy @solana/web3.js Connection and modern @solana/kit Rpc clients.',
-        code: `import { useConnectorClient } from '@solana/connector';
-import { getLatestBlockhash, isLegacyConnection, isKitConnection } from '@solana/connector/headless';
-import { createSolanaRpc } from '@solana/kit';
-import { Connection } from '@solana/web3.js';
+            'Dual-architecture helpers that work with both legacy @trezoa/web3.js Connection and modern @trezoa/kit Rpc clients.',
+        code: `import { useConnectorClient } from '@trezoa/connector';
+import { getLatestBlockhash, isLegacyConnection, isKitConnection } from '@trezoa/connector/headless';
+import { createTrezoaRpc } from '@trezoa/kit';
+import { Connection } from '@trezoa/web3.js';
 
 function ConnectionAbstractionDemo() {
     const client = useConnectorClient();
@@ -367,7 +367,7 @@ function ConnectionAbstractionDemo() {
 
     // Works with Kit Rpc
     async function getBlockhashKit() {
-        const rpc = createSolanaRpc(client.getRpcUrl());
+        const rpc = createTrezoaRpc(client.getRpcUrl());
         console.log('Is Kit:', isKitConnection(rpc)); // true
         
         // Same helper, different connection type

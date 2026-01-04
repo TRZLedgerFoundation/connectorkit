@@ -1,5 +1,5 @@
 /**
- * @solana/connector
+ * @trezoa/connector
  *
  * Complete library - includes both React and headless functionality
  * Use this for full-featured applications

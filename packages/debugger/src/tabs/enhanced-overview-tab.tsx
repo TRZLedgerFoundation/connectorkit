@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger - Enhanced Overview Tab Component
+ * @trezoa/connector-debugger - Enhanced Overview Tab Component
  *
  * Combines Overview + Signer + Wallet information into a single comprehensive dashboard
  */
@@ -7,8 +7,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import type { ConnectorState, ConnectorHealth, TransactionSignerCapabilities } from '@solana/connector';
-import type { ConnectorClient } from '@solana/connector/headless';
+import type { ConnectorState, ConnectorHealth, TransactionSignerCapabilities } from '@trezoa/connector';
+import type { ConnectorClient } from '@trezoa/connector/headless';
 import { Section, Divider, EmptyState, Button, CollapsibleSection } from '../ui-components';
 import { StorageIcon, NetworkIcon, LockIcon, HealthIcon, WalletIcon } from '../icons';
 
@@ -81,7 +81,7 @@ export function EnhancedOverviewTab({
 
     const handleClearCluster = () => {
         try {
-            clientWithStorage.clusterStorage?.set('solana:mainnet');
+            clientWithStorage.clusterStorage?.set('trezoa:mainnet');
             setLastClear(Date.now().toString());
         } catch (error) {
             console.error('Failed to clear cluster storage:', error);

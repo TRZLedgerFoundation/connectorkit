@@ -1,5 +1,5 @@
 /**
- * @solana/connector - Unified Error System
+ * @trezoa/connector - Unified Error System
  */
 
 export abstract class ConnectorError extends Error {

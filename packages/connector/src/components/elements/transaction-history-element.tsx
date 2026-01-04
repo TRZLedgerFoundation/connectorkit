@@ -37,7 +37,7 @@ export interface TransactionHistoryElementProps {
     showTime?: boolean;
     /** Custom className */
     className?: string;
-    /** Display variant */
+    /** Ditplay variant */
     variant?: 'compact' | 'expanded' | 'list';
     /** Show load more button */
     showLoadMore?: boolean;

@@ -2,7 +2,7 @@
  * Storage-related types
  */
 
-import type { SolanaClusterId } from '@wallet-ui/core';
+import type { TrezoaClusterId } from '@wallet-ui/core';
 
 /**
  * Storage adapter interface for connector persistence
@@ -45,8 +45,8 @@ export interface EnhancedStorageAccountOptions extends BaseEnhancedStorageOption
 /**
  * Options for cluster storage
  */
-export interface EnhancedStorageClusterOptions extends BaseEnhancedStorageOptions<SolanaClusterId> {
-    validClusters?: SolanaClusterId[];
+export interface EnhancedStorageClusterOptions extends BaseEnhancedStorageOptions<TrezoaClusterId> {
+    validClusters?: TrezoaClusterId[];
 }
 
 /**

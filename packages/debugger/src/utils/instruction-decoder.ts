@@ -3,7 +3,7 @@
  * Decodes common instruction types for display
  */
 
-import type { Address, Base58EncodedBytes } from '@solana/kit';
+import type { Address, Base58EncodedBytes } from '@trezoa/kit';
 import { getShortProgramName } from './program-names';
 
 export interface DecodedInstruction {
@@ -15,7 +15,7 @@ export interface DecodedInstruction {
 }
 
 /**
- * Instruction type from Solana Kit getTransaction with 'json' encoding (not exported from Solana Kit)
+ * Instruction type from Trezoa Kit getTransaction with 'json' encoding (not exported from Trezoa Kit)
  * Uses indices to reference accounts, not addresses directly
  */
 type TransactionInstruction = Readonly<{

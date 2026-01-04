@@ -10,13 +10,13 @@ import { formatBigIntBalance, formatBigIntUsd } from '../utils/formatting';
 import {
     useWalletAssets,
     getWalletAssetsQueryKey,
-    NATIVE_SOL_MINT,
+    NATIVE_TRZ_MINT,
     type WalletAssetsData,
     type TokenAccountInfo,
 } from './_internal/use-wallet-assets';
-import { fetchSolanaTokenListMetadata } from './_internal/solana-token-list';
+import { fetchTrezoaTokenListMetadata } from './_internal/trezoa-token-list';
 import type { CoinGeckoConfig } from '../types/connector';
-import type { SolanaClient } from '../lib/kit';
+import type { TrezoaClient } from '../lib/kit';
 import type { ClusterType } from '../utils/cluster';
 
 /**
@@ -80,7 +80,7 @@ export interface UseTokensOptions {
     refreshInterval?: number;
     /** Fetch metadata (name, symbol, logo) and USD prices */
     fetchMetadata?: boolean;
-    /** Include native SOL balance */
+    /** Include native TRZ balance */
     includeNativeSol?: boolean;
     /** Time in ms to consider data fresh (default: 0) */
     staleTimeMs?: number;
@@ -88,8 +88,8 @@ export interface UseTokensOptions {
     cacheTimeMs?: number;
     /** Whether to refetch on mount (default: 'stale') */
     refetchOnMount?: boolean | 'stale';
-    /** Override the Solana client from provider */
-    client?: SolanaClient | null;
+    /** Override the Trezoa client from provider */
+    client?: TrezoaClient | null;
 }
 
 export interface UseTokensReturn {
@@ -109,7 +109,7 @@ export interface UseTokensReturn {
     totalAccounts: number;
 }
 
-// Combined token metadata (Solana Token List + CoinGecko price)
+// Combined token metadata (Trezoa Token List + CoinGecko price)
 interface TokenMetadata {
     address: string;
     name: string;
@@ -406,7 +406,7 @@ async function fetchCoinGeckoPrices(coingeckoIds: string[], config?: CoinGeckoCo
 }
 
 /**
- * Fetch token metadata from Solana Token List API and prices from CoinGecko.
+ * Fetch token metadata from Trezoa Token List API and prices from CoinGecko.
  */
 async function fetchTokenMetadataHybrid(
     mints: string[],
@@ -439,7 +439,7 @@ async function fetchTokenMetadataHybrid(
     let didUpdate = false;
 
     // 1. Fetch token list metadata ONLY for mints missing metadata
-    const tokenListMetadata = await fetchSolanaTokenListMetadata(mintsNeedingTokenList, {
+    const tokenListMetadata = await fetchTrezoaTokenListMetadata(mintsNeedingTokenList, {
         timeoutMs: 10000,
         cluster: options?.cluster,
     });
@@ -452,7 +452,7 @@ async function fetchTokenMetadataHybrid(
 
         const combined: TokenMetadata = {
             address: meta.address,
-            name: meta.address === NATIVE_SOL_MINT ? 'Solana' : meta.name,
+            name: meta.address === NATIVE_TRZ_MINT ? 'Trezoa' : meta.name,
             symbol: meta.symbol,
             decimals: meta.decimals,
             logoURI: meta.logoURI,
@@ -567,7 +567,7 @@ function sortByValueDesc(a: Token, b: Token): number {
 
 /**
  * Hook for fetching wallet token holdings.
- * Fetches metadata (name, symbol, icon) from Solana Token List API and USD prices from CoinGecko.
+ * Fetches metadata (name, symbol, icon) from Trezoa Token List API and USD prices from CoinGecko.
  *
  * Features:
  * - Automatic request deduplication across components
@@ -674,11 +674,11 @@ export function useTokens(options: UseTokensOptions = {}): UseTokensReturn {
     const baseTokens = useMemo((): Token[] => {
         const result: Token[] = [];
 
-        // Add native SOL if requested
+        // Add native TRZ if requested
         if (includeNativeSol && walletAddress) {
             if (includeZeroBalance || lamports > 0n) {
                 result.push({
-                    mint: NATIVE_SOL_MINT,
+                    mint: NATIVE_TRZ_MINT,
                     tokenAccount: walletAddress,
                     amount: lamports,
                     decimals: 9,
@@ -689,7 +689,7 @@ export function useTokens(options: UseTokensOptions = {}): UseTokensReturn {
             }
         }
 
-        // Add SPL tokens
+        // Add TPL tokens
         for (const account of tokenAccounts) {
             if (!includeZeroBalance && account.amount === 0n) {
                 continue;
@@ -734,7 +734,7 @@ export function useTokens(options: UseTokensOptions = {}): UseTokensReturn {
 
         (async () => {
             try {
-                const mintList = mintsKey.split(',');
+                const mintList = mintsKey.tplit(',');
 
                 // Fetch and cache metadata; onUpdate is called immediately when logos arrive
                 await fetchTokenMetadataHybrid(mintList, coingeckoConfig, {

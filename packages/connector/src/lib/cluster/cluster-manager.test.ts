@@ -9,35 +9,35 @@ import { ClusterManager } from './cluster-manager';
 import { StateManager } from '../core/state-manager';
 import { EventEmitter } from '../core/event-emitter';
 import type { ConnectorState } from '../../types/connector';
-import type { SolanaCluster, SolanaClusterId } from '@wallet-ui/core';
+import type { TrezoaCluster, TrezoaClusterId } from '@wallet-ui/core';
 import { MockStorageAdapter } from '../../__tests__/mocks/storage-mock';
 import { createEventCollector } from '../../__tests__/utils/test-helpers';
 
 describe('ClusterManager', () => {
     let stateManager: StateManager;
     let eventEmitter: EventEmitter;
-    let storage: MockStorageAdapter<SolanaClusterId>;
+    let storage: MockStorageAdapter<TrezoaClusterId>;
     let eventCollector: ReturnType<typeof createEventCollector>;
 
-    const mainnetCluster: SolanaCluster = {
-        id: 'solana:mainnet',
+    const mainnetCluster: TrezoaCluster = {
+        id: 'trezoa:mainnet',
         name: 'Mainnet Beta',
         network: 'mainnet-beta',
-        rpcUrl: 'https://api.mainnet-beta.solana.com',
+        rpcUrl: 'https://api.mainnet-beta.trezoa.com',
     };
 
-    const devnetCluster: SolanaCluster = {
-        id: 'solana:devnet',
+    const devnetCluster: TrezoaCluster = {
+        id: 'trezoa:devnet',
         name: 'Devnet',
         network: 'devnet',
-        rpcUrl: 'https://api.devnet.solana.com',
+        rpcUrl: 'https://api.devnet.trezoa.com',
     };
 
-    const testnetCluster: SolanaCluster = {
-        id: 'solana:testnet',
+    const testnetCluster: TrezoaCluster = {
+        id: 'trezoa:testnet',
         name: 'Testnet',
         network: 'testnet',
-        rpcUrl: 'https://api.testnet.solana.com',
+        rpcUrl: 'https://api.testnet.trezoa.com',
     };
 
     const clusters = [mainnetCluster, devnetCluster, testnetCluster];
@@ -56,7 +56,7 @@ describe('ClusterManager', () => {
 
         stateManager = new StateManager(initialState);
         eventEmitter = new EventEmitter(false);
-        storage = new MockStorageAdapter<SolanaClusterId>('solana:mainnet');
+        storage = new MockStorageAdapter<TrezoaClusterId>('trezoa:mainnet');
         eventCollector = createEventCollector();
 
         eventEmitter.on(eventCollector.collect);
@@ -78,7 +78,7 @@ describe('ClusterManager', () => {
         it('should initialize with config and clusters', () => {
             const manager = new ClusterManager(stateManager, eventEmitter, storage, {
                 clusters,
-                initialCluster: 'solana:mainnet',
+                initialCluster: 'trezoa:mainnet',
             });
 
             const state = stateManager.getSnapshot();
@@ -102,11 +102,11 @@ describe('ClusterManager', () => {
             });
 
             const state = stateManager.getSnapshot();
-            expect(state.cluster?.id).toBe('solana:mainnet');
+            expect(state.cluster?.id).toBe('trezoa:mainnet');
         });
 
         it('should use first cluster if stored cluster not found', async () => {
-            await storage.set('solana:invalid' as SolanaClusterId);
+            await storage.set('trezoa:invalid' as TrezoaClusterId);
 
             const manager = new ClusterManager(stateManager, eventEmitter, storage, {
                 clusters,
@@ -119,7 +119,7 @@ describe('ClusterManager', () => {
         it('should handle empty clusters array', () => {
             const manager = new ClusterManager(stateManager, eventEmitter, storage, {
                 clusters: [],
-                initialCluster: 'solana:mainnet',
+                initialCluster: 'trezoa:mainnet',
             });
 
             const state = stateManager.getSnapshot();
@@ -134,106 +134,106 @@ describe('ClusterManager', () => {
         beforeEach(() => {
             manager = new ClusterManager(stateManager, eventEmitter, storage, {
                 clusters,
-                initialCluster: 'solana:mainnet',
+                initialCluster: 'trezoa:mainnet',
             });
             eventCollector.clear();
         });
 
         it('should set cluster successfully', async () => {
-            await manager.setCluster('solana:devnet');
+            await manager.setCluster('trezoa:devnet');
 
             const state = stateManager.getSnapshot();
-            expect(state.cluster?.id).toBe('solana:devnet');
+            expect(state.cluster?.id).toBe('trezoa:devnet');
         });
 
         it('should emit cluster:changed event', async () => {
-            await manager.setCluster('solana:devnet');
+            await manager.setCluster('trezoa:devnet');
 
             eventCollector.assertEventEmitted('cluster:changed');
             const events = eventCollector.getEventsByType('cluster:changed');
-            expect(events[0].cluster).toBe('solana:devnet');
-            expect(events[0].previousCluster).toBe('solana:mainnet');
+            expect(events[0].cluster).toBe('trezoa:devnet');
+            expect(events[0].previousCluster).toBe('trezoa:mainnet');
         });
 
         it('should not emit event if cluster unchanged', async () => {
-            await manager.setCluster('solana:mainnet');
+            await manager.setCluster('trezoa:mainnet');
 
             const events = eventCollector.getEventsByType('cluster:changed');
             expect(events).toHaveLength(0);
         });
 
         it('should save cluster to storage', async () => {
-            await manager.setCluster('solana:devnet');
+            await manager.setCluster('trezoa:devnet');
 
             const storedCluster = await storage.get();
-            expect(storedCluster).toBe('solana:devnet');
+            expect(storedCluster).toBe('trezoa:devnet');
         });
 
         it('should throw error for unknown cluster', async () => {
-            await expect(manager.setCluster('solana:unknown' as SolanaClusterId)).rejects.toThrow('not found');
+            await expect(manager.setCluster('trezoa:unknown' as TrezoaClusterId)).rejects.toThrow('not found');
         });
 
         it('should include available clusters in error message', async () => {
             try {
-                await manager.setCluster('solana:unknown' as SolanaClusterId);
+                await manager.setCluster('trezoa:unknown' as TrezoaClusterId);
                 expect.fail('Should have thrown error');
             } catch (error: unknown) {
                 const err = error instanceof Error ? error : new Error(String(error));
-                expect(err.message).toContain('solana:mainnet');
-                expect(err.message).toContain('solana:devnet');
-                expect(err.message).toContain('solana:testnet');
+                expect(err.message).toContain('trezoa:mainnet');
+                expect(err.message).toContain('trezoa:devnet');
+                expect(err.message).toContain('trezoa:testnet');
             }
         });
 
         it('should work without storage', async () => {
             const managerWithoutStorage = new ClusterManager(stateManager, eventEmitter, undefined, {
                 clusters,
-                initialCluster: 'solana:mainnet',
+                initialCluster: 'trezoa:mainnet',
             });
 
-            await expect(managerWithoutStorage.setCluster('solana:devnet')).resolves.not.toThrow();
+            await expect(managerWithoutStorage.setCluster('trezoa:devnet')).resolves.not.toThrow();
 
             const state = stateManager.getSnapshot();
-            expect(state.cluster?.id).toBe('solana:devnet');
+            expect(state.cluster?.id).toBe('trezoa:devnet');
         });
 
         it('should handle storage unavailable (private browsing)', async () => {
-            const unavailableStorage = new MockStorageAdapter<SolanaClusterId>('solana:mainnet');
+            const unavailableStorage = new MockStorageAdapter<TrezoaClusterId>('trezoa:mainnet');
             unavailableStorage.isAvailable = () => false;
 
             const managerWithUnavailableStorage = new ClusterManager(stateManager, eventEmitter, unavailableStorage, {
                 clusters,
-                initialCluster: 'solana:mainnet',
+                initialCluster: 'trezoa:mainnet',
             });
 
-            await managerWithUnavailableStorage.setCluster('solana:devnet');
+            await managerWithUnavailableStorage.setCluster('trezoa:devnet');
 
             // Should still update state even if storage fails
             const state = stateManager.getSnapshot();
-            expect(state.cluster?.id).toBe('solana:devnet');
+            expect(state.cluster?.id).toBe('trezoa:devnet');
         });
 
         it('should switch between multiple clusters', async () => {
             // Mainnet -> Devnet
-            await manager.setCluster('solana:devnet');
-            expect(stateManager.getSnapshot().cluster?.id).toBe('solana:devnet');
+            await manager.setCluster('trezoa:devnet');
+            expect(stateManager.getSnapshot().cluster?.id).toBe('trezoa:devnet');
 
             // Devnet -> Testnet
-            await manager.setCluster('solana:testnet');
-            expect(stateManager.getSnapshot().cluster?.id).toBe('solana:testnet');
+            await manager.setCluster('trezoa:testnet');
+            expect(stateManager.getSnapshot().cluster?.id).toBe('trezoa:testnet');
 
             // Testnet -> Mainnet
-            await manager.setCluster('solana:mainnet');
-            expect(stateManager.getSnapshot().cluster?.id).toBe('solana:mainnet');
+            await manager.setCluster('trezoa:mainnet');
+            expect(stateManager.getSnapshot().cluster?.id).toBe('trezoa:mainnet');
         });
 
         it('should update state immediately', async () => {
-            const setClusterPromise = manager.setCluster('solana:devnet');
+            const setClusterPromise = manager.setCluster('trezoa:devnet');
 
             // State should be updated before promise resolves
             await setClusterPromise;
             const state = stateManager.getSnapshot();
-            expect(state.cluster?.id).toBe('solana:devnet');
+            expect(state.cluster?.id).toBe('trezoa:devnet');
         });
     });
 
@@ -246,7 +246,7 @@ describe('ClusterManager', () => {
         it('should return current cluster', () => {
             const manager = new ClusterManager(stateManager, eventEmitter, storage, {
                 clusters,
-                initialCluster: 'solana:mainnet',
+                initialCluster: 'trezoa:mainnet',
             });
 
             const cluster = manager.getCluster();
@@ -256,13 +256,13 @@ describe('ClusterManager', () => {
         it('should return updated cluster after change', async () => {
             const manager = new ClusterManager(stateManager, eventEmitter, storage, {
                 clusters,
-                initialCluster: 'solana:mainnet',
+                initialCluster: 'trezoa:mainnet',
             });
 
-            await manager.setCluster('solana:devnet');
+            await manager.setCluster('trezoa:devnet');
 
             const cluster = manager.getCluster();
-            expect(cluster?.id).toBe('solana:devnet');
+            expect(cluster?.id).toBe('trezoa:devnet');
         });
     });
 
@@ -275,7 +275,7 @@ describe('ClusterManager', () => {
         it('should return all configured clusters', () => {
             const manager = new ClusterManager(stateManager, eventEmitter, storage, {
                 clusters,
-                initialCluster: 'solana:mainnet',
+                initialCluster: 'trezoa:mainnet',
             });
 
             const returnedClusters = manager.getClusters();
@@ -285,7 +285,7 @@ describe('ClusterManager', () => {
         it('should return array reference from state', () => {
             const manager = new ClusterManager(stateManager, eventEmitter, storage, {
                 clusters,
-                initialCluster: 'solana:mainnet',
+                initialCluster: 'trezoa:mainnet',
             });
 
             const state = stateManager.getSnapshot();
@@ -304,15 +304,15 @@ describe('ClusterManager', () => {
                 storage,
                 {
                     clusters,
-                    initialCluster: 'solana:mainnet',
+                    initialCluster: 'trezoa:mainnet',
                 },
                 true,
             );
 
-            await expect(manager.setCluster('solana:devnet')).resolves.not.toThrow();
+            await expect(manager.setCluster('trezoa:devnet')).resolves.not.toThrow();
 
             const state = stateManager.getSnapshot();
-            expect(state.cluster?.id).toBe('solana:devnet');
+            expect(state.cluster?.id).toBe('trezoa:devnet');
         });
 
         it('should not log in non-debug mode', async () => {
@@ -324,12 +324,12 @@ describe('ClusterManager', () => {
                 storage,
                 {
                     clusters,
-                    initialCluster: 'solana:mainnet',
+                    initialCluster: 'trezoa:mainnet',
                 },
                 false,
             );
 
-            await manager.setCluster('solana:devnet');
+            await manager.setCluster('trezoa:devnet');
 
             expect(consoleSpy).not.toHaveBeenCalled();
 
@@ -339,8 +339,8 @@ describe('ClusterManager', () => {
 
     describe('edge cases', () => {
         it('should handle cluster with same id but different properties', async () => {
-            const customMainnet: SolanaCluster = {
-                id: 'solana:mainnet',
+            const customMainnet: TrezoaCluster = {
+                id: 'trezoa:mainnet',
                 name: 'Custom Mainnet',
                 network: 'mainnet-beta',
                 rpcUrl: 'https://custom-rpc.com',
@@ -350,7 +350,7 @@ describe('ClusterManager', () => {
 
             const manager = new ClusterManager(stateManager, eventEmitter, storage, {
                 clusters: customClusters,
-                initialCluster: 'solana:mainnet',
+                initialCluster: 'trezoa:mainnet',
             });
 
             const cluster = manager.getCluster();
@@ -361,19 +361,19 @@ describe('ClusterManager', () => {
         it('should handle rapid cluster switching', async () => {
             const manager = new ClusterManager(stateManager, eventEmitter, storage, {
                 clusters,
-                initialCluster: 'solana:mainnet',
+                initialCluster: 'trezoa:mainnet',
             });
 
             // Switch rapidly
             await Promise.all([
-                manager.setCluster('solana:devnet'),
-                manager.setCluster('solana:testnet'),
-                manager.setCluster('solana:mainnet'),
+                manager.setCluster('trezoa:devnet'),
+                manager.setCluster('trezoa:testnet'),
+                manager.setCluster('trezoa:mainnet'),
             ]);
 
             // Final state should be consistent
             const cluster = manager.getCluster();
-            expect(cluster?.id).toMatch(/solana:(mainnet|devnet|testnet)/);
+            expect(cluster?.id).toMatch(/trezoa:(mainnet|devnet|testnet)/);
         });
 
         it('should handle null previous cluster on first change', async () => {
@@ -386,7 +386,7 @@ describe('ClusterManager', () => {
             stateManager.updateState({ cluster: null });
             eventCollector.clear();
 
-            await manager.setCluster('solana:devnet');
+            await manager.setCluster('trezoa:devnet');
 
             const events = eventCollector.getEventsByType('cluster:changed');
             expect(events.length).toBeGreaterThan(0);

@@ -406,7 +406,7 @@ export interface UseSharedQueryReturnSelected<TSelected> {
  *
  * @example With select (reduces rerenders)
  * ```tsx
- * const { data: solBalance } = useSharedQuery(
+ * const { data: trzBalance } = useSharedQuery(
  *   ['wallet-assets', address],
  *   fetchWalletAssets,
  *   {

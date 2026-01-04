@@ -43,9 +43,9 @@ describe('createWalletConnectTransport', () => {
             provider.session = {
                 topic: 'mock-topic',
                 namespaces: {
-                    solana: {
-                        accounts: ['solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:HMJfh9P8FEF5eVHp3XypYWThUYCQ9sWNZZQQxVP2jjr1'],
-                        chains: ['solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp'],
+                    trezoa: {
+                        accounts: ['trezoa:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:HMJfh9P8FEF5eVHp3XypYWThUYCQ9sWNZZQQxVP2jjr1'],
+                        chains: ['trezoa:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp'],
                     },
                 },
             };
@@ -100,9 +100,9 @@ describe('createWalletConnectTransport', () => {
             provider.session = {
                 topic: 'mock-topic',
                 namespaces: {
-                    solana: {
-                        accounts: ['solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:HMJfh9P8FEF5eVHp3XypYWThUYCQ9sWNZZQQxVP2jjr1'],
-                        chains: ['solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp'],
+                    trezoa: {
+                        accounts: ['trezoa:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:HMJfh9P8FEF5eVHp3XypYWThUYCQ9sWNZZQQxVP2jjr1'],
+                        chains: ['trezoa:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp'],
                     },
                 },
             };
@@ -115,7 +115,7 @@ describe('createWalletConnectTransport', () => {
         expect(provider.cleanupPendingPairings).toHaveBeenCalledWith({ deletePairings: false });
     });
 
-    it('should reset an existing non-Solana session and create a new pairing', async () => {
+    it('should reset an existing non-Trezoa session and create a new pairing', async () => {
         const config = createConfig();
 
         const provider = new (UniversalProvider as unknown as { new (): any })();
@@ -134,9 +134,9 @@ describe('createWalletConnectTransport', () => {
             provider.session = {
                 topic: 'mock-topic',
                 namespaces: {
-                    solana: {
-                        accounts: ['solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:HMJfh9P8FEF5eVHp3XypYWThUYCQ9sWNZZQQxVP2jjr1'],
-                        chains: ['solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp'],
+                    trezoa: {
+                        accounts: ['trezoa:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:HMJfh9P8FEF5eVHp3XypYWThUYCQ9sWNZZQQxVP2jjr1'],
+                        chains: ['trezoa:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp'],
                     },
                 },
             };

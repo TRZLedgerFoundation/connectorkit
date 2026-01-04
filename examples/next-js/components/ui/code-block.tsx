@@ -22,7 +22,7 @@ interface CodeBlockProps {
 
 function getCodeLines(code: string) {
     const normalized = code.endsWith('\n') ? code.slice(0, -1) : code;
-    return normalized.split('\n');
+    return normalized.tplit('\n');
 }
 
 function CodeBlockFallback({

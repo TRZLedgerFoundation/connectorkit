@@ -1,14 +1,14 @@
 /**
- * @solana/connector - useKitTransactionSigner hook
+ * @trezoa/connector - useKitTransactionSigner hook
  *
  * React hook for kit-compatible transaction signing
- * Use this when working with modern Solana libraries (@solana/kit)
+ * Use this when working with modern Trezoa libraries (@trezoa/kit)
  */
 
 'use client';
 
 import { useMemo } from 'react';
-import type { TransactionModifyingSigner } from '@solana/signers';
+import type { TransactionModifyingSigner } from '@trezoa/signers';
 import { useTransactionSigner } from './use-transaction-signer';
 import { createKitTransactionSigner } from '../lib/transaction/kit-transaction-signer';
 
@@ -18,7 +18,7 @@ import { createKitTransactionSigner } from '../lib/transaction/kit-transaction-s
 export interface UseKitTransactionSignerReturn {
     /**
      * Kit-compatible TransactionModifyingSigner instance (null if not connected)
-     * Use this with modern Solana libraries (@solana/kit)
+     * Use this with modern Trezoa libraries (@trezoa/kit)
      */
     signer: TransactionModifyingSigner | null;
 
@@ -37,17 +37,17 @@ export type UseGillTransactionSignerReturn = UseKitTransactionSignerReturn;
 /**
  * Hook for kit-compatible transaction signing
  *
- * Creates a TransactionPartialSigner that's compatible with @solana/kit,
- * enabling seamless integration with modern Solana development patterns.
+ * Creates a TransactionPartialSigner that's compatible with @trezoa/kit,
+ * enabling seamless integration with modern Trezoa development patterns.
  *
  * This hook wraps the standard useTransactionSigner and adapts it to kit's
  * interface, allowing you to use modern libraries without type incompatibilities.
  *
  * @example
  * ```tsx
- * import { useKitTransactionSigner } from '@solana/connector';
- * import { getTransferSolInstruction } from '@solana-program/system';
- * import { address, pipe, createTransactionMessage } from '@solana/kit';
+ * import { useKitTransactionSigner } from '@trezoa/connector';
+ * import { getTransferTrzInstruction } from '@trezoa-program/system';
+ * import { address, pipe, createTransactionMessage } from '@trezoa/kit';
  *
  * function ModernTransfer() {
  *   const { signer, ready } = useKitTransactionSigner();
@@ -55,8 +55,8 @@ export type UseGillTransactionSignerReturn = UseKitTransactionSignerReturn;
  *   const handleTransfer = async (recipient: string, amount: number) => {
  *     if (!signer) return;
  *
- *     // Fully type-safe with @solana/kit!
- *     const instruction = getTransferSolInstruction({
+ *     // Fully type-safe with @trezoa/kit!
+ *     const instruction = getTransferTrzInstruction({
  *       source: signer, // No type errors
  *       destination: address(recipient),
  *       amount
@@ -80,11 +80,11 @@ export type UseGillTransactionSignerReturn = UseKitTransactionSignerReturn;
  * @example
  * ```tsx
  * // For backward compatibility, continue using useTransactionSigner
- * import { useTransactionSigner } from '@solana/connector';
+ * import { useTransactionSigner } from '@trezoa/connector';
  *
  * function LegacyTransfer() {
  *   const { signer } = useTransactionSigner(); // Wallet adapter compatible
- *   // Works with @solana/web3.js v1 and wallet-adapter
+ *   // Works with @trezoa/web3.js v1 and wallet-adapter
  * }
  * ```
  */

@@ -1,5 +1,5 @@
 /**
- * @solana/connector - Wallet Authenticity Verifier
+ * @trezoa/connector - Wallet Authenticity Verifier
  *
  * Verifies that detected wallets are authentic and not malicious browser extensions
  * Uses dynamic heuristic-based approach instead of hard-coded wallet lists
@@ -165,16 +165,16 @@ export class WalletAuthenticityVerifier {
 
             score += (presentFeatures.length / requiredFeatures.length) * 0.4;
 
-            // Check for Solana-specific features (bonus points)
-            const solanaFeatures = [
-                'solana:signTransaction',
-                'solana:signAndSendTransaction',
-                'solana:signMessage',
-                'solana:signAllTransactions',
+            // Check for Trezoa-specific features (bonus points)
+            const trezoaFeatures = [
+                'trezoa:signTransaction',
+                'trezoa:signAndSendTransaction',
+                'trezoa:signMessage',
+                'trezoa:signAllTransactions',
             ];
-            const presentSolanaFeatures = solanaFeatures.filter(feature => feature in wallet.features!);
+            const presentTrezoaFeatures = trezoaFeatures.filter(feature => feature in wallet.features!);
 
-            score += (presentSolanaFeatures.length / solanaFeatures.length) * 0.3;
+            score += (presentTrezoaFeatures.length / trezoaFeatures.length) * 0.3;
 
             if (presentFeatures.length < requiredFeatures.length) {
                 warnings.push('Wallet missing some standard features');
@@ -239,7 +239,7 @@ export class WalletAuthenticityVerifier {
     }
 
     /**
-     * Verify Solana chain support
+     * Verify Trezoa chain support
      */
     private static checkChainSupport(wallet: DirectWallet): { score: number; warnings: string[] } {
         const warnings: string[] = [];
@@ -247,15 +247,15 @@ export class WalletAuthenticityVerifier {
 
         // Check chains array
         if (Array.isArray(wallet.chains)) {
-            const hasSolanaChain = wallet.chains.some(chain => {
+            const hasTrezoaChain = wallet.chains.some(chain => {
                 const chainStr = String(chain).toLowerCase();
-                return chainStr.includes('solana');
+                return chainStr.includes('trezoa');
             });
 
-            if (hasSolanaChain) {
+            if (hasTrezoaChain) {
                 score = 1.0;
             } else {
-                warnings.push('Wallet does not explicitly support Solana chain');
+                warnings.push('Wallet does not explicitly support Trezoa chain');
                 score = 0.3; // Some partial credit - might still work
             }
         } else if (wallet.chains === undefined) {
@@ -432,7 +432,7 @@ export class WalletAuthenticityVerifier {
             }
 
             // Check for excessive subdomains (common in phishing)
-            const subdomains = hostname.split('.');
+            const subdomains = hostname.tplit('.');
             if (subdomains.length > 4) {
                 return true;
             }

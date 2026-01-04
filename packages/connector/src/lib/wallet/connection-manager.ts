@@ -10,7 +10,7 @@ import type {
     StandardEventsFeature,
     StandardEventsOnMethod,
 } from '@wallet-standard/features';
-import type { Address } from '@solana/addresses';
+import type { Address } from '@trezoa/addresses';
 import { MAX_POLL_ATTEMPTS, POLL_INTERVALS_MS } from '../constants';
 
 /**

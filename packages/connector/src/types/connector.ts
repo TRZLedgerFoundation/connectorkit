@@ -2,12 +2,12 @@
  * Connector state, configuration, and diagnostic types
  */
 
-import type { SolanaCluster, SolanaClusterId } from '@wallet-ui/core';
+import type { TrezoaCluster, TrezoaClusterId } from '@wallet-ui/core';
 import type { StorageAdapter } from './storage';
 import type { WalletInfo } from './wallets';
 import type { AccountInfo } from './accounts';
 import type { Wallet } from './wallets';
-import type { Address } from '@solana/addresses';
+import type { Address } from '@trezoa/addresses';
 import type { WalletConnectConfig } from './walletconnect';
 
 /**
@@ -67,8 +67,8 @@ export interface ConnectorState {
     connecting: boolean;
     accounts: AccountInfo[];
     selectedAccount: Address | null;
-    cluster: SolanaCluster | null;
-    clusters: SolanaCluster[];
+    cluster: TrezoaCluster | null;
+    clusters: TrezoaCluster[];
 }
 
 /**
@@ -85,15 +85,15 @@ export interface ConnectorConfig {
     /** Storage configuration using enhanced storage adapters */
     storage?: {
         account: StorageAdapter<string | undefined>;
-        cluster: StorageAdapter<SolanaClusterId>;
+        cluster: StorageAdapter<TrezoaClusterId>;
         wallet: StorageAdapter<string | undefined>;
     };
 
     /** Enhanced cluster configuration using wallet-ui */
     cluster?: {
-        clusters?: SolanaCluster[];
+        clusters?: TrezoaCluster[];
         persistSelection?: boolean;
-        initialCluster?: SolanaClusterId;
+        initialCluster?: TrezoaClusterId;
     };
 
     /**
@@ -120,7 +120,7 @@ export interface ConnectorConfig {
     /**
      * WalletConnect configuration for connecting via QR code / deep link.
      * When enabled, a "WalletConnect" wallet is registered in the Wallet Standard registry.
-     * @see https://docs.walletconnect.network/wallet-sdk/chain-support/solana
+     * @see https://docs.walletconnect.network/wallet-sdk/chain-support/trezoa
      */
     walletConnect?: WalletConnectConfig;
 }

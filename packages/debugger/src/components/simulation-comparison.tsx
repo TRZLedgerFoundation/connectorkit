@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger - Simulation Comparison Component
+ * @trezoa/connector-debugger - Simulation Comparison Component
  *
  * Side-by-side comparison of simulation results (with/without ALT)
  */
@@ -15,7 +15,7 @@ interface SimulationComparisonProps {
 }
 
 /**
- * Displays side-by-side comparison of two simulation results
+ * Ditplays side-by-side comparison of two simulation results
  */
 export function SimulationComparisonView({ comparison }: SimulationComparisonProps) {
     const { original, optimized, savings } = comparison;

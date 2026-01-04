@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { AppProvider, getDefaultConfig, getDefaultMobileConfig } from '@solana/connector/react';
+import { AppProvider, getDefaultConfig, getDefaultMobileConfig } from '@trezoa/connector/react';
 import type { ReactNode } from 'react';
 
 // Get origin synchronously on client, fallback for SSR
@@ -21,22 +21,22 @@ export function Providers({ children }: { children: ReactNode }) {
 
         const clusters = [
             {
-                id: 'solana:mainnet' as const,
+                id: 'trezoa:mainnet' as const,
                 label: 'Mainnet',
                 name: 'mainnet-beta' as const,
                 url: rpcProxyUrl,
             },
             {
-                id: 'solana:devnet' as const,
+                id: 'trezoa:devnet' as const,
                 label: 'Devnet',
                 name: 'devnet' as const,
-                url: 'https://api.devnet.solana.com',
+                url: 'https://api.devnet.trezoa.com',
             },
             {
-                id: 'solana:testnet' as const,
+                id: 'trezoa:testnet' as const,
                 label: 'Testnet',
                 name: 'testnet' as const,
-                url: 'https://api.testnet.solana.com',
+                url: 'https://api.testnet.trezoa.com',
             },
         ];
 

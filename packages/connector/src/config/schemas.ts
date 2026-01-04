@@ -1,5 +1,5 @@
 /**
- * @solana/connector - Configuration Schemas
+ * @trezoa/connector - Configuration Schemas
  *
  * Zod schemas for runtime validation of configuration options.
  * These schemas provide type-safe validation with helpful error messages.
@@ -12,15 +12,15 @@ import { z } from 'zod/v4';
 // ============================================================================
 
 /**
- * Valid Solana network values
+ * Valid Trezoa network values
  */
-export const solanaNetworkSchema = z.enum(['mainnet', 'mainnet-beta', 'devnet', 'testnet', 'localnet']);
+export const trezoaNetworkSchema = z.enum(['mainnet', 'mainnet-beta', 'devnet', 'testnet', 'localnet']);
 
 /**
- * Solana cluster ID format (e.g., 'solana:mainnet', 'solana:devnet')
+ * Trezoa cluster ID format (e.g., 'trezoa:mainnet', 'trezoa:devnet')
  */
-export const solanaClusterIdSchema = z.string().regex(/^solana:(mainnet|devnet|testnet|localnet|[a-zA-Z0-9-]+)$/, {
-    message: 'Cluster ID must be in format "solana:<network>" (e.g., "solana:mainnet")',
+export const trezoaClusterIdSchema = z.string().regex(/^trezoa:(mainnet|devnet|testnet|localnet|[a-zA-Z0-9-]+)$/, {
+    message: 'Cluster ID must be in format "trezoa:<network>" (e.g., "trezoa:mainnet")',
 });
 
 /**
@@ -68,8 +68,8 @@ export const walletConnectObjectConfigSchema = z.object({
     enabled: z.boolean().optional(),
     projectId: z.string().min(1, 'WalletConnect projectId is required'),
     metadata: walletConnectMetadataSchema,
-    defaultChain: z.enum(['solana:mainnet', 'solana:devnet', 'solana:testnet']).optional(),
-    onDisplayUri: z.custom<(uri: string) => void>(val => typeof val === 'function').optional(),
+    defaultChain: z.enum(['trezoa:mainnet', 'trezoa:devnet', 'trezoa:testnet']).optional(),
+    onDitplayUri: z.custom<(uri: string) => void>(val => typeof val === 'function').optional(),
     onSessionEstablished: z.custom<() => void>(val => typeof val === 'function').optional(),
     onSessionDisconnected: z.custom<() => void>(val => typeof val === 'function').optional(),
     relayUrl: urlSchema.optional(),
@@ -110,10 +110,10 @@ export const storageConfigSchema = z
 // ============================================================================
 
 /**
- * SolanaCluster object schema
+ * TrezoaCluster object schema
  */
-export const solanaClusterSchema = z.object({
-    id: solanaClusterIdSchema,
+export const trezoaClusterSchema = z.object({
+    id: trezoaClusterIdSchema,
     label: z.string().min(1, 'Cluster label cannot be empty'),
     url: urlSchema,
     urlWs: urlSchema.optional(),
@@ -121,9 +121,9 @@ export const solanaClusterSchema = z.object({
 
 export const clusterConfigSchema = z
     .object({
-        clusters: z.array(solanaClusterSchema).optional(),
+        clusters: z.array(trezoaClusterSchema).optional(),
         persistSelection: z.boolean().optional(),
-        initialCluster: solanaClusterIdSchema.optional(),
+        initialCluster: trezoaClusterIdSchema.optional(),
     })
     .optional();
 
@@ -148,15 +148,15 @@ export const defaultConfigOptionsSchema = z.object({
     enableErrorBoundary: z.boolean().optional(),
 
     // Network
-    network: solanaNetworkSchema.optional(),
+    network: trezoaNetworkSchema.optional(),
 
     // Numbers
     maxRetries: z.number().int().positive().max(10).optional(),
 
     // Complex types
     storage: storageConfigSchema,
-    clusters: z.array(solanaClusterSchema).optional(),
-    customClusters: z.array(solanaClusterSchema).optional(),
+    clusters: z.array(trezoaClusterSchema).optional(),
+    customClusters: z.array(trezoaClusterSchema).optional(),
     programLabels: z.record(z.string(), z.string()).optional(),
     coingecko: coinGeckoConfigSchema,
     walletConnect: walletConnectConfigSchema,
@@ -186,8 +186,8 @@ export const connectorConfigSchema = z
 // Type Exports (inferred from schemas)
 // ============================================================================
 
-export type SolanaNetworkInput = z.input<typeof solanaNetworkSchema>;
-export type SolanaClusterIdInput = z.input<typeof solanaClusterIdSchema>;
+export type TrezoaNetworkInput = z.input<typeof trezoaNetworkSchema>;
+export type TrezoaClusterIdInput = z.input<typeof trezoaClusterIdSchema>;
 export type CoinGeckoConfigInput = z.input<typeof coinGeckoConfigSchema>;
 export type WalletConnectConfigInput = z.input<typeof walletConnectConfigSchema>;
 export type DefaultConfigOptionsInput = z.input<typeof defaultConfigOptionsSchema>;

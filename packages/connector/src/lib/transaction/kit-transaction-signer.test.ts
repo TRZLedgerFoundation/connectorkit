@@ -1,21 +1,21 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createKitTransactionSigner, createGillTransactionSigner } from './kit-transaction-signer';
 import type { TransactionSigner } from './transaction-signer';
-import type { SolanaTransaction, TransactionSignerCapabilities } from '../../types/transactions';
+import type { TrezoaTransaction, TransactionSignerCapabilities } from '../../types/transactions';
 
 // Mock dependencies
-vi.mock('@solana/transactions', () => ({
+vi.mock('@trezoa/transactions', () => ({
     getTransactionDecoder: vi.fn(() => ({ decode: vi.fn() })),
     assertIsTransactionWithinSizeLimit: vi.fn(),
 }));
 
-vi.mock('@solana/codecs', () => ({
+vi.mock('@trezoa/codecs', () => ({
     getBase58Decoder: vi.fn(() => ({ decode: vi.fn(() => 'mock-address') })),
 }));
 
-vi.mock('@solana/keys', () => ({}));
+vi.mock('@trezoa/keys', () => ({}));
 
-vi.mock('@solana/addresses', () => ({
+vi.mock('@trezoa/addresses', () => ({
     address: vi.fn((addr: string) => addr),
 }));
 
@@ -45,8 +45,8 @@ describe('KitTransactionSigner', () => {
 
         const signer = {
             address: mockAddress,
-            signTransaction: vi.fn(async (transaction: SolanaTransaction) => transaction),
-            signAllTransactions: vi.fn(async (transactions: SolanaTransaction[]) => transactions),
+            signTransaction: vi.fn(async (transaction: TrezoaTransaction) => transaction),
+            signAllTransactions: vi.fn(async (transactions: TrezoaTransaction[]) => transactions),
             signAndSendTransaction: vi.fn(async () => 'mock-signature'),
             signAndSendTransactions: vi.fn(async () => ['mock-signature']),
             getCapabilities: vi.fn(() => capabilities),

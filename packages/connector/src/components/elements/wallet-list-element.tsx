@@ -2,18 +2,18 @@
 
 import React from 'react';
 import type { ReactNode } from 'react';
-import { useWalletInfo, type WalletDisplayInfo } from '../../hooks/use-wallet-info';
+import { useWalletInfo, type WalletDitplayInfo } from '../../hooks/use-wallet-info';
 import { useConnector } from '../../ui/connector-provider';
 
 export interface WalletListElementRenderProps {
-    wallets: WalletDisplayInfo[];
-    installedWallets: WalletDisplayInfo[];
+    wallets: WalletDitplayInfo[];
+    installedWallets: WalletDitplayInfo[];
     select: (walletName: string) => Promise<void>;
     connecting: boolean;
 }
 
 export interface WalletListElementWalletProps {
-    wallet: WalletDisplayInfo;
+    wallet: WalletDitplayInfo;
     select: () => Promise<void>;
     connecting: boolean;
 }
@@ -133,7 +133,7 @@ export function WalletListElement({
                         {installedOnly ? 'No wallets detected' : 'No wallets available'}
                     </p>
                     <p className="ck-wallet-list-empty-hint" data-slot="wallet-list-empty-hint">
-                        Install a Solana wallet extension to continue
+                        Install a Trezoa wallet extension to continue
                     </p>
                 </div>
             </div>

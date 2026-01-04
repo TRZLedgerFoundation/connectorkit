@@ -1,0 +1,38 @@
+name: 'Setup Trezoa CLI'
+description: 'Install and cache Trezoa CLI'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Get current week for cache key
+      id: week
+      shell: bash
+      run: echo "week=$(date +'%Y-W%U')" >> $GITHUB_OUTPUT
+
+    - name: Cache Trezoa CLI installation
+      uses: actions/cache@v4
+      with:
+        path: ~/.local/share/trezoa
+        key: trezoa-cli-stable-${{ runner.os }}-${{ steps.week.outputs.week }}
+        restore-keys: |
+          trezoa-cli-stable-${{ runner.os }}-
+
+    - name: Install Trezoa CLI
+      shell: bash
+      run: |
+        # Check if already installed
+        if command -v trezoa &> /dev/null; then
+          echo "Trezoa CLI already installed"
+          trezoa --version
+          exit 0
+        fi
+
+        # Install Trezoa CLI (stable version)
+        sh -c "$(curl -sSfL https://release.trezoa.xyz/v2.2.19/install)"
+        echo "$HOME/.local/share/trezoa/install/active_release/bin" >> $GITHUB_PATH
+        export PATH="$HOME/.local/share/trezoa/install/active_release/bin:$PATH"
+
+        # Verify installation
+        trezoa --version
+        trezoa-test-validator --version
+        cargo-build-sbf --version

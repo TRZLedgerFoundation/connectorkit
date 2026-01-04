@@ -1,8 +1,8 @@
 /**
- * @solana/connector - Kit Client Factory
+ * @trezoa/connector - Kit Client Factory
  *
- * Creates a Solana RPC and WebSocket subscriptions client.
- * Replaces gill's createSolanaClient with a kit-based implementation.
+ * Creates a Trezoa RPC and WebSocket subscriptions client.
+ * Replaces gill's createTrezoaClient with a kit-based implementation.
  */
 
 import type {
@@ -11,100 +11,100 @@ import type {
     TestnetUrl,
     Rpc,
     RpcSubscriptions,
-    SolanaRpcApi,
-    SolanaRpcSubscriptionsApi,
-} from '@solana/kit';
-import { createSolanaRpc, createSolanaRpcSubscriptions } from '@solana/kit';
+    TrezoaRpcApi,
+    TrezoaRpcSubscriptionsApi,
+} from '@trezoa/kit';
+import { createTrezoaRpc, createTrezoaRpcSubscriptions } from '@trezoa/kit';
 
-import type { LocalnetUrl, ModifiedClusterUrl, SolanaClientUrlOrMoniker } from './rpc';
-import { getPublicSolanaRpcUrl } from './rpc';
+import type { LocalnetUrl, ModifiedClusterUrl, TrezoaClientUrlOrMoniker } from './rpc';
+import { getPublicTrezoaRpcUrl } from './rpc';
 
 /**
- * Configuration for creating a Solana RPC client
+ * Configuration for creating a Trezoa RPC client
  */
-export interface CreateSolanaClientRpcConfig {
+export interface CreateTrezoaClientRpcConfig {
     /** Custom port for the RPC endpoint */
     port?: number;
 }
 
 /**
- * Configuration for creating a Solana RPC subscriptions client
+ * Configuration for creating a Trezoa RPC subscriptions client
  */
-export interface CreateSolanaClientRpcSubscriptionsConfig {
+export interface CreateTrezoaClientRpcSubscriptionsConfig {
     /** Custom port for the WebSocket endpoint */
     port?: number;
 }
 
 /**
- * Arguments for creating a Solana client
+ * Arguments for creating a Trezoa client
  */
-export interface CreateSolanaClientArgs<TClusterUrl extends SolanaClientUrlOrMoniker = string> {
-    /** Full RPC URL (for a private RPC endpoint) or the Solana moniker (for a public RPC endpoint) */
-    urlOrMoniker: SolanaClientUrlOrMoniker | TClusterUrl;
+export interface CreateTrezoaClientArgs<TClusterUrl extends TrezoaClientUrlOrMoniker = string> {
+    /** Full RPC URL (for a private RPC endpoint) or the Trezoa moniker (for a public RPC endpoint) */
+    urlOrMoniker: TrezoaClientUrlOrMoniker | TClusterUrl;
     /** Configuration used to create the `rpc` client */
-    rpcConfig?: CreateSolanaClientRpcConfig;
+    rpcConfig?: CreateTrezoaClientRpcConfig;
     /** Configuration used to create the `rpcSubscriptions` client */
-    rpcSubscriptionsConfig?: CreateSolanaClientRpcSubscriptionsConfig;
+    rpcSubscriptionsConfig?: CreateTrezoaClientRpcSubscriptionsConfig;
 }
 
 /**
- * A Solana client with RPC and WebSocket subscription capabilities
+ * A Trezoa client with RPC and WebSocket subscription capabilities
  */
-export interface SolanaClient<TClusterUrl extends ModifiedClusterUrl | string = string> {
+export interface TrezoaClient<TClusterUrl extends ModifiedClusterUrl | string = string> {
     /** Used to make RPC calls to your RPC provider */
-    rpc: Rpc<SolanaRpcApi>;
+    rpc: Rpc<TrezoaRpcApi>;
     /** Used to make RPC websocket calls to your RPC provider */
-    rpcSubscriptions: RpcSubscriptions<SolanaRpcSubscriptionsApi>;
+    rpcSubscriptions: RpcSubscriptions<TrezoaRpcSubscriptionsApi>;
     /** Full RPC URL that was used to create this client */
-    urlOrMoniker: SolanaClientUrlOrMoniker | TClusterUrl;
+    urlOrMoniker: TrezoaClientUrlOrMoniker | TClusterUrl;
 }
 
 /**
- * Create a Solana `rpc` and `rpcSubscriptions` client
+ * Create a Trezoa `rpc` and `rpcSubscriptions` client
  *
  * @param props - Configuration for the client
- * @returns Solana client with RPC and WebSocket subscription capabilities
+ * @returns Trezoa client with RPC and WebSocket subscription capabilities
  *
  * @example
  * ```ts
  * // Using a cluster moniker
- * const client = createSolanaClient({ urlOrMoniker: 'devnet' });
+ * const client = createTrezoaClient({ urlOrMoniker: 'devnet' });
  *
  * // Using a custom RPC URL
- * const client = createSolanaClient({ urlOrMoniker: 'https://my-rpc.example.com' });
+ * const client = createTrezoaClient({ urlOrMoniker: 'https://my-rpc.example.com' });
  *
  * // Making RPC calls
  * const balance = await client.rpc.getBalance(address).send();
  * ```
  */
-export function createSolanaClient(
-    props: Omit<CreateSolanaClientArgs<MainnetUrl | 'mainnet'>, 'urlOrMoniker'> & {
+export function createTrezoaClient(
+    props: Omit<CreateTrezoaClientArgs<MainnetUrl | 'mainnet'>, 'urlOrMoniker'> & {
         urlOrMoniker: 'mainnet';
     },
-): SolanaClient<MainnetUrl>;
-export function createSolanaClient(
-    props: Omit<CreateSolanaClientArgs<DevnetUrl | 'devnet'>, 'urlOrMoniker'> & {
+): TrezoaClient<MainnetUrl>;
+export function createTrezoaClient(
+    props: Omit<CreateTrezoaClientArgs<DevnetUrl | 'devnet'>, 'urlOrMoniker'> & {
         urlOrMoniker: 'devnet';
     },
-): SolanaClient<DevnetUrl>;
-export function createSolanaClient(
-    props: Omit<CreateSolanaClientArgs<TestnetUrl | 'testnet'>, 'urlOrMoniker'> & {
+): TrezoaClient<DevnetUrl>;
+export function createTrezoaClient(
+    props: Omit<CreateTrezoaClientArgs<TestnetUrl | 'testnet'>, 'urlOrMoniker'> & {
         urlOrMoniker: 'testnet';
     },
-): SolanaClient<TestnetUrl>;
-export function createSolanaClient(
-    props: Omit<CreateSolanaClientArgs<LocalnetUrl | 'localnet'>, 'urlOrMoniker'> & {
+): TrezoaClient<TestnetUrl>;
+export function createTrezoaClient(
+    props: Omit<CreateTrezoaClientArgs<LocalnetUrl | 'localnet'>, 'urlOrMoniker'> & {
         urlOrMoniker: 'localnet';
     },
-): SolanaClient<LocalnetUrl>;
-export function createSolanaClient<TClusterUrl extends ModifiedClusterUrl>(
-    props: CreateSolanaClientArgs<TClusterUrl>,
-): SolanaClient<TClusterUrl>;
-export function createSolanaClient<TCluster extends ModifiedClusterUrl>({
+): TrezoaClient<LocalnetUrl>;
+export function createTrezoaClient<TClusterUrl extends ModifiedClusterUrl>(
+    props: CreateTrezoaClientArgs<TClusterUrl>,
+): TrezoaClient<TClusterUrl>;
+export function createTrezoaClient<TCluster extends ModifiedClusterUrl>({
     urlOrMoniker,
     rpcConfig,
     rpcSubscriptionsConfig,
-}: CreateSolanaClientArgs<TCluster>): SolanaClient<TCluster> {
+}: CreateTrezoaClientArgs<TCluster>): TrezoaClient<TCluster> {
     if (!urlOrMoniker) throw new Error('Cluster url or moniker is required');
 
     let parsedUrl: URL;
@@ -119,7 +119,7 @@ export function createSolanaClient<TCluster extends ModifiedClusterUrl>({
             // Not a valid URL, try as moniker
             try {
                 parsedUrl = new URL(
-                    getPublicSolanaRpcUrl(urlOrMoniker.toString() as 'mainnet' | 'devnet' | 'testnet' | 'localnet'),
+                    getPublicTrezoaRpcUrl(urlOrMoniker.toString() as 'mainnet' | 'devnet' | 'testnet' | 'localnet'),
                 );
             } catch {
                 throw new Error('Invalid URL or cluster moniker');
@@ -137,7 +137,7 @@ export function createSolanaClient<TCluster extends ModifiedClusterUrl>({
     }
 
     const rpcUrl = parsedUrl.toString();
-    const rpc = createSolanaRpc(rpcUrl) as Rpc<SolanaRpcApi>;
+    const rpc = createTrezoaRpc(rpcUrl) as Rpc<TrezoaRpcApi>;
 
     // Convert HTTP to WS for subscriptions
     parsedUrl.protocol = parsedUrl.protocol.replace('http', 'ws');
@@ -149,9 +149,9 @@ export function createSolanaClient<TCluster extends ModifiedClusterUrl>({
         parsedUrl.port = '8900';
     }
 
-    const rpcSubscriptions = createSolanaRpcSubscriptions(
+    const rpcSubscriptions = createTrezoaRpcSubscriptions(
         parsedUrl.toString(),
-    ) as RpcSubscriptions<SolanaRpcSubscriptionsApi>;
+    ) as RpcSubscriptions<TrezoaRpcSubscriptionsApi>;
 
     return {
         rpc,

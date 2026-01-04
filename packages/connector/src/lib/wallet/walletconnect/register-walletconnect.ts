@@ -43,11 +43,11 @@ export interface WalletConnectRegistration {
  *   projectId: 'your-project-id',
  *   metadata: {
  *     name: 'My App',
- *     description: 'My Solana App',
+ *     description: 'My Trezoa App',
  *     url: 'https://myapp.com',
  *     icons: ['https://myapp.com/icon.png'],
  *   },
- *   onDisplayUri: (uri) => {
+ *   onDitplayUri: (uri) => {
  *     // Show QR code with this URI
  *   },
  * });

@@ -16,7 +16,7 @@
         "incremental": true,
         "baseUrl": ".",
         "paths": {
-            "@solana/*": ["packages/*/src"]
+            "@trezoa/*": ["packages/*/src"]
         }
     },
     "include": ["**/*.ts", "**/*.tsx"],

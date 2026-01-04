@@ -63,7 +63,7 @@ const inter = localFont({
 export const metadata: Metadata = {
     title: 'ConnectorKit',
     description:
-        'Production-ready wallet connection package for Solana. Pre-built, composable blocks built with modern standards.',
+        'Production-ready wallet connection package for Trezoa. Pre-built, composable blocks built with modern standards.',
 };
 
 export default function RootLayout({

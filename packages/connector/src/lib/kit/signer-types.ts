@@ -1,11 +1,11 @@
 /**
- * @solana/connector - Kit Signer Types
+ * @trezoa/connector - Kit Signer Types
  *
- * Re-exports of Kit signer types from @solana/signers and related packages.
+ * Re-exports of Kit signer types from @trezoa/signers and related packages.
  * These types enable framework-agnostic Kit integration.
  */
 
-// Import from actual @solana/signers package
+// Import from actual @trezoa/signers package
 import type {
     MessageModifyingSigner,
     TransactionSendingSigner,
@@ -13,11 +13,11 @@ import type {
     MessageModifyingSignerConfig,
     TransactionSendingSignerConfig,
     SignatureDictionary,
-} from '@solana/signers';
+} from '@trezoa/signers';
 
-import type { Address } from '@solana/addresses';
-import type { SignatureBytes } from '@solana/keys';
-import type { Transaction } from '@solana/transactions';
+import type { Address } from '@trezoa/addresses';
+import type { SignatureBytes } from '@trezoa/keys';
+import type { Transaction } from '@trezoa/transactions';
 
 // Re-export for convenience
 export type {
@@ -33,4 +33,4 @@ export type {
 };
 
 // Re-export utility function
-export { createSignableMessage } from '@solana/signers';
+export { createSignableMessage } from '@trezoa/signers';

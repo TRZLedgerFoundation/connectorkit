@@ -3,17 +3,17 @@
  */
 
 import type { Wallet, WalletAccount } from './wallets';
-import type { SolanaCluster, SolanaClusterId } from '@wallet-ui/core';
-import type { Address } from '@solana/addresses';
-import type { Signature } from '@solana/keys';
-import type { TransactionMessage } from '@solana/transaction-messages';
-import type { Transaction, VersionedTransaction } from '@solana/web3.js';
+import type { TrezoaCluster, TrezoaClusterId } from '@wallet-ui/core';
+import type { Address } from '@trezoa/addresses';
+import type { Signature } from '@trezoa/keys';
+import type { TransactionMessage } from '@trezoa/transaction-messages';
+import type { Transaction, VersionedTransaction } from '@trezoa/web3.js';
 
 /**
- * Union type for all supported Solana transaction formats
- * Supports both legacy (@solana/web3.js) and modern (gill) transaction types
+ * Union type for all supported Trezoa transaction formats
+ * Supports both legacy (@trezoa/web3.js) and modern (gill) transaction types
  */
-export type SolanaTransaction = Transaction | VersionedTransaction | TransactionMessage | Uint8Array | ArrayBufferView;
+export type TrezoaTransaction = Transaction | VersionedTransaction | TransactionMessage | Uint8Array | ArrayBufferView;
 
 /**
  * Transaction status during its lifecycle
@@ -58,7 +58,7 @@ export interface TransactionSignerConfig {
     /** The specific account to sign with */
     account: WalletAccount;
     /** Optional cluster/network context for chain-specific operations */
-    cluster?: SolanaCluster;
+    cluster?: TrezoaCluster;
     /** Optional event emitter for transaction lifecycle events */
     eventEmitter?: {
         emit: (event: unknown) => void;
@@ -72,7 +72,7 @@ export interface SignedTransaction {
     /** The transaction signature/hash */
     signature: string;
     /** The signed transaction data */
-    transaction: SolanaTransaction;
+    transaction: TrezoaTransaction;
 }
 
 /**
@@ -103,7 +103,7 @@ export interface TransactionActivity {
     /** Error message if failed */
     error?: string;
     /** Cluster where transaction was sent */
-    cluster: SolanaClusterId;
+    cluster: TrezoaClusterId;
     /** Fee payer address */
     feePayer?: Address;
     /** Method used (signAndSendTransaction, sendTransaction, etc) */

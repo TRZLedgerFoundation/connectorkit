@@ -1,5 +1,5 @@
 /**
- * @solana/connector - Kit Transaction Preparation
+ * @trezoa/connector - Kit Transaction Preparation
  *
  * Prepares transactions for sending by setting blockhash.
  * A simplified version that focuses on blockhash management.
@@ -11,11 +11,11 @@ import type {
     TransactionMessage,
     TransactionMessageWithBlockhashLifetime,
     TransactionMessageWithFeePayer,
-} from '@solana/kit';
+} from '@trezoa/kit';
 import {
     assertIsTransactionMessageWithBlockhashLifetime,
     setTransactionMessageLifetimeUsingBlockhash,
-} from '@solana/kit';
+} from '@trezoa/kit';
 
 import { debug, isDebugEnabled } from './debug';
 

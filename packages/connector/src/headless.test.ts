@@ -123,10 +123,10 @@ describe('Headless Entry Point (headless.ts)', () => {
 
         it('should export formatting utilities', () => {
             expect(ConnectorKitHeadless.formatAddress).toBeDefined();
-            expect(ConnectorKitHeadless.formatSOL).toBeDefined();
+            expect(ConnectorKitHeadless.formatTRZ).toBeDefined();
             expect(ConnectorKitHeadless.formatSignature).toBeDefined();
             expect(typeof ConnectorKitHeadless.formatAddress).toBe('function');
-            expect(typeof ConnectorKitHeadless.formatSOL).toBe('function');
+            expect(typeof ConnectorKitHeadless.formatTRZ).toBe('function');
         });
 
         it('should export cluster utilities', () => {
@@ -141,7 +141,7 @@ describe('Headless Entry Point (headless.ts)', () => {
             expect(ConnectorKitHeadless.normalizeNetwork).toBeDefined();
             expect(ConnectorKitHeadless.toClusterId).toBeDefined();
             expect(ConnectorKitHeadless.getDefaultRpcUrl).toBeDefined();
-            expect(ConnectorKitHeadless.getNetworkDisplayName).toBeDefined();
+            expect(ConnectorKitHeadless.getNetworkDitplayName).toBeDefined();
             expect(typeof ConnectorKitHeadless.normalizeNetwork).toBe('function');
             expect(typeof ConnectorKitHeadless.getDefaultRpcUrl).toBe('function');
         });
@@ -149,13 +149,13 @@ describe('Headless Entry Point (headless.ts)', () => {
 
     describe('explorer URLs', () => {
         it('should export explorer URL functions', () => {
-            expect(ConnectorKitHeadless.getSolanaExplorerUrl).toBeDefined();
-            expect(ConnectorKitHeadless.getSolscanUrl).toBeDefined();
+            expect(ConnectorKitHeadless.getTrezoaExplorerUrl).toBeDefined();
+            expect(ConnectorKitHeadless.getTrzscanUrl).toBeDefined();
             expect(ConnectorKitHeadless.getXrayUrl).toBeDefined();
-            expect(ConnectorKitHeadless.getSolanaFmUrl).toBeDefined();
+            expect(ConnectorKitHeadless.getTrezoaFmUrl).toBeDefined();
             expect(ConnectorKitHeadless.getAllExplorerUrls).toBeDefined();
-            expect(typeof ConnectorKitHeadless.getSolanaExplorerUrl).toBe('function');
-            expect(typeof ConnectorKitHeadless.getSolscanUrl).toBe('function');
+            expect(typeof ConnectorKitHeadless.getTrezoaExplorerUrl).toBe('function');
+            expect(typeof ConnectorKitHeadless.getTrzscanUrl).toBe('function');
         });
 
         it('should export signature utilities', () => {
@@ -179,11 +179,11 @@ describe('Headless Entry Point (headless.ts)', () => {
 
     describe('wallet-ui integration', () => {
         it('should export cluster creation functions', () => {
-            expect(ConnectorKitHeadless.createSolanaMainnet).toBeDefined();
-            expect(ConnectorKitHeadless.createSolanaDevnet).toBeDefined();
-            expect(ConnectorKitHeadless.createSolanaTestnet).toBeDefined();
-            expect(ConnectorKitHeadless.createSolanaLocalnet).toBeDefined();
-            expect(typeof ConnectorKitHeadless.createSolanaMainnet).toBe('function');
+            expect(ConnectorKitHeadless.createTrezoaMainnet).toBeDefined();
+            expect(ConnectorKitHeadless.createTrezoaDevnet).toBeDefined();
+            expect(ConnectorKitHeadless.createTrezoaTestnet).toBeDefined();
+            expect(ConnectorKitHeadless.createTrezoaLocalnet).toBeDefined();
+            expect(typeof ConnectorKitHeadless.createTrezoaMainnet).toBe('function');
         });
     });
 

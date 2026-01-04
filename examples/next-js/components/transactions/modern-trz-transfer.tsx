@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 import {
-    createSolanaRpc,
+    createTrezoaRpc,
     pipe,
     createTransactionMessage,
     setTransactionMessageFeePayerSigner,
@@ -10,14 +10,14 @@ import {
     appendTransactionMessageInstructions,
     sendAndConfirmTransactionFactory,
     signTransactionMessageWithSigners,
-    createSolanaRpcSubscriptions,
+    createTrezoaRpcSubscriptions,
     lamports,
     assertIsTransactionWithBlockhashLifetime,
     signature as createSignature,
     type TransactionSigner,
-} from '@solana/kit';
-import { getTransferSolInstruction } from '@solana-program/system';
-import { useKitTransactionSigner, useCluster, useConnectorClient } from '@solana/connector';
+} from '@trezoa/kit';
+import { getTransferTrzInstruction } from '@trezoa-program/system';
+import { useKitTransactionSigner, useCluster, useConnectorClient } from '@trezoa/connector';
 import { PipelineHeaderButton, PipelineVisualization } from '@/components/pipeline';
 import {
     getBase58SignatureFromSignedTransaction,
@@ -30,13 +30,13 @@ import { VisualPipeline } from '@/lib/visual-pipeline';
 import { useExampleCardHeaderActions } from '@/components/playground/example-card-actions';
 
 /**
- * Modern SOL Transfer Component
+ * Modern TRZ Transfer Component
  *
- * Demonstrates using @solana/kit (web3.js 2.0) with modular packages.
- * This shows the modern, type-safe approach to Solana development using
+ * Demonstrates using @trezoa/kit (web3.js 2.0) with modular packages.
+ * This shows the modern, type-safe approach to Trezoa development using
  * connector-kit's kit-compatible TransactionSigner.
  */
-export function ModernSolTransfer() {
+export function ModernTrzTransfer() {
     const { signer, ready } = useKitTransactionSigner();
     const { cluster } = useCluster();
     const client = useConnectorClient();
@@ -52,11 +52,11 @@ export function ModernSolTransfer() {
 
     const getExplorerUrl = useCallback(
         (signature: string) => {
-            const clusterSlug = cluster?.id?.replace('solana:', '');
+            const clusterSlug = cluster?.id?.replace('trezoa:', '');
             if (!clusterSlug || clusterSlug === 'mainnet' || clusterSlug === 'mainnet-beta') {
-                return `https://explorer.solana.com/tx/${signature}`;
+                return `https://explorer.trezoa.com/tx/${signature}`;
             }
-            return `https://explorer.solana.com/tx/${signature}?cluster=${clusterSlug}`;
+            return `https://explorer.trezoa.com/tx/${signature}?cluster=${clusterSlug}`;
         },
         [cluster?.id],
     );
@@ -69,7 +69,7 @@ export function ModernSolTransfer() {
         if (!rpcUrl) throw new Error('No RPC endpoint configured');
 
         // Create RPC client using web3.js 2.0
-        const rpc = createSolanaRpc(rpcUrl);
+        const rpc = createTrezoaRpc(rpcUrl);
 
         let signatureBase58: string | null = null;
 
@@ -84,9 +84,9 @@ export function ModernSolTransfer() {
                 // 1 lamport self-transfer (net effect: only pay fees)
                 const amountInLamports = lamports(1n);
 
-                // Create transfer instruction using @solana/kit's modern API
+                // Create transfer instruction using @trezoa/kit's modern API
                 // Cast to TransactionSigner for compatibility with instruction builders
-                const transferInstruction = getTransferSolInstruction({
+                const transferInstruction = getTransferTrzInstruction({
                     source: signer as TransactionSigner,
                     destination: signer.address,
                     amount: amountInLamports,
@@ -134,7 +134,7 @@ export function ModernSolTransfer() {
                             await rpc.getSignatureStatuses([createSignature(sig)]).send(),
                     });
                 } else {
-                    const rpcSubscriptions = createSolanaRpcSubscriptions(getWebSocketUrlForRpcUrl(rpcUrl));
+                    const rpcSubscriptions = createTrezoaRpcSubscriptions(getWebSocketUrlForRpcUrl(rpcUrl));
                     await sendAndConfirmTransactionFactory({ rpc, rpcSubscriptions })(signedTransaction, {
                         commitment: 'confirmed',
                     });

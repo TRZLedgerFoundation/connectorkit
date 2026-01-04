@@ -1,5 +1,5 @@
 /**
- * @solana/connector - Kit Debug Utilities
+ * @trezoa/connector - Kit Debug Utilities
  *
  * Simplified debug logging utilities for the connector.
  * Replaces gill's debug system with a connector-specific implementation.

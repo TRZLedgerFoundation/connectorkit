@@ -2,7 +2,7 @@
     "name": "connector-kit",
     "version": "0.0.2",
     "private": true,
-    "description": "A connector kit for solana applications",
+    "description": "A connector kit for trezoa applications",
     "workspaces": [
         "packages/*",
         "apps/*",
@@ -24,7 +24,7 @@
     },
     "devDependencies": {
         "@changesets/cli": "^2.29.7",
-        "@solana/prettier-config-solana": "0.0.5",
+        "@trezoa/prettier-config-trezoa": "0.0.6",
         "@types/d3-path": "^3.1.1",
         "@types/js-cookie": "^3.0.6",
         "@types/node": "^24.8.1",

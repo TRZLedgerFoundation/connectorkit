@@ -1,18 +1,18 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { address as toAddress } from '@solana/addresses';
-import { signature as toSignature } from '@solana/keys';
-import type { SolanaCluster, SolanaClusterId } from '@wallet-ui/core';
+import { address as toAddress } from '@trezoa/addresses';
+import { signature as toSignature } from '@trezoa/keys';
+import type { TrezoaCluster, TrezoaClusterId } from '@wallet-ui/core';
 import { useAccount } from './use-account';
 import { useCluster } from './use-cluster';
-import { useSolanaClient } from './use-kit-solana-client';
+import { useTrezoaClient } from './use-kit-trezoa-client';
 import { useConnectorClient } from '../ui/connector-provider';
 import { useSharedQuery } from './_internal/use-shared-query';
-import { fetchSolanaTokenListMetadata } from './_internal/solana-token-list';
+import { fetchTrezoaTokenListMetadata } from './_internal/trezoa-token-list';
 import { getTransactionUrl, getClusterType, type ClusterType } from '../utils/cluster';
-import { LAMPORTS_PER_SOL } from '../lib/kit';
-import type { SolanaClient } from '../lib/kit';
+import { LAMPORTS_PER_TRZ } from '../lib/kit';
+import type { TrezoaClient } from '../lib/kit';
 import { transformImageUrl } from '../utils/image';
 
 /**
@@ -21,7 +21,7 @@ import { transformImageUrl } from '../utils/image';
 export interface TransactionsQueryKeyOptions {
     rpcUrl: string;
     address: string;
-    clusterId: SolanaClusterId;
+    clusterId: TrezoaClusterId;
     limit?: number;
     fetchDetails?: boolean;
 }
@@ -37,9 +37,9 @@ export interface TransactionsQueryKeyOptions {
  * ```tsx
  * // Invalidate transactions after sending a new transaction
  * const key = getTransactionsQueryKey({
- *   rpcUrl: 'https://api.mainnet-beta.solana.com',
+ *   rpcUrl: 'https://api.mainnet-beta.trezoa.com',
  *   address: 'ABC123...',
- *   clusterId: 'solana:mainnet',
+ *   clusterId: 'trezoa:mainnet',
  * });
  * if (key) invalidateSharedQuery(key);
  * ```
@@ -65,7 +65,7 @@ export interface TransactionInfo {
     type: 'sent' | 'received' | 'swap' | 'nft' | 'stake' | 'program' | 'tokenAccountClosed' | 'unknown';
     /** Direction for transfers */
     direction?: 'in' | 'out';
-    /** Amount in SOL (for transfers) */
+    /** Amount in TRZ (for transfers) */
     amount?: number;
     /** Formatted amount string */
     formattedAmount?: string;
@@ -131,8 +131,8 @@ export interface UseTransactionsOptions {
     cacheTimeMs?: number;
     /** Whether to refetch on mount (default: 'stale') */
     refetchOnMount?: boolean | 'stale';
-    /** Override the Solana client from provider */
-    client?: SolanaClient | null;
+    /** Override the Trezoa client from provider */
+    client?: TrezoaClient | null;
 }
 
 export interface UseTransactionsReturn {
@@ -185,19 +185,19 @@ function formatDate(timestamp: number | null): { date: string; time: string } {
 // Known program IDs for detection
 const KNOWN_PROGRAMS: Record<string, string> = {
     '11111111111111111111111111111111': 'System Program',
-    TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA: 'Token Program',
-    ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL: 'Associated Token',
-    JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4: 'Jupiter',
-    whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc: 'Orca Whirlpool',
-    '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8': 'Raydium AMM',
+    '4JkrrPuuQPxDZuBW1bgrM1GBa8oYg1LxcuX9szBPh3ic': 'Token Program',
+    '33ksqUXaBWjFMW3TiRuh92meTGShZWTeFRWaNsrrZY8s': 'Associated Token',
+    '2VkqRHyuCDfG3fT5XnGsV6iXA91atJbZMWQARVMT5tud': 'Jupiter',
+    Bqpg7gpSAMaqcgnkTroJzC2dGBbLHeAKGLKfKMADgMC6: 'Orca Whirlpool',
+    'EoEUaGniHcot6xtgqLBA843k74xT2A2KNjEeNc5NiuDV': 'Raydium AMM',
     Stake11111111111111111111111111111111111111: 'Stake Program',
-    metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s: 'Metaplex',
+    Ayg9zmbQZAaBErJGDvwxFmEwg8j8Uu6Eo5wQx8BThMWq: 'Trezoaplex',
 };
 
 const DEFAULT_IGNORED_PROGRAM_IDS = new Set<string>([
     '11111111111111111111111111111111', // System Program
-    'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', // Token Program
-    'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL', // Associated Token
+    '4JkrrPuuQPxDZuBW1bgrM1GBa8oYg1LxcuX9szBPh3ic', // Token Program
+    '33ksqUXaBWjFMW3TiRuh92meTGShZWTeFRWaNsrrZY8s', // Associated Token
 ]);
 
 function resolveProgramName(programId: string, programLabels: Record<string, string> | undefined): string | undefined {
@@ -435,9 +435,9 @@ function detectProgramIds(message: TransactionMessage, accountKeys: string[]): S
     return programIds;
 }
 
-function parseSolChange(meta: TransactionMeta, walletIndex: number): { balanceChange: number; solChange: number } {
+function parseTrzChange(meta: TransactionMeta, walletIndex: number): { balanceChange: number; trzChange: number } {
     if (!isTransactionMeta(meta) || !Array.isArray(meta.preBalances) || !Array.isArray(meta.postBalances)) {
-        return { balanceChange: 0, solChange: 0 };
+        return { balanceChange: 0, trzChange: 0 };
     }
 
     const preBalanceRaw = meta.preBalances[walletIndex];
@@ -458,9 +458,9 @@ function parseSolChange(meta: TransactionMeta, walletIndex: number): { balanceCh
               : 0;
 
     const balanceChange = postBalance - preBalance;
-    const solChange = balanceChange / LAMPORTS_PER_SOL;
+    const trzChange = balanceChange / LAMPORTS_PER_TRZ;
 
-    return { balanceChange, solChange };
+    return { balanceChange, trzChange };
 }
 
 function parseTokenTransfers(
@@ -635,7 +635,7 @@ function parseSwapTokens(
     meta: TransactionMeta,
     accountKeys: string[],
     walletAddress: string,
-    solChange: number,
+    trzChange: number,
 ): ParsedSwapTokens {
     if (!isTransactionMeta(meta)) {
         return {};
@@ -704,14 +704,14 @@ function parseSwapTokens(
         }
     }
 
-    // Handle SOL as from/to token (wrapped SOL mint)
-    const WRAPPED_SOL_MINT = 'So11111111111111111111111111111111111111112';
-    if (solChange < -0.001 && !fromToken) {
-        // SOL decreased significantly (more than just fees)
-        fromToken = { mint: WRAPPED_SOL_MINT };
-    } else if (solChange > 0.001 && !toToken) {
-        // SOL increased
-        toToken = { mint: WRAPPED_SOL_MINT };
+    // Handle TRZ as from/to token (wrapped TRZ mint)
+    const WRAPPED_TRZ_MINT = 'tr11111111111111111111111111111111111111112';
+    if (trzChange < -0.001 && !fromToken) {
+        // TRZ decreased significantly (more than just fees)
+        fromToken = { mint: WRAPPED_TRZ_MINT };
+    } else if (trzChange > 0.001 && !toToken) {
+        // TRZ increased
+        toToken = { mint: WRAPPED_TRZ_MINT };
     }
 
     return { fromToken, toToken };
@@ -721,7 +721,7 @@ function formatAmount(
     tokenAmount: number | undefined,
     tokenDecimals: number | undefined,
     direction: 'in' | 'out' | undefined,
-    solChange: number,
+    trzChange: number,
 ): string | undefined {
     if (tokenAmount !== undefined && tokenDecimals !== undefined && direction !== undefined) {
         const sign = direction === 'in' ? '+' : '-';
@@ -729,8 +729,8 @@ function formatAmount(
         return `${sign}${tokenAmount.toLocaleString(undefined, { maximumFractionDigits: maxDecimals })}`;
     }
 
-    if (solChange !== 0) {
-        return `${solChange > 0 ? '+' : ''}${solChange.toFixed(4)} SOL`;
+    if (trzChange !== 0) {
+        return `${trzChange > 0 ? '+' : ''}${trzChange.toFixed(4)} TRZ`;
     }
 
     return undefined;
@@ -787,7 +787,7 @@ async function fetchTransactionTokenMetadata(
     const results = new Map<string, { symbol: string; icon: string }>();
     if (!mints.length) return results;
 
-    const tokenList = await fetchSolanaTokenListMetadata(mints, {
+    const tokenList = await fetchTrezoaTokenListMetadata(mints, {
         timeoutMs: 5000,
         signal: options.signal,
         cluster: options.cluster,
@@ -839,7 +839,7 @@ export function useTransactions(options: UseTransactionsOptions = {}): UseTransa
 
     const { address, connected } = useAccount();
     const { cluster } = useCluster();
-    const { client: providerClient } = useSolanaClient();
+    const { client: providerClient } = useTrezoaClient();
     const connectorClient = useConnectorClient();
 
     // Pagination state (local, not shared)
@@ -912,20 +912,20 @@ export function useTransactions(options: UseTransactionsOptions = {}): UseTransa
                     return baseInfo;
                 }
 
-                // Calculate SOL balance change using helper
-                const { balanceChange, solChange } = parseSolChange(meta, walletIndex);
+                // Calculate TRZ balance change using helper
+                const { balanceChange, trzChange } = parseTrzChange(meta, walletIndex);
 
                 // Detect program IDs using helper
                 const programIds = detectProgramIds(message, accountKeys);
 
                 // Check for known programs
-                const hasJupiter = programIds.has('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4');
-                const hasOrca = programIds.has('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc');
-                const hasRaydium = programIds.has('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8');
+                const hasJupiter = programIds.has('2VkqRHyuCDfG3fT5XnGsV6iXA91atJbZMWQARVMT5tud');
+                const hasOrca = programIds.has('Bqpg7gpSAMaqcgnkTroJzC2dGBbLHeAKGLKfKMADgMC6');
+                const hasRaydium = programIds.has('EoEUaGniHcot6xtgqLBA843k74xT2A2KNjEeNc5NiuDV');
                 const hasStake = programIds.has('Stake11111111111111111111111111111111111111');
-                const hasMetaplex = programIds.has('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
+                const hasTrezoaplex = programIds.has('Ayg9zmbQZAaBErJGDvwxFmEwg8j8Uu6Eo5wQx8BThMWq');
                 const hasSystemProgram = programIds.has('11111111111111111111111111111111');
-                const hasTokenProgram = programIds.has('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+                const hasTokenProgram = programIds.has('4JkrrPuuQPxDZuBW1bgrM1GBa8oYg1LxcuX9szBPh3ic');
 
                 // Precompute token program derived signals (used for transfers and closures)
                 const tokenTransfer = hasTokenProgram ? parseTokenTransfers(meta, accountKeys, walletAddress) : null;
@@ -934,7 +934,7 @@ export function useTransactions(options: UseTransactionsOptions = {}): UseTransa
                     : null;
 
                 // Infer swap tokens from balance deltas (works even when program IDs are unknown)
-                const inferredSwapTokens = parseSwapTokens(meta, accountKeys, walletAddress, solChange);
+                const inferredSwapTokens = parseSwapTokens(meta, accountKeys, walletAddress, trzChange);
                 const inferredSwapFromMint = inferredSwapTokens.fromToken?.mint;
                 const inferredSwapToMint = inferredSwapTokens.toToken?.mint;
                 const hasNonTrivialProgram = [...programIds].some(id => !DEFAULT_IGNORED_PROGRAM_IDS.has(id));
@@ -967,7 +967,7 @@ export function useTransactions(options: UseTransactionsOptions = {}): UseTransa
                     if (inferredSwapTokens.toToken) swapToToken = { mint: inferredSwapTokens.toToken.mint };
                 } else if (hasStake) {
                     type = 'stake';
-                } else if (hasMetaplex) {
+                } else if (hasTrezoaplex) {
                     type = 'nft';
                 } else if (hasInferredSwap) {
                     type = 'swap';
@@ -982,13 +982,13 @@ export function useTransactions(options: UseTransactionsOptions = {}): UseTransa
                 } else if (tokenAccountClosure) {
                     type = 'tokenAccountClosed';
                     tokenMint = tokenAccountClosure.tokenMint;
-                    direction = solChange > 0 ? 'in' : undefined;
+                    direction = trzChange > 0 ? 'in' : undefined;
                 } else if (hasSystemProgram && Math.abs(balanceChange) > 0) {
-                    // Simple SOL transfer
+                    // Simple TRZ transfer
                     type = balanceChange > 0 ? 'received' : 'sent';
                     direction = balanceChange > 0 ? 'in' : 'out';
-                    // SOL is native, use wrapped SOL mint for icon
-                    tokenMint = 'So11111111111111111111111111111111111111112';
+                    // TRZ is native, use wrapped TRZ mint for icon
+                    tokenMint = 'tr11111111111111111111111111111111111111112';
 
                     // Try to find counterparty
                     if (accountKeys.length >= 2) {
@@ -1001,13 +1001,13 @@ export function useTransactions(options: UseTransactionsOptions = {}): UseTransa
                 }
 
                 // Format amount string using helper
-                const formattedAmount = formatAmount(tokenAmount, tokenDecimals, direction, solChange);
+                const formattedAmount = formatAmount(tokenAmount, tokenDecimals, direction, trzChange);
 
                 return {
                     ...baseInfo,
                     type,
                     direction,
-                    amount: tokenAmount ?? Math.abs(solChange),
+                    amount: tokenAmount ?? Math.abs(trzChange),
                     formattedAmount,
                     tokenMint,
                     counterparty: counterparty ? `${counterparty.slice(0, 4)}...${counterparty.slice(-4)}` : undefined,
@@ -1048,7 +1048,7 @@ export function useTransactions(options: UseTransactionsOptions = {}): UseTransa
     const fetchAndEnrichTransactions = useCallback(
         async (
             beforeSignature: string | undefined,
-            currentCluster: SolanaCluster,
+            currentCluster: TrezoaCluster,
             signal?: AbortSignal,
         ): Promise<{ transactions: TransactionInfo[]; hasMore: boolean }> => {
             if (!rpcClient || !address) {

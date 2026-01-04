@@ -37,13 +37,13 @@ const features = [
         icon: Shield,
         title: 'Wallet Standard',
         description:
-            'Built on the official Wallet Standard protocol. Auto-detects Phantom, Solflare, Backpack, and any compliant wallet.',
+            'Built on the official Wallet Standard protocol. Auto-detects Phantom, Trzflare, Backpack, and any compliant wallet.',
     },
     {
         icon: Code2,
         title: 'Transaction Signer',
         description:
-            'Dual API support for modern @solana/kit and legacy @solana/web3.js. Unified signing, sending, and batching.',
+            'Dual API support for modern @trezoa/kit and legacy @trezoa/web3.js. Unified signing, sending, and batching.',
     },
     {
         icon: Network,
@@ -54,7 +54,7 @@ const features = [
     {
         icon: Smartphone,
         title: 'Mobile Wallet Adapter',
-        description: 'First-class Solana Mobile support. Connect to mobile wallets with the same API as desktop.',
+        description: 'First-class Trezoa Mobile support. Connect to mobile wallets with the same API as desktop.',
     },
     {
         icon: RefreshCw,
@@ -69,7 +69,7 @@ const features = [
     {
         icon: Puzzle,
         title: 'Backward Compatibility',
-        description: 'Drop-in compatibility bridge for existing @solana/wallet-adapter code. Migrate incrementally.',
+        description: 'Drop-in compatibility bridge for existing @trezoa/wallet-adapter code. Migrate incrementally.',
     },
     {
         icon: Lock,

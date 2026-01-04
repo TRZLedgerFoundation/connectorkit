@@ -1,11 +1,11 @@
 /**
  * Program log parsing utilities
- * Adapted from Solana Explorer for transaction debugging
+ * Adapted from Trezoa Explorer for transaction debugging
  */
 
 import { getTransactionInstructionError, type TransactionErrorType } from './transaction-errors';
 import { getProgramName } from './program-names';
-import { TransactionError } from '@solana/kit';
+import { TransactionError } from '@trezoa/kit';
 
 export interface LogMessage {
     text: string;
@@ -23,7 +23,7 @@ export interface InstructionLogs {
 
 /**
  * Parse raw transaction logs into structured instruction logs
- * Works with both legacy web3.js and Solana Kit transaction structures
+ * Works with both legacy web3.js and Trezoa Kit transaction structures
  */
 export function parseProgramLogs(
     logs: readonly string[],

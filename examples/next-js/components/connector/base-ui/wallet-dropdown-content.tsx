@@ -7,7 +7,7 @@ import {
     TokenListElement,
     TransactionHistoryElement,
     DisconnectElement,
-} from '@solana/connector/react';
+} from '@trezoa/connector/react';
 import { Button } from '@/components/ui-base/button';
 import {
     Wallet,
@@ -36,10 +36,10 @@ interface WalletDropdownContentProps {
 type DropdownView = 'wallet' | 'network';
 
 const clusterColors: Record<string, string> = {
-    'solana:mainnet': 'bg-green-500',
-    'solana:devnet': 'bg-blue-500',
-    'solana:testnet': 'bg-yellow-500',
-    'solana:localnet': 'bg-red-500',
+    'trezoa:mainnet': 'bg-green-500',
+    'trezoa:devnet': 'bg-blue-500',
+    'trezoa:testnet': 'bg-yellow-500',
+    'trezoa:localnet': 'bg-red-500',
 };
 
 // Custom Avatar component
@@ -210,7 +210,7 @@ export function WalletDropdownContent({ selectedAccount, walletIcon, walletName 
 
                 {/* Full Width Balance */}
                 <BalanceElement
-                    render={({ solBalance, isLoading, refetch }) => (
+                    render={({ trzBalance, isLoading, refetch }) => (
                         <div className="rounded-[12px] border bg-muted/50 p-4">
                             <div className="flex items-center justify-between mb-1">
                                 <span className="text-sm text-muted-foreground">Balance</span>
@@ -225,10 +225,10 @@ export function WalletDropdownContent({ selectedAccount, walletIcon, walletName 
                             <div className="text-2xl font-bold">
                                 {isLoading ? (
                                     <div className="h-8 w-32 bg-muted animate-pulse rounded" />
-                                ) : solBalance !== null ? (
-                                    `${solBalance.toFixed(4)} SOL`
+                                ) : trzBalance !== null ? (
+                                    `${trzBalance.toFixed(4)} TRZ`
                                 ) : (
-                                    '-- SOL'
+                                    '-- TRZ'
                                 )}
                             </div>
                         </div>
@@ -460,7 +460,7 @@ export function WalletDropdownContent({ selectedAccount, walletIcon, walletName 
             {/* Network Options */}
             <ClusterElement
                 render={({ cluster, clusters, setCluster }) => {
-                    const currentClusterId = (cluster as { id?: string })?.id || 'solana:mainnet';
+                    const currentClusterId = (cluster as { id?: string })?.id || 'trezoa:mainnet';
                     return (
                         <div className="rounded-[12px] border bg-muted/50 overflow-hidden">
                             {clusters.map((network, index) => {

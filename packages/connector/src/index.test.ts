@@ -30,10 +30,10 @@ describe('Main Entry Point (index.ts)', () => {
             expect(ConnectorKit.useWalletInfo).toBeDefined();
             expect(ConnectorKit.useTransactionSigner).toBeDefined();
             expect(ConnectorKit.useKitTransactionSigner).toBeDefined();
-            expect(ConnectorKit.useSolanaClient).toBeDefined();
+            expect(ConnectorKit.useTrezoaClient).toBeDefined();
             // Deprecated aliases
             expect(ConnectorKit.useGillTransactionSigner).toBeDefined();
-            expect(ConnectorKit.useGillSolanaClient).toBeDefined();
+            expect(ConnectorKit.useGillTrezoaClient).toBeDefined();
             expect(ConnectorKit.useTransactionPreparer).toBeDefined();
             expect(typeof ConnectorKit.useConnector).toBe('function');
             expect(typeof ConnectorKit.useAccount).toBe('function');
@@ -82,21 +82,21 @@ describe('Main Entry Point (index.ts)', () => {
 
         it('should export utility functions', () => {
             expect(ConnectorKit.formatAddress).toBeDefined();
-            expect(ConnectorKit.formatSOL).toBeDefined();
+            expect(ConnectorKit.formatTRZ).toBeDefined();
             expect(ConnectorKit.formatSignature).toBeDefined();
-            expect(ConnectorKit.getNetworkDisplayName).toBeDefined();
+            expect(ConnectorKit.getNetworkDitplayName).toBeDefined();
             expect(typeof ConnectorKit.formatAddress).toBe('function');
-            expect(typeof ConnectorKit.formatSOL).toBe('function');
+            expect(typeof ConnectorKit.formatTRZ).toBe('function');
         });
 
         it('should export explorer URL functions', () => {
-            expect(ConnectorKit.getSolanaExplorerUrl).toBeDefined();
-            expect(ConnectorKit.getSolscanUrl).toBeDefined();
+            expect(ConnectorKit.getTrezoaExplorerUrl).toBeDefined();
+            expect(ConnectorKit.getTrzscanUrl).toBeDefined();
             expect(ConnectorKit.getXrayUrl).toBeDefined();
-            expect(ConnectorKit.getSolanaFmUrl).toBeDefined();
+            expect(ConnectorKit.getTrezoaFmUrl).toBeDefined();
             expect(ConnectorKit.getAllExplorerUrls).toBeDefined();
-            expect(typeof ConnectorKit.getSolanaExplorerUrl).toBe('function');
-            expect(typeof ConnectorKit.getSolscanUrl).toBe('function');
+            expect(typeof ConnectorKit.getTrezoaExplorerUrl).toBe('function');
+            expect(typeof ConnectorKit.getTrzscanUrl).toBe('function');
         });
 
         it('should export polyfill functions', () => {

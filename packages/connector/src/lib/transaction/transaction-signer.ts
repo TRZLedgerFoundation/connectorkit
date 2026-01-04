@@ -3,7 +3,7 @@
  */
 
 import type {
-    SolanaTransaction,
+    TrezoaTransaction,
     TransactionSignerConfig,
     TransactionSignerCapabilities,
 } from '../../types/transactions';
@@ -11,7 +11,7 @@ import { prepareTransactionForWallet, convertSignedTransaction } from '../../uti
 import { TransactionValidator } from './transaction-validator';
 import { createLogger } from '../utils/secure-logger';
 import { TransactionError, ValidationError, Errors } from '../errors';
-import { getBase58Decoder } from '@solana/codecs';
+import { getBase58Decoder } from '@trezoa/codecs';
 
 const logger = createLogger('TransactionSigner');
 
@@ -55,17 +55,17 @@ export interface TransactionSigner {
     /** The wallet address that will sign transactions */
     readonly address: string;
 
-    signTransaction(transaction: SolanaTransaction): Promise<SolanaTransaction>;
+    signTransaction(transaction: TrezoaTransaction): Promise<TrezoaTransaction>;
 
-    signAllTransactions(transactions: SolanaTransaction[]): Promise<SolanaTransaction[]>;
+    signAllTransactions(transactions: TrezoaTransaction[]): Promise<TrezoaTransaction[]>;
 
     signAndSendTransaction(
-        transaction: SolanaTransaction,
+        transaction: TrezoaTransaction,
         options?: { skipPreflight?: boolean; maxRetries?: number },
     ): Promise<string>;
 
     signAndSendTransactions(
-        transactions: SolanaTransaction[],
+        transactions: TrezoaTransaction[],
         options?: { skipPreflight?: boolean; maxRetries?: number },
     ): Promise<string[]>;
 
@@ -85,16 +85,16 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
     const address = account.address as string;
 
     const capabilities: TransactionSignerCapabilities = {
-        canSign: Boolean(features['solana:signTransaction']),
-        canSend: Boolean(features['solana:signAndSendTransaction']),
-        canSignMessage: Boolean(features['solana:signMessage']),
-        supportsBatchSigning: Boolean(features['solana:signAllTransactions']),
+        canSign: Boolean(features['trezoa:signTransaction']),
+        canSend: Boolean(features['trezoa:signAndSendTransaction']),
+        canSignMessage: Boolean(features['trezoa:signMessage']),
+        supportsBatchSigning: Boolean(features['trezoa:signAllTransactions']),
     };
 
     const signer: TransactionSigner = {
         address,
 
-        async signTransaction(transaction: SolanaTransaction): Promise<SolanaTransaction> {
+        async signTransaction(transaction: TrezoaTransaction): Promise<TrezoaTransaction> {
             if (!capabilities.canSign) {
                 throw Errors.featureNotSupported('transaction signing');
             }
@@ -110,7 +110,7 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
             }
 
             try {
-                const signFeature = features['solana:signTransaction'];
+                const signFeature = features['trezoa:signTransaction'];
 
                 const { serialized, wasWeb3js } = prepareTransactionForWallet(transaction);
 
@@ -205,14 +205,14 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
             }
         },
 
-        async signAllTransactions(transactions: SolanaTransaction[]): Promise<SolanaTransaction[]> {
+        async signAllTransactions(transactions: TrezoaTransaction[]): Promise<TrezoaTransaction[]> {
             if (transactions.length === 0) {
                 return [];
             }
 
             if (capabilities.supportsBatchSigning) {
                 try {
-                    const signFeature = features['solana:signAllTransactions'];
+                    const signFeature = features['trezoa:signAllTransactions'];
 
                     const prepared = transactions.map(tx => prepareTransactionForWallet(tx));
                     const serializedTxs = prepared.map(p => p.serialized);
@@ -262,7 +262,7 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
                 throw Errors.featureNotSupported('transaction signing');
             }
 
-            const signed: SolanaTransaction[] = [];
+            const signed: TrezoaTransaction[] = [];
             for (let i = 0; i < transactions.length; i++) {
                 try {
                     const signedTx = await signer.signTransaction(transactions[i]);
@@ -281,7 +281,7 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
         },
 
         async signAndSendTransaction(
-            transaction: SolanaTransaction,
+            transaction: TrezoaTransaction,
             options?: { skipPreflight?: boolean; maxRetries?: number },
         ): Promise<string> {
             if (!capabilities.canSend) {
@@ -289,7 +289,7 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
             }
 
             try {
-                const sendFeature = features['solana:signAndSendTransaction'];
+                const sendFeature = features['trezoa:signAndSendTransaction'];
 
                 const { serialized } = prepareTransactionForWallet(transaction);
 
@@ -346,7 +346,7 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
         },
 
         async signAndSendTransactions(
-            transactions: SolanaTransaction[],
+            transactions: TrezoaTransaction[],
             options?: { skipPreflight?: boolean; maxRetries?: number },
         ): Promise<string[]> {
             if (transactions.length === 0) {
@@ -379,7 +379,7 @@ export function createTransactionSigner(config: TransactionSignerConfig): Transa
         ...(capabilities.canSignMessage && {
             async signMessage(message: Uint8Array): Promise<Uint8Array> {
                 try {
-                    const signFeature = features['solana:signMessage'];
+                    const signFeature = features['trezoa:signMessage'];
                     const result = (await signFeature.signMessage({
                         account,
                         message,

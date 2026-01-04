@@ -1,6 +1,6 @@
 'use client';
 
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';

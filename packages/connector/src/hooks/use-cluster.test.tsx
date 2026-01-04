@@ -7,9 +7,9 @@ import type { ReactNode } from 'react';
 describe('useCluster', () => {
     const mockConfig = {
         clusters: [
-            { id: 'solana:mainnet', name: 'Mainnet', rpcUrl: 'https://api.mainnet.solana.com' },
-            { id: 'solana:devnet', name: 'Devnet', rpcUrl: 'https://api.devnet.solana.com' },
-            { id: 'solana:testnet', name: 'Testnet', rpcUrl: 'https://api.testnet.solana.com' },
+            { id: 'trezoa:mainnet', name: 'Mainnet', rpcUrl: 'https://api.mainnet.trezoa.com' },
+            { id: 'trezoa:devnet', name: 'Devnet', rpcUrl: 'https://api.devnet.trezoa.com' },
+            { id: 'trezoa:testnet', name: 'Testnet', rpcUrl: 'https://api.testnet.trezoa.com' },
         ],
     };
 

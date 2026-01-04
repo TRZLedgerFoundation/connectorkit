@@ -1,4 +1,4 @@
-# Contributing to @solana/connector
+# Contributing to @trezoa/connector
 
 Thank you for your interest in contributing! This document provides guidelines for contributing to the connector package.
 
@@ -39,8 +39,8 @@ packages/connector/
 │   │   ├── cluster/      # Network/cluster management
 │   │   ├── health/       # Health checks and diagnostics
 │   │   ├── adapters/     # Storage and wallet adapters
-│   │   ├── kit-signers/  # @solana/kit transaction signers
-│   │   ├── kit-utils/    # @solana/kit utilities
+│   │   ├── kit-signers/  # @trezoa/kit transaction signers
+│   │   ├── kit-utils/    # @trezoa/kit utilities
 │   │   ├── errors/       # Error types and handling
 │   │   └── utils/        # Internal utilities
 │   ├── hooks/            # React hooks
@@ -110,7 +110,7 @@ pnpm test        # Run tests
 
 - Follow the [Wallet Standard](https://github.com/wallet-standard/wallet-standard) specification
 - Ensure compatibility with all Wallet Standard compliant wallets
-- Test with multiple wallets (Phantom, Solflare, Backpack, etc.)
+- Test with multiple wallets (Phantom, Trzflare, Backpack, etc.)
 
 ### Framework Support
 
@@ -120,7 +120,7 @@ pnpm test        # Run tests
 
 ### Transaction Signing
 
-- Support both `@solana/kit` (modern) and `@solana/web3.js` (legacy) APIs
+- Support both `@trezoa/kit` (modern) and `@trezoa/web3.js` (legacy) APIs
 - Ensure proper error handling
 - Test transaction signing with real wallets on devnet
 

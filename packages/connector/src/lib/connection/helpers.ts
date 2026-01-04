@@ -1,11 +1,11 @@
 /**
- * @solana/connector - Connection Helpers
+ * @trezoa/connector - Connection Helpers
  *
- * Abstraction layer for working with both legacy @solana/web3.js Connection
+ * Abstraction layer for working with both legacy @trezoa/web3.js Connection
  * and modern Kit/gill Rpc objects.
  */
 
-import type { SendOptions } from '@solana/web3.js';
+import type { SendOptions } from '@trezoa/web3.js';
 import type { DualConnection, Commitment, KitRpc } from './types';
 import { isLegacyConnection, isKitConnection } from './types';
 

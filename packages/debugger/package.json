@@ -1,7 +1,7 @@
 {
-    "name": "@solana/connector-debugger",
+    "name": "@trezoa/connector-debugger",
     "version": "0.1.1",
-    "description": "Development debug panel for @solana/connector",
+    "description": "Development debug panel for @trezoa/connector",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
@@ -29,14 +29,14 @@
         "clean": "rm -rf dist"
     },
     "dependencies": {
-        "@solana/kit": "^4.0.0"
+        "@trezoa/kit": "^5.1.0"
     },
     "peerDependencies": {
-        "@solana/connector": "workspace:*",
+        "@trezoa/connector": "workspace:*",
         "react": ">=18.0.0"
     },
     "devDependencies": {
-        "@solana/connector": "workspace:*",
+        "@trezoa/connector": "workspace:*",
         "@types/react": "^19.2.2",
         "tsup": "^8.5.0",
         "typescript": "^5.9.3"
@@ -44,6 +44,6 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/solana-foundation/connectorkit"
+        "url": "https://github.com/trezoa-foundation/connectorkit"
     }
 }

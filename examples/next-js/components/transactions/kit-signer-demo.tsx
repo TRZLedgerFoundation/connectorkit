@@ -6,9 +6,9 @@ import {
     createMessageSignerFromWallet,
     createSignableMessage,
     address,
-} from '@solana/connector/headless';
-import { useConnector, useConnectorClient } from '@solana/connector';
-import { Connection } from '@solana/web3.js';
+} from '@trezoa/connector/headless';
+import { useConnector, useConnectorClient } from '@trezoa/connector';
+import { Connection } from '@trezoa/web3.js';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
@@ -45,7 +45,7 @@ export function KitSignerDemo() {
         }
 
         const features = selectedWallet.features as Record<string, unknown>;
-        const signMessageFeature = features['solana:signMessage'];
+        const signMessageFeature = features['trezoa:signMessage'];
 
         // Validate signMessage feature exists and has the expected structure
         if (

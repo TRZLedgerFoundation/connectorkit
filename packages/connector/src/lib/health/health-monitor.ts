@@ -1,6 +1,6 @@
 import type { ConnectorHealth } from '../../types/connector';
 import type { StorageAdapter } from '../../types/storage';
-import type { SolanaClusterId } from '@wallet-ui/core';
+import type { TrezoaClusterId } from '@wallet-ui/core';
 import type { StateManager } from '../core/state-manager';
 import { getWalletsRegistry } from '../wallet/standard-shim';
 
@@ -12,13 +12,13 @@ import { getWalletsRegistry } from '../wallet/standard-shim';
 export class HealthMonitor {
     private stateManager: StateManager;
     private walletStorage?: StorageAdapter<string | undefined>;
-    private clusterStorage?: StorageAdapter<SolanaClusterId>;
+    private clusterStorage?: StorageAdapter<TrezoaClusterId>;
     private isInitialized: () => boolean;
 
     constructor(
         stateManager: StateManager,
         walletStorage?: StorageAdapter<string | undefined>,
-        clusterStorage?: StorageAdapter<SolanaClusterId>,
+        clusterStorage?: StorageAdapter<TrezoaClusterId>,
         isInitialized?: () => boolean,
     ) {
         this.stateManager = stateManager;

@@ -1,6 +1,6 @@
-# @solana/connector-debugger
+# @trezoa/connector-debugger
 
-Development debug panel for `@solana/connector` with advanced transaction analysis and optimization capabilities.
+Development debug panel for `@trezoa/connector` with advanced transaction analysis and optimization capabilities.
 
 **✨ New in this version:** Transaction size analysis, Address Lookup Table optimization recommendations, pre-flight simulation, session-wide statistics, and automatic code generation for creating ALTs. Test transactions before sending and validate optimizations work. Based on real-world measurements showing **40-50% typical size reductions** and **12-15% compute unit savings**.
 
@@ -44,19 +44,19 @@ Development debug panel for `@solana/connector` with advanced transaction analys
 ## Installation
 
 ```bash
-npm install @solana/connector-debugger
+npm install @trezoa/connector-debugger
 # or
-pnpm add @solana/connector-debugger
+pnpm add @trezoa/connector-debugger
 # or
-yarn add @solana/connector-debugger
+yarn add @trezoa/connector-debugger
 ```
 
 ## Usage
 
 ```tsx
-import { AppProvider } from '@solana/connector/react';
-import { ConnectorDebugPanel } from '@solana/connector-debugger/react';
-import { getDefaultConfig } from '@solana/connector/headless';
+import { AppProvider } from '@trezoa/connector/react';
+import { ConnectorDebugPanel } from '@trezoa/connector-debugger/react';
+import { getDefaultConfig } from '@trezoa/connector/headless';
 
 function App() {
     const config = getDefaultConfig({
@@ -77,7 +77,7 @@ function App() {
 
 ## Transaction Analysis
 
-The debugger now includes powerful transaction analysis features extracted from Solana Explorer:
+The debugger now includes powerful transaction analysis features extracted from Trezoa Explorer:
 
 ### Program Logs
 
@@ -101,7 +101,7 @@ See decoded instruction types instead of raw data:
 
 ```
 #1: Transfer (Token Program)
-    TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA
+    4JkrrPuuQPxDZuBW1bgrM1GBa8oYg1LxcuX9szBPh3ic
 
 #2: Create Account (System Program)
     11111111111111111111111111111111
@@ -124,7 +124,7 @@ Instead of raw error objects.
 Every transaction is analyzed for size efficiency:
 
 ```
-✅ Transfer SOL
+✅ Transfer TRZ
    234 bytes ✅ Optimal
 
 ⚠️ Token Swap
@@ -245,7 +245,7 @@ await signer.signAndSendTransaction(tx);
 │                                 │
 │ Size: 892 bytes ⚠️              │
 │ Compute: 2,802 CU ✅            │
-│ Fee: 0.000005 SOL ✅            │
+│ Fee: 0.000005 TRZ ✅            │
 │                                 │
 │ 💡 Could optimize with ALT:     │
 │    → 534 bytes (-40%)           │
@@ -298,10 +298,10 @@ With animated pulsing dots for active steps.
 
 Would fail: insufficient funds
 
-Current balance: 0.05 SOL
-Required: 0.1 SOL
+Current balance: 0.05 TRZ
+Required: 0.1 TRZ
 
-→ Add SOL before signing
+→ Add TRZ before signing
 → Saves transaction fee
 ```
 
@@ -374,15 +374,15 @@ Transaction details are fetched on-demand to minimize RPC calls:
 
 ### Program Recognition
 
-Recognizes 50+ common Solana programs including:
+Recognizes 50+ common Trezoa programs including:
 
 - Native programs (System, Token, Stake, Vote, etc.)
-- SPL programs (Associated Token, Memo, etc.)
+- TPL programs (Associated Token, Memo, etc.)
 - Popular DeFi (Serum, Raydium, Orca, Jupiter, etc.)
 
 ### Error Parsing
 
-Maps 50+ Solana error codes to readable descriptions:
+Maps 50+ Trezoa error codes to readable descriptions:
 
 - `InsufficientFunds` → "insufficient funds for instruction"
 - `AccountNotExecutable` → "instruction expected an executable account"
@@ -392,7 +392,7 @@ Maps 50+ Solana error codes to readable descriptions:
 
 ### Transaction Optimization Examples
 
-Based on actual measurements from production Solana transactions:
+Based on actual measurements from production Trezoa transactions:
 
 **Single Token Purchase:**
 
@@ -480,7 +480,7 @@ await signer.signAndSendTransaction(transaction);
 ## Important Notes
 
 - **Development Only**: The debug panel should only be used in development environments
-- **Requires Connector Provider**: Must be used within `AppProvider` or `ConnectorProvider` from `@solana/connector`
+- **Requires Connector Provider**: Must be used within `AppProvider` or `ConnectorProvider` from `@trezoa/connector`
 - **RPC Access**: Transaction details require RPC access (uses cluster from connector config)
 
 ## Advanced Features
@@ -529,4 +529,4 @@ MIT
 
 ## Credits
 
-Transaction analysis capabilities adapted from [Solana Explorer](https://github.com/solana-labs/explorer).
+Transaction analysis capabilities adapted from [Trezoa Explorer](https://github.com/trezoa-labs/explorer).

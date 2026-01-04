@@ -1,5 +1,5 @@
-import type { Base64EncodedWireTransaction } from '@solana/kit';
-import { signatureBytesToBase58 } from '@solana/connector/headless';
+import type { Base64EncodedWireTransaction } from '@trezoa/kit';
+import { signatureBytesToBase58 } from '@trezoa/connector/headless';
 
 interface SignatureStatus {
     confirmationStatus?: string | null;
@@ -127,7 +127,7 @@ export function getWebSocketUrlForRpcUrl(rpcUrl: string): string {
     const url = new URL(rpcUrl);
     url.protocol = url.protocol.replace('http', 'ws');
 
-    // solana-test-validator defaults to HTTP 8899 and WS 8900
+    // trezoa-test-validator defaults to HTTP 8899 and WS 8900
     if ((url.hostname === 'localhost' || url.hostname.startsWith('127')) && (url.port === '8899' || url.port === '')) {
         url.port = '8900';
     }

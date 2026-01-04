@@ -3,12 +3,12 @@
 import React from 'react';
 import type { ReactNode } from 'react';
 import { useCluster } from '../../hooks/use-cluster';
-import type { SolanaCluster, SolanaClusterId } from '@wallet-ui/core';
+import type { TrezoaCluster, TrezoaClusterId } from '@wallet-ui/core';
 
 export interface ClusterElementRenderProps {
-    cluster: SolanaCluster | null;
-    clusters: SolanaCluster[];
-    setCluster: (id: SolanaClusterId) => Promise<void>;
+    cluster: TrezoaCluster | null;
+    clusters: TrezoaCluster[];
+    setCluster: (id: TrezoaClusterId) => Promise<void>;
     isMainnet: boolean;
     isDevnet: boolean;
     isTestnet: boolean;
@@ -16,7 +16,7 @@ export interface ClusterElementRenderProps {
 }
 
 export interface ClusterElementProps {
-    /** Display variant */
+    /** Ditplay variant */
     variant?: 'badge' | 'select' | 'menuitem';
     /** Custom className */
     className?: string;
@@ -174,7 +174,7 @@ export function ClusterElement({
                 </button>
                 {isOpen && (
                     <div className="ck-cluster-block-options" data-slot="cluster-element-options">
-                        {clusters.map((c: SolanaCluster) => {
+                        {clusters.map((c: TrezoaCluster) => {
                             const cLabel = allLabels[c.id] || c.label || c.id;
                             const cColor = getClusterColor(c.id);
                             const isSelected = c.id === cluster.id;
@@ -185,7 +185,7 @@ export function ClusterElement({
                                     type="button"
                                     className={`ck-cluster-block-option ${isSelected ? 'ck-cluster-block-option--selected' : ''}`}
                                     onClick={() => {
-                                        setCluster(c.id as SolanaClusterId);
+                                        setCluster(c.id as TrezoaClusterId);
                                         setIsOpen(false);
                                     }}
                                     data-slot="cluster-element-option"
@@ -256,7 +256,7 @@ export function ClusterElement({
                 <>
                     <div className="ck-cluster-block-backdrop" onClick={() => setIsOpen(false)} aria-hidden="true" />
                     <div className="ck-cluster-block-options" data-slot="cluster-element-options">
-                        {clusters.map((c: SolanaCluster) => {
+                        {clusters.map((c: TrezoaCluster) => {
                             const cLabel = allLabels[c.id] || c.label || c.id;
                             const cColor = getClusterColor(c.id);
                             const isSelected = c.id === cluster.id;
@@ -267,7 +267,7 @@ export function ClusterElement({
                                     type="button"
                                     className={`ck-cluster-block-option ${isSelected ? 'ck-cluster-block-option--selected' : ''}`}
                                     onClick={() => {
-                                        setCluster(c.id as SolanaClusterId);
+                                        setCluster(c.id as TrezoaClusterId);
                                         setIsOpen(false);
                                     }}
                                     data-slot="cluster-element-option"

@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger - Live Transaction Types
+ * @trezoa/connector-debugger - Live Transaction Types
  *
  * Types for real-time transaction monitoring and lifecycle tracking
  */

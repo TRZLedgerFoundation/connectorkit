@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger/react
+ * @trezoa/connector-debugger/react
  *
  * React-specific exports for the debug panel
  */

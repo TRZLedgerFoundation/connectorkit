@@ -1,10 +1,10 @@
 'use client';
 
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 import { Alert } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
-import { LegacySolTransfer } from './legacy-sol-transfer';
-import { ModernSolTransfer } from './modern-sol-transfer';
+import { LegacyTrzTransfer } from './legacy-trz-transfer';
+import { ModernTrzTransfer } from './modern-trz-transfer';
 import { KitSignerDemo } from './kit-signer-demo';
 import { ChainUtilitiesDemo } from './chain-utilities-demo';
 import { ConnectionAbstractionDemo } from './connection-abstraction-demo';
@@ -28,8 +28,8 @@ export function TransactionDemo() {
         <div className="space-y-6">
             {/* Transactions */}
             <div className="grid gap-4 lg:grid-cols-2">
-                <LegacySolTransfer />
-                <ModernSolTransfer />
+                <LegacyTrzTransfer />
+                <ModernTrzTransfer />
             </div>
 
             {/* New Features */}

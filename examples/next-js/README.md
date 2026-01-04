@@ -1,6 +1,6 @@
 # ConnectorKit React Example
 
-Production-ready Solana wallet connection components built with shadcn/ui and Next.js. These components are designed to be copied into your project and customized to match your needs.
+Production-ready Trezoa wallet connection components built with shadcn/ui and Next.js. These components are designed to be copied into your project and customized to match your needs.
 
 ## 🚀 Quick Start
 
@@ -45,11 +45,11 @@ export default function Header() {
 
 #### **WalletModal**
 
-A dialog for selecting and connecting to Solana wallets.
+A dialog for selecting and connecting to Trezoa wallets.
 
 **Features:**
 
-- Lists all available Solana wallets
+- Lists all available Trezoa wallets
 - Shows wallet icons and names
 - Detects installed vs. not installed wallets
 - Provides installation links for popular wallets
@@ -90,7 +90,7 @@ export default function Header() {
 
 #### **ClusterSelector**
 
-A dropdown for switching between Solana networks.
+A dropdown for switching between Trezoa networks.
 
 **Features:**
 
@@ -133,7 +133,7 @@ These components are meant to be **copied and customized**:
 
 These components use:
 
-- `@solana/connector` - Headless wallet connection logic
+- `@trezoa/connector` - Headless wallet connection logic
 - `shadcn/ui` - UI components (Button, Dialog, Dropdown, etc.)
 - `lucide-react` - Icons
 - `tailwindcss` - Styling
@@ -175,7 +175,7 @@ components/
 1. Install dependencies:
 
     ```bash
-    npm install @solana/connector
+    npm install @trezoa/connector
     npx shadcn@latest init
     npx shadcn@latest add button dialog dropdown-menu avatar badge card
     ```

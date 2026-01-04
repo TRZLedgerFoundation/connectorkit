@@ -3,7 +3,7 @@
  */
 
 import { Storage as WalletUiStorage } from '@wallet-ui/core';
-import type { SolanaClusterId } from '@wallet-ui/core';
+import type { TrezoaClusterId } from '@wallet-ui/core';
 import type {
     StorageOptions,
     StorageAdapter,
@@ -170,9 +170,9 @@ export function createEnhancedStorageAccount(
 
 export function createEnhancedStorageCluster(
     options?: EnhancedStorageClusterOptions,
-): EnhancedStorage<SolanaClusterId> {
+): EnhancedStorage<TrezoaClusterId> {
     const key = options?.key ?? `connector-kit:${STORAGE_VERSION}:cluster`;
-    const storage = new EnhancedStorage(key, options?.initial ?? 'solana:mainnet', {
+    const storage = new EnhancedStorage(key, options?.initial ?? 'trezoa:mainnet', {
         onError: options?.onError,
         useMemoryFallback: true,
     });

@@ -4,7 +4,7 @@ import { StateManager } from '../core/state-manager';
 import { EventEmitter } from '../core/event-emitter';
 import type { ConnectorState } from '../../types/connector';
 import { getWalletsRegistry } from './standard-shim';
-import { createMockBackpackWallet, createMockPhantomWallet, createMockSolflareWallet } from '../../__tests__/mocks/wallet-standard-mock';
+import { createMockBackpackWallet, createMockPhantomWallet, createMockTrzflareWallet } from '../../__tests__/mocks/wallet-standard-mock';
 import { applyWalletIconOverride, getWalletIconOverride } from './wallet-icon-overrides';
 
 // Mock dependencies
@@ -66,13 +66,13 @@ describe('WalletDetector', () => {
         expect(() => detector.destroy()).not.toThrow();
     });
 
-    it('should override known wallet icons (Phantom, Solflare, Backpack)', () => {
+    it('should override known wallet icons (Phantom, Trzflare, Backpack)', () => {
         const phantom = createMockPhantomWallet({ icon: 'data:image/svg+xml,<svg><text>OLD_P</text></svg>' });
-        const solflare = createMockSolflareWallet({ icon: 'data:image/svg+xml,<svg><text>OLD_S</text></svg>' });
+        const trzflare = createMockTrzflareWallet({ icon: 'data:image/svg+xml,<svg><text>OLD_S</text></svg>' });
         const backpack = createMockBackpackWallet({ icon: 'data:image/svg+xml,<svg><text>OLD_B</text></svg>' });
 
         vi.mocked(getWalletsRegistry).mockReturnValue({
-            get: vi.fn(() => [phantom, solflare, backpack]),
+            get: vi.fn(() => [phantom, trzflare, backpack]),
             on: vi.fn(() => vi.fn()),
         } as unknown as ReturnType<typeof getWalletsRegistry>);
 
@@ -85,7 +85,7 @@ describe('WalletDetector', () => {
         }
 
         expect(iconFor('Phantom')).toBe(getWalletIconOverride('Phantom'));
-        expect(iconFor('Solflare')).toBe(getWalletIconOverride('Solflare'));
+        expect(iconFor('Trzflare')).toBe(getWalletIconOverride('Trzflare'));
         expect(iconFor('Backpack')).toBe(getWalletIconOverride('Backpack'));
     });
 
@@ -100,7 +100,7 @@ describe('WalletDetector', () => {
             constructor(name: string) {
                 this._name = name;
                 this._icon = 'data:image/svg+xml,<svg><text>ORIGINAL</text></svg>';
-                this._chains = ['solana:mainnet'];
+                this._chains = ['trezoa:mainnet'];
                 this._accounts = [];
                 this._features = {
                     'standard:connect': { version: '1.0.0' },
@@ -150,7 +150,7 @@ describe('WalletDetector', () => {
             constructor(name: string) {
                 this.#name = name;
                 this.#icon = 'data:image/svg+xml,<svg><text>ORIGINAL</text></svg>';
-                this.#chains = ['solana:mainnet'];
+                this.#chains = ['trezoa:mainnet'];
                 this.#accounts = [];
                 this.#features = {
                     'standard:connect': { version: '1.0.0', connect: async () => ({ accounts: [] }) },

@@ -19,14 +19,14 @@ export interface UniversalProviderOpts {
 
 export interface ConnectParams {
     namespaces?: {
-        solana?: {
+        trezoa?: {
             chains: string[];
             methods: string[];
             events: string[];
         };
     };
     optionalNamespaces?: {
-        solana?: {
+        trezoa?: {
             chains: string[];
             methods: string[];
             events: string[];
@@ -69,19 +69,19 @@ class MockUniversalProvider {
     async request<T = unknown>(_args: { method: string; params?: unknown; chainId?: string }): Promise<T> {
         // Return mock responses based on method
         const method = _args.method;
-        if (method === 'solana_getAccounts' || method === 'solana_requestAccounts') {
+        if (method === 'trezoa_getAccounts' || method === 'trezoa_requestAccounts') {
             return [{ pubkey: 'MockPublicKey111111111111111111111111111' }] as unknown as T;
         }
-        if (method === 'solana_signMessage') {
+        if (method === 'trezoa_signMessage') {
             return { signature: 'MockSignature' } as unknown as T;
         }
-        if (method === 'solana_signTransaction') {
+        if (method === 'trezoa_signTransaction') {
             return { signature: 'MockSignature' } as unknown as T;
         }
-        if (method === 'solana_signAllTransactions') {
+        if (method === 'trezoa_signAllTransactions') {
             return { transactions: [] } as unknown as T;
         }
-        if (method === 'solana_signAndSendTransaction') {
+        if (method === 'trezoa_signAndSendTransaction') {
             return { signature: 'MockTxSignature' } as unknown as T;
         }
         throw new Error(`Mock: Unknown method ${method}`);

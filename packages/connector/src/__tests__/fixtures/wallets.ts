@@ -7,7 +7,7 @@
 import type { WalletInfo } from '../../types/wallets';
 import {
     createMockPhantomWallet,
-    createMockSolflareWallet,
+    createMockTrzflareWallet,
     createMockBackpackWallet,
 } from '../mocks/wallet-standard-mock';
 
@@ -17,8 +17,8 @@ export const PHANTOM_WALLET_INFO: WalletInfo = {
     connectable: true,
 };
 
-export const SOLFLARE_WALLET_INFO: WalletInfo = {
-    wallet: createMockSolflareWallet(),
+export const TRZFLARE_WALLET_INFO: WalletInfo = {
+    wallet: createMockTrzflareWallet(),
     installed: true,
     connectable: true,
 };
@@ -35,7 +35,7 @@ export const BACKPACK_WALLET_INFO: WalletInfo = {
 export function createTestWallets() {
     return {
         phantom: createMockPhantomWallet(),
-        solflare: createMockSolflareWallet(),
+        trzflare: createMockTrzflareWallet(),
         backpack: createMockBackpackWallet(),
     };
 }

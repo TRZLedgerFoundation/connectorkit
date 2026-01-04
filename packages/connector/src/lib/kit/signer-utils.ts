@@ -1,7 +1,7 @@
-import type { Address } from '@solana/addresses';
-import { getBase58Decoder, getBase58Encoder } from '@solana/codecs';
-import type { SignatureBytes } from '@solana/keys';
-import type { SignatureDictionary } from '@solana/signers';
+import type { Address } from '@trezoa/addresses';
+import { getBase58Decoder, getBase58Encoder } from '@trezoa/codecs';
+import type { SignatureBytes } from '@trezoa/keys';
+import type { SignatureDictionary } from '@trezoa/signers';
 
 function toSignatureBytes(bytes: Uint8Array): SignatureBytes {
     return bytes as SignatureBytes;

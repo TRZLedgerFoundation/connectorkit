@@ -6,12 +6,12 @@
  * - Serialized Uint8Array (Wallet Standard format)
  * - Other TypedArray formats
  *
- * Note: Uses dynamic imports for @solana/web3.js to avoid bundling it
+ * Note: Uses dynamic imports for @trezoa/web3.js to avoid bundling it
  * since it's only needed for the compat layer.
  */
 
-import type { Transaction, VersionedTransaction } from '@solana/web3.js';
-import type { SolanaTransaction } from '../types/transactions';
+import type { Transaction, VersionedTransaction } from '@trezoa/web3.js';
+import type { TrezoaTransaction } from '../types/transactions';
 
 /**
  * Check if a value is a web3.js Transaction or VersionedTransaction object
@@ -31,7 +31,7 @@ export function isWeb3jsTransaction(tx: unknown): tx is Transaction | VersionedT
  * @returns Serialized transaction bytes
  * @throws Error if transaction format is unsupported
  */
-export function serializeTransaction(tx: SolanaTransaction): Uint8Array {
+export function serializeTransaction(tx: TrezoaTransaction): Uint8Array {
     // web3.js Transaction/VersionedTransaction object
     if (isWeb3jsTransaction(tx)) {
         return tx.serialize({
@@ -68,7 +68,7 @@ function isLegacyTransaction(bytes: Uint8Array): boolean {
 
 /**
  * Deserialize bytes to a web3.js Transaction or VersionedTransaction object
- * Uses dynamic import to avoid bundling @solana/web3.js
+ * Uses dynamic import to avoid bundling @trezoa/web3.js
  * Automatically detects legacy vs versioned format
  *
  * @param bytes - Serialized transaction bytes
@@ -77,11 +77,11 @@ function isLegacyTransaction(bytes: Uint8Array): boolean {
 export async function deserializeToWeb3jsTransaction(bytes: Uint8Array): Promise<Transaction | VersionedTransaction> {
     if (isLegacyTransaction(bytes)) {
         // Legacy transaction - use Transaction.deserialize to preserve legacy-only fields
-        const { Transaction } = await import('@solana/web3.js');
+        const { Transaction } = await import('@trezoa/web3.js');
         return Transaction.from(bytes);
     } else {
         // Versioned transaction
-        const { VersionedTransaction } = await import('@solana/web3.js');
+        const { VersionedTransaction } = await import('@trezoa/web3.js');
         return VersionedTransaction.deserialize(bytes);
     }
 }
@@ -93,7 +93,7 @@ export async function deserializeToWeb3jsTransaction(bytes: Uint8Array): Promise
  * @param tx - Transaction in any supported format
  * @returns Object with serialized bytes and format flag
  */
-export function prepareTransactionForWallet(tx: SolanaTransaction): { serialized: Uint8Array; wasWeb3js: boolean } {
+export function prepareTransactionForWallet(tx: TrezoaTransaction): { serialized: Uint8Array; wasWeb3js: boolean } {
     const wasWeb3js = isWeb3jsTransaction(tx);
     const serialized = serializeTransaction(tx);
     return { serialized, wasWeb3js };

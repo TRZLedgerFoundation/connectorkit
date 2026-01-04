@@ -20,14 +20,14 @@ declare module '@walletconnect/universal-provider' {
 
     export interface ConnectParams {
         namespaces?: {
-            solana?: {
+            trezoa?: {
                 chains: string[];
                 methods: string[];
                 events: string[];
             };
         };
         optionalNamespaces?: {
-            solana?: {
+            trezoa?: {
                 chains: string[];
                 methods: string[];
                 events: string[];

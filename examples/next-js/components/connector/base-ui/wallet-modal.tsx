@@ -1,6 +1,6 @@
 'use client';
 
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 import { Dialog, DialogContent, DialogTitle, DialogClose } from '@/components/ui-base/dialog';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui-base/collapsible';
 import { Button } from '@/components/ui-base/button';
@@ -197,7 +197,7 @@ export function WalletModal({ open, onOpenChange, walletConnectUri, onClearWalle
         // Known wallet install URLs
         const name = walletName.toLowerCase();
         if (name.includes('phantom')) return 'https://phantom.app';
-        if (name.includes('solflare')) return 'https://solflare.com';
+        if (name.includes('trzflare')) return 'https://trzflare.com';
         if (name.includes('backpack')) return 'https://backpack.app';
         if (name.includes('glow')) return 'https://glow.app';
         if (name.includes('coinbase')) return 'https://www.coinbase.com/wallet';
@@ -240,7 +240,7 @@ export function WalletModal({ open, onOpenChange, walletConnectUri, onClearWalle
                     </DialogClose>
                 </div>
 
-                {/* WalletConnect QR Code Display */}
+                {/* WalletConnect QR Code Ditplay */}
                 {isWalletConnectFlow ? (
                     <div className="space-y-4 py-2">
                         <p className="text-center text-sm text-muted-foreground">
@@ -478,7 +478,7 @@ export function WalletModal({ open, onOpenChange, walletConnectUri, onClearWalle
                                     <Wallet className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
                                     <h3 className="font-semibold mb-2">No Wallets Detected</h3>
                                     <p className="text-sm text-muted-foreground mb-6">
-                                        Install a Solana wallet extension to get started
+                                        Install a Trezoa wallet extension to get started
                                     </p>
                                     <div className="flex gap-2 justify-center">
                                         <Button

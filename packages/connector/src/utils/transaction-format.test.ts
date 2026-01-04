@@ -12,7 +12,7 @@ import {
     prepareTransactionForWallet,
     convertSignedTransaction,
 } from './transaction-format';
-import type { Transaction, VersionedTransaction } from '@solana/web3.js';
+import type { Transaction, VersionedTransaction } from '@trezoa/web3.js';
 
 describe('Transaction Format Utilities', () => {
     // Mock transaction bytes (legacy format - first byte high bit = 0)

@@ -266,7 +266,7 @@ describe('Connector Flow Integration', () => {
         it('should switch between wallets', async () => {
             const wallet1 = createMockPhantomWallet();
             const wallet2 = createMockPhantomWallet();
-            wallet2.name = 'Solflare';
+            wallet2.name = 'Trzflare';
 
             const account1 = createMockWalletAccount(TEST_ADDRESSES.ACCOUNT_1);
             const account2 = createMockWalletAccount(TEST_ADDRESSES.ACCOUNT_2);

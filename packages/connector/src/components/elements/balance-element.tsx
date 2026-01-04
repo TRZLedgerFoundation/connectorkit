@@ -6,7 +6,7 @@ import { useBalance, type TokenBalance } from '../../hooks/use-balance';
 import { SkeletonShine } from './skeleton-shine';
 
 export interface BalanceElementRenderProps {
-    solBalance: number;
+    trzBalance: number;
     formattedSol: string;
     tokens: TokenBalance[];
     isLoading: boolean;
@@ -15,7 +15,7 @@ export interface BalanceElementRenderProps {
 }
 
 export interface BalanceElementProps {
-    /** Show SOL balance */
+    /** Show TRZ balance */
     showSol?: boolean;
     /** Show token balances */
     showTokens?: boolean;
@@ -23,7 +23,7 @@ export interface BalanceElementProps {
     tokenCount?: number;
     /** Custom className */
     className?: string;
-    /** Display variant */
+    /** Ditplay variant */
     variant?: 'compact' | 'expanded' | 'inline';
     /** Show refresh button */
     showRefresh?: boolean;
@@ -34,7 +34,7 @@ export interface BalanceElementProps {
 }
 
 /**
- * Element for displaying wallet balance (SOL and tokens).
+ * Element for displaying wallet balance (TRZ and tokens).
  *
  * @example Basic usage
  * ```tsx
@@ -67,11 +67,11 @@ export function BalanceElement({
     showSkeleton = true,
     render,
 }: BalanceElementProps) {
-    const { solBalance, formattedSol, tokens, isLoading, error, refetch } = useBalance();
+    const { trzBalance, formattedSol, tokens, isLoading, error, refetch } = useBalance();
 
     // Custom render
     if (render) {
-        return <>{render({ solBalance, formattedSol, tokens, isLoading, error, refetch })}</>;
+        return <>{render({ trzBalance, formattedSol, tokens, isLoading, error, refetch })}</>;
     }
 
     const displayTokens = tokens.slice(0, tokenCount);
@@ -97,7 +97,7 @@ export function BalanceElement({
     );
 
     // Loading skeleton
-    if (isLoading && showSkeleton && solBalance === 0) {
+    if (isLoading && showSkeleton && trzBalance === 0) {
         return (
             <div
                 className={`ck-balance-block ck-balance-block--${variant} ck-balance-block--loading ${className || ''}`}
@@ -187,9 +187,9 @@ export function BalanceElement({
                 data-variant="expanded"
             >
                 {showSol && (
-                    <div className="ck-balance-block-sol-section" data-slot="balance-element-sol-section">
+                    <div className="ck-balance-block-trz-section" data-slot="balance-element-trz-section">
                         <span className="ck-balance-block-label" data-slot="balance-element-label">
-                            SOL Balance
+                            TRZ Balance
                         </span>
                         <span className="ck-balance-block-sol" data-slot="balance-element-sol">
                             {formattedSol}

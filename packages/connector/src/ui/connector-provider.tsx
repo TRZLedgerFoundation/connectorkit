@@ -12,8 +12,8 @@ import { createLogger } from '../lib/utils/secure-logger';
 import type {
     AuthorizationCache,
     ChainSelector,
-    SolanaMobileWalletAdapterWallet,
-} from '@solana-mobile/wallet-standard-mobile';
+    TrezoaMobileWalletAdapterWallet,
+} from '@trezoa-mobile/wallet-standard-mobile';
 import type { IdentifierArray } from '@wallet-standard/base';
 
 /** Configuration for registerMwa - defined locally as the package doesn't export this type */
@@ -27,7 +27,7 @@ interface RegisterMwaConfig {
     chains: IdentifierArray;
     chainSelector: ChainSelector;
     remoteHostAuthority?: string;
-    onWalletNotFound: (mobileWalletAdapter: SolanaMobileWalletAdapterWallet) => Promise<void>;
+    onWalletNotFound: (mobileWalletAdapter: TrezoaMobileWalletAdapterWallet) => Promise<void>;
 }
 
 const logger = createLogger('ConnectorProvider');
@@ -63,7 +63,7 @@ export interface MobileWalletAdapterConfig {
     chains?: RegisterMwaConfig['chains'];
     authorizationCache?: AuthorizationCache;
     chainSelector?: ChainSelector;
-    onWalletNotFound?: (wallet: SolanaMobileWalletAdapterWallet) => Promise<void>;
+    onWalletNotFound?: (wallet: TrezoaMobileWalletAdapterWallet) => Promise<void>;
 }
 
 function ConnectorProviderInternal({
@@ -135,8 +135,8 @@ function ConnectorProviderInternal({
         (async () => {
             try {
                 const mod = (await import(
-                    '@solana-mobile/wallet-standard-mobile'
-                )) as typeof import('@solana-mobile/wallet-standard-mobile');
+                    '@trezoa-mobile/wallet-standard-mobile'
+                )) as typeof import('@trezoa-mobile/wallet-standard-mobile');
                 if (cancelled) return;
                 const {
                     registerMwa,
@@ -145,9 +145,9 @@ function ConnectorProviderInternal({
                     createDefaultWalletNotFoundHandler,
                 } = mod;
                 const defaultChains: RegisterMwaConfig['chains'] = [
-                    'solana:mainnet',
-                    'solana:devnet',
-                    'solana:testnet',
+                    'trezoa:mainnet',
+                    'trezoa:devnet',
+                    'trezoa:testnet',
                 ];
 
                 const mwaConfig: RegisterMwaConfig = {

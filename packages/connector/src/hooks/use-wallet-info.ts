@@ -1,5 +1,5 @@
 /**
- * @solana/connector - useWalletInfo hook
+ * @trezoa/connector - useWalletInfo hook
  *
  * React hook for getting information about the connected wallet
  */
@@ -13,14 +13,14 @@ import type { WalletInfo } from '../types/wallets';
 /**
  * Simplified wallet information for display purposes
  */
-export interface WalletDisplayInfo {
+export interface WalletDitplayInfo {
     /** Wallet name */
     name: string;
     /** Wallet icon/logo URL if available */
     icon?: string;
     /** Whether the wallet extension is installed */
     installed: boolean;
-    /** Whether the wallet supports Solana connections */
+    /** Whether the wallet supports Trezoa connections */
     connectable?: boolean;
 }
 
@@ -28,20 +28,20 @@ export interface WalletDisplayInfo {
  * Return value from useWalletInfo hook
  */
 export interface UseWalletInfoReturn {
-    /** Name of the connected wallet (e.g., 'Phantom', 'Solflare') */
+    /** Name of the connected wallet (e.g., 'Phantom', 'Trzflare') */
     name: string | null;
     /** Wallet icon/logo URL if available */
     icon: string | null;
     /** Whether the wallet extension is installed */
     installed: boolean;
-    /** Whether the wallet supports Solana connections */
+    /** Whether the wallet supports Trezoa connections */
     connectable: boolean;
     /** Whether currently connected to the wallet */
     connected: boolean;
     /** Whether a connection attempt is in progress */
     connecting: boolean;
     /** All available wallets */
-    wallets: WalletDisplayInfo[];
+    wallets: WalletDitplayInfo[];
 }
 
 /**
@@ -68,11 +68,11 @@ export interface UseWalletInfoReturn {
 export function useWalletInfo(): UseWalletInfoReturn {
     const { selectedWallet, wallets, connected, connecting } = useConnector();
 
-    // Map WalletInfo[] to WalletDisplayInfo[] for simplified consumption
-    const mappedWallets = useMemo<WalletDisplayInfo[]>(
+    // Map WalletInfo[] to WalletDitplayInfo[] for simplified consumption
+    const mappedWallets = useMemo<WalletDitplayInfo[]>(
         () =>
             wallets.map(
-                (walletInfo: WalletInfo): WalletDisplayInfo => ({
+                (walletInfo: WalletInfo): WalletDitplayInfo => ({
                     name: walletInfo.wallet.name,
                     icon: walletInfo.wallet.icon,
                     installed: walletInfo.installed,

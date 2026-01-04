@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 import {
     AccountElement,
     BalanceElement,
@@ -13,7 +13,7 @@ import {
     DisconnectElement,
     TransactionHistoryElement,
     TokenListElement,
-} from '@solana/connector/react';
+} from '@trezoa/connector/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
@@ -37,7 +37,7 @@ export function ElementsDemo() {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-lg">AccountElement</CardTitle>
-                    <CardDescription>Displays connected account information</CardDescription>
+                    <CardDescription>Ditplays connected account information</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div>
@@ -61,11 +61,11 @@ export function ElementsDemo() {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-lg">BalanceElement</CardTitle>
-                    <CardDescription>Shows SOL and token balances</CardDescription>
+                    <CardDescription>Shows TRZ and token balances</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div>
-                        <p className="text-sm text-muted-foreground mb-2">Compact (SOL only):</p>
+                        <p className="text-sm text-muted-foreground mb-2">Compact (TRZ only):</p>
                         <BalanceElement variant="compact" />
                     </div>
                     <Separator />
@@ -85,7 +85,7 @@ export function ElementsDemo() {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-lg">ClusterElement</CardTitle>
-                    <CardDescription>Displays and optionally changes network</CardDescription>
+                    <CardDescription>Ditplays and optionally changes network</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div>
@@ -141,7 +141,7 @@ export function ElementsDemo() {
             <Card className="md:col-span-2">
                 <CardHeader>
                     <CardTitle className="text-lg">TokenListElement</CardTitle>
-                    <CardDescription>Displays token holdings</CardDescription>
+                    <CardDescription>Ditplays token holdings</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <TokenListElement limit={6} variant="expanded" showRefresh />

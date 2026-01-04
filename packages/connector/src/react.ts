@@ -1,5 +1,5 @@
 /**
- * @solana/connector/react
+ * @trezoa/connector/react
  *
  * React-specific exports with hooks and components
  * Use this when you only need React functionality
@@ -50,7 +50,7 @@ export type { WalletStandardWallet, WalletStandardAccount } from './lib/wallet/s
 export type { ExtendedConnectorConfig } from './config';
 
 // Re-export wallet-ui types for React components
-export type { SolanaCluster, SolanaClusterId } from '@wallet-ui/core';
+export type { TrezoaCluster, TrezoaClusterId } from '@wallet-ui/core';
 
 // Cluster utilities and types
 export type { ClusterType } from './utils/cluster';

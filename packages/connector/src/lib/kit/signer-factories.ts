@@ -1,20 +1,20 @@
 /**
- * @solana/connector - Kit Signer Factories
+ * @trezoa/connector - Kit Signer Factories
  *
  * Framework-agnostic factory functions to create Kit-compatible signers from wallet functions.
  * These factories enable pure Kit integration without React or framework dependencies.
  */
 
-import type { Address } from '@solana/addresses';
+import type { Address } from '@trezoa/addresses';
 import type {
     MessageModifyingSigner,
     TransactionSendingSigner,
     SignableMessage,
     MessageModifyingSignerConfig,
     TransactionSendingSignerConfig,
-} from '@solana/signers';
-import type { SignatureBytes } from '@solana/keys';
-import type { Transaction } from '@solana/transactions';
+} from '@trezoa/signers';
+import type { SignatureBytes } from '@trezoa/keys';
+import type { Transaction } from '@trezoa/transactions';
 import { ValidationError, TransactionError, Errors } from '../errors';
 import { updateSignatureDictionary, freezeSigner, base58ToSignatureBytes } from './signer-utils';
 
@@ -30,8 +30,8 @@ import { updateSignatureDictionary, freezeSigner, base58ToSignatureBytes } from 
  *
  * @example
  * ```typescript
- * import { address } from '@solana/addresses';
- * import { createMessageSignerFromWallet } from '@solana/connector/headless';
+ * import { address } from '@trezoa/addresses';
+ * import { createMessageSignerFromWallet } from '@trezoa/connector/headless';
  *
  * const signer = createMessageSignerFromWallet(
  *   address('...'),
@@ -39,7 +39,7 @@ import { updateSignatureDictionary, freezeSigner, base58ToSignatureBytes } from 
  * );
  *
  * // Use with Kit message signing
- * import { createSignableMessage } from '@solana/signers';
+ * import { createSignableMessage } from '@trezoa/signers';
  * const signed = await signer.modifyAndSignMessages([createSignableMessage(messageBytes)]);
  * ```
  */
@@ -117,18 +117,18 @@ export function createMessageSignerFromWallet(
  * Enables sign + send in one operation (wallets like Phantom support this).
  *
  * @param walletAddress - The address of the wallet
- * @param chain - The Solana chain identifier (e.g., 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1')
+ * @param chain - The Trezoa chain identifier (e.g., 'trezoa:EtWTRABZaYq6iMfeYKouRu166VU2xqa1')
  * @param sendTransactionFn - Function to send a transaction (from wallet adapter)
  * @returns A frozen TransactionSendingSigner object
  *
  * @example
  * ```typescript
- * import { address } from '@solana/addresses';
- * import { createTransactionSendingSignerFromWallet } from '@solana/connector/headless';
+ * import { address } from '@trezoa/addresses';
+ * import { createTransactionSendingSignerFromWallet } from '@trezoa/connector/headless';
  *
  * const signer = createTransactionSendingSignerFromWallet(
  *   address('...'),
- *   'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1',
+ *   'trezoa:EtWTRABZaYq6iMfeYKouRu166VU2xqa1',
  *   async (tx) => await wallet.sendTransaction(tx, connection)
  * );
  *
@@ -138,7 +138,7 @@ export function createMessageSignerFromWallet(
  */
 export function createTransactionSendingSignerFromWallet(
     walletAddress: Address<string>,
-    chain: `solana:${string}`,
+    chain: `trezoa:${string}`,
     sendTransactionFn: (transaction: Transaction) => Promise<string>,
 ): TransactionSendingSigner<string> {
     const signer: TransactionSendingSigner<string> = {

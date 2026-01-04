@@ -1,18 +1,18 @@
 /**
  * Formatting utilities tests
  *
- * Tests address, SOL amount, and number formatting functions
+ * Tests address, TRZ amount, and number formatting functions
  */
 
 import { describe, it, expect } from 'vitest';
 import {
     formatAddress,
-    formatSOL,
+    formatTRZ,
     formatNumber,
     truncate,
     formatTokenAmount,
     formatBigIntBalance,
-    formatLamportsToSolSafe,
+    formatLamportsToTrzSafe,
     formatBigIntUsd,
     formatTokenBalanceSafe,
 } from './formatting';
@@ -52,45 +52,45 @@ describe('formatAddress', () => {
     });
 });
 
-describe('formatSOL', () => {
-    it('should format lamports to SOL with default decimals', () => {
-        const formatted = formatSOL(1000000000n);
-        expect(formatted).toBe('1.0000 SOL');
+describe('formatTRZ', () => {
+    it('should format lamports to TRZ with default decimals', () => {
+        const formatted = formatTRZ(1000000000n);
+        expect(formatted).toBe('1.0000 TRZ');
     });
 
     it('should format lamports with custom decimals', () => {
-        const formatted = formatSOL(1500000000n, { decimals: 2 });
-        expect(formatted).toBe('1.50 SOL');
+        const formatted = formatTRZ(1500000000n, { decimals: 2 });
+        expect(formatted).toBe('1.50 TRZ');
     });
 
     it('should format without suffix', () => {
-        const formatted = formatSOL(1000000000n, { suffix: false });
+        const formatted = formatTRZ(1000000000n, { suffix: false });
         expect(formatted).toBe('1.0000');
     });
 
     it('should handle zero lamports', () => {
-        const formatted = formatSOL(0n);
-        expect(formatted).toBe('0.0000 SOL');
+        const formatted = formatTRZ(0n);
+        expect(formatted).toBe('0.0000 TRZ');
     });
 
     it('should handle small amounts', () => {
-        const formatted = formatSOL(1000n, { decimals: 6 });
-        expect(formatted).toBe('0.000001 SOL');
+        const formatted = formatTRZ(1000n, { decimals: 6 });
+        expect(formatted).toBe('0.000001 TRZ');
     });
 
     it('should handle large amounts', () => {
-        const formatted = formatSOL(1000000000000n, { decimals: 2 });
-        expect(formatted).toBe('1000.00 SOL');
+        const formatted = formatTRZ(1000000000000n, { decimals: 2 });
+        expect(formatted).toBe('1000.00 TRZ');
     });
 
     it('should use fast path for numbers when specified', () => {
-        const formatted = formatSOL(1000000000, { fast: true });
-        expect(formatted).toBe('1.0000 SOL');
+        const formatted = formatTRZ(1000000000, { fast: true });
+        expect(formatted).toBe('1.0000 TRZ');
     });
 
     it('should handle number input', () => {
-        const formatted = formatSOL(1000000000);
-        expect(formatted).toBe('1.0000 SOL');
+        const formatted = formatTRZ(1000000000);
+        expect(formatted).toBe('1.0000 TRZ');
     });
 });
 
@@ -212,7 +212,7 @@ describe('formatTokenAmount', () => {
         expect(formatted).toBe('1.50');
     });
 
-    it('should handle 9 decimal tokens (common for SPL tokens)', () => {
+    it('should handle 9 decimal tokens (common for TPL tokens)', () => {
         const formatted = formatTokenAmount(1000000000, 9);
         expect(formatted).toBe('1');
     });
@@ -273,13 +273,13 @@ describe('formatBigIntBalance', () => {
         expect(formatted).toBe('1.0000');
     });
 
-    it('should handle 9 decimal tokens (SOL)', () => {
+    it('should handle 9 decimal tokens (TRZ)', () => {
         const formatted = formatBigIntBalance(1500000000n, 9, { maxDecimals: 4 });
         expect(formatted).toBe('1.5');
     });
 
     it('should handle large amounts within safe integer range', () => {
-        // 9000 SOL in lamports - still within safe range
+        // 9000 TRZ in lamports - still within safe range
         const formatted = formatBigIntBalance(9000000000000n, 9, { maxDecimals: 2 });
         expect(formatted).toBe('9,000');
     });
@@ -302,35 +302,35 @@ describe('formatBigIntBalance', () => {
     });
 });
 
-describe('formatLamportsToSolSafe', () => {
-    it('should format lamports to SOL', () => {
-        const formatted = formatLamportsToSolSafe(1000000000n);
+describe('formatLamportsToTrzSafe', () => {
+    it('should format lamports to TRZ', () => {
+        const formatted = formatLamportsToTrzSafe(1000000000n);
         expect(formatted).toBe('1');
     });
 
     it('should format with suffix', () => {
-        const formatted = formatLamportsToSolSafe(1000000000n, { suffix: true });
-        expect(formatted).toBe('1 SOL');
+        const formatted = formatLamportsToTrzSafe(1000000000n, { suffix: true });
+        expect(formatted).toBe('1 TRZ');
     });
 
     it('should respect maxDecimals', () => {
-        const formatted = formatLamportsToSolSafe(1500000000n, { maxDecimals: 2 });
+        const formatted = formatLamportsToTrzSafe(1500000000n, { maxDecimals: 2 });
         expect(formatted).toBe('1.5');
     });
 
     it('should handle zero lamports', () => {
-        const formatted = formatLamportsToSolSafe(0n, { suffix: true });
-        expect(formatted).toBe('0 SOL');
+        const formatted = formatLamportsToTrzSafe(0n, { suffix: true });
+        expect(formatted).toBe('0 TRZ');
     });
 
     it('should handle small amounts', () => {
-        const formatted = formatLamportsToSolSafe(1000n, { maxDecimals: 9 });
+        const formatted = formatLamportsToTrzSafe(1000n, { maxDecimals: 9 });
         expect(formatted).toBe('0.000001');
     });
 
     it('should handle large amounts', () => {
-        const formatted = formatLamportsToSolSafe(1000000000000n, { maxDecimals: 2, suffix: true });
-        expect(formatted).toBe('1,000 SOL');
+        const formatted = formatLamportsToTrzSafe(1000000000000n, { maxDecimals: 2, suffix: true });
+        expect(formatted).toBe('1,000 TRZ');
     });
 });
 
@@ -346,17 +346,17 @@ describe('formatBigIntUsd', () => {
     });
 
     it('should handle fractional token amounts', () => {
-        const formatted = formatBigIntUsd(500000000n, 9, 100); // 0.5 SOL at $100
+        const formatted = formatBigIntUsd(500000000n, 9, 100); // 0.5 TRZ at $100
         expect(formatted).toMatch(/\$50\.00/);
     });
 
     it('should handle small USD values', () => {
-        const formatted = formatBigIntUsd(1000n, 9, 150); // 0.000001 SOL at $150
+        const formatted = formatBigIntUsd(1000n, 9, 150); // 0.000001 TRZ at $150
         expect(formatted).toMatch(/\$0\.00/);
     });
 
     it('should handle large token amounts', () => {
-        const formatted = formatBigIntUsd(10000000000000n, 9, 150); // 10,000 SOL at $150
+        const formatted = formatBigIntUsd(10000000000000n, 9, 150); // 10,000 TRZ at $150
         expect(formatted).toMatch(/1,500,000\.00/);
     });
 });

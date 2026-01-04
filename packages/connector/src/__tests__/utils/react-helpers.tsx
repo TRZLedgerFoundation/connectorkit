@@ -43,10 +43,10 @@ export function setupTestEnvironment(options: { walletCount?: number; config?: C
     // Mock the wallet registry
     const registry = mockWalletRegistry(wallets);
 
-    // Mock window.solana (Phantom injection)
+    // Mock window.trezoa (Phantom injection)
     if (typeof window !== 'undefined') {
-        // @ts-expect-error - Mocking window.solana
-        window.solana = {
+        // @ts-expect-error - Mocking window.trezoa
+        window.trezoa = {
             isPhantom: true,
             publicKey: null,
             connect: testWallets.phantom.features['standard:connect']?.connect,
@@ -60,7 +60,7 @@ export function setupTestEnvironment(options: { walletCount?: number; config?: C
         cleanup: () => {
             if (typeof window !== 'undefined') {
                 // @ts-expect-error - Cleaning up mock
-                delete window.solana;
+                delete window.trezoa;
             }
         },
     };

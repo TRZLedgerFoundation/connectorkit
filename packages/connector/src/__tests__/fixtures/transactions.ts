@@ -1,7 +1,7 @@
 import type { TransactionActivity, TransactionMethod } from '../../types/transactions';
-import type { SolanaClusterId } from '@wallet-ui/core';
-import type { Signature } from '@solana/keys';
-import { signature as toSignature } from '@solana/keys';
+import type { TrezoaClusterId } from '@wallet-ui/core';
+import type { Signature } from '@trezoa/keys';
+import { signature as toSignature } from '@trezoa/keys';
 
 export const TEST_SIGNATURES = {
     TX_1: '5j7s6NiJS3JAkvgkoc18WVAsiSaci2pxB2A6ueCJP4tprA2TFg9wSyTLeYouxPBJEMzJinENTkpA52YStRW5Dia7',
@@ -21,7 +21,7 @@ export function createMockTransaction(
         status?: 'pending' | 'confirmed' | 'failed';
         timestamp?: string;
         error?: string;
-        cluster?: SolanaClusterId;
+        cluster?: TrezoaClusterId;
         method?: TransactionMethod;
     } = {},
 ): TransactionActivity {
@@ -30,7 +30,7 @@ export function createMockTransaction(
         status: options.status ?? 'pending',
         timestamp: options.timestamp ?? new Date().toISOString(),
         error: options.error,
-        cluster: (options.cluster ?? 'solana:devnet') as SolanaClusterId,
+        cluster: (options.cluster ?? 'trezoa:devnet') as TrezoaClusterId,
         method: options.method ?? 'signAndSendTransaction',
     };
 }

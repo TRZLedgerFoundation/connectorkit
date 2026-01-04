@@ -1,25 +1,25 @@
 /**
- * @solana/connector - Kit Transaction Signer Adapter
+ * @trezoa/connector - Kit Transaction Signer Adapter
  *
  * Adapter that wraps connector-kit's TransactionSigner to be compatible with
- * @solana/kit TransactionModifyingSigner interface.
+ * @trezoa/kit TransactionModifyingSigner interface.
  *
- * This enables connector-kit to work seamlessly with modern Solana libraries
- * that expect @solana/kit's signer interface.
+ * This enables connector-kit to work seamlessly with modern Trezoa libraries
+ * that expect @trezoa/kit's signer interface.
  *
  * Uses TransactionModifyingSigner to return fully signed Transaction objects,
  * ensuring the exact bytes the wallet signed are preserved without re-encoding.
  */
 
 import type { TransactionSigner as ConnectorTransactionSigner } from './transaction-signer';
-import type { SolanaTransaction } from '../../types/transactions';
-import type { Address } from '@solana/addresses';
-import { address as createAddress } from '@solana/addresses';
-import type { TransactionModifyingSigner } from '@solana/signers';
-import type { Transaction, TransactionWithLifetime, TransactionWithinSizeLimit } from '@solana/transactions';
-import { getTransactionDecoder, assertIsTransactionWithinSizeLimit } from '@solana/transactions';
-import { getBase58Decoder } from '@solana/codecs';
-import type { SignatureBytes } from '@solana/keys';
+import type { TrezoaTransaction } from '../../types/transactions';
+import type { Address } from '@trezoa/addresses';
+import { address as createAddress } from '@trezoa/addresses';
+import type { TransactionModifyingSigner } from '@trezoa/signers';
+import type { Transaction, TransactionWithLifetime, TransactionWithinSizeLimit } from '@trezoa/transactions';
+import { getTransactionDecoder, assertIsTransactionWithinSizeLimit } from '@trezoa/transactions';
+import { getBase58Decoder } from '@trezoa/codecs';
+import type { SignatureBytes } from '@trezoa/keys';
 import { isWeb3jsTransaction } from '../../utils/transaction-format';
 import { createLogger } from '../utils/secure-logger';
 
@@ -180,7 +180,7 @@ function createTransactionBytesForSigning(messageBytes: Uint8Array, numSigners: 
  * @returns Signature bytes (64 bytes)
  */
 function extractSignatureAtIndex(
-    signedTx: SolanaTransaction,
+    signedTx: TrezoaTransaction,
     signerIndex: number,
     expectedNumSigners: number,
 ): Uint8Array {
@@ -250,7 +250,7 @@ function extractSignatureAtIndex(
  * @param signedTx - Signed transaction in any format
  * @returns Signature bytes (64 bytes)
  */
-function extractSignature(signedTx: SolanaTransaction): Uint8Array {
+function extractSignature(signedTx: TrezoaTransaction): Uint8Array {
     if (signedTx instanceof Uint8Array) {
         // Serialized transaction format: [shortvec_length, ...signatures, ...]
         // First decode the shortvec prefix to find where signatures start
@@ -298,22 +298,22 @@ function extractSignature(signedTx: SolanaTransaction): Uint8Array {
 /**
  * Create a kit-compatible TransactionPartialSigner from connector-kit's TransactionSigner
  *
- * This adapter allows connector-kit to work with modern Solana libraries that use
- * @solana/kit's signer interfaces.
+ * This adapter allows connector-kit to work with modern Trezoa libraries that use
+ * @trezoa/kit's signer interfaces.
  *
  * @param connectorSigner - Connector-kit's TransactionSigner instance
  * @returns Kit-compatible TransactionModifyingSigner
  *
  * @example
  * ```typescript
- * import { createTransactionSigner } from '@solana/connector';
- * import { createKitTransactionSigner } from '@solana/connector';
+ * import { createTransactionSigner } from '@trezoa/connector';
+ * import { createKitTransactionSigner } from '@trezoa/connector';
  *
  * const connectorSigner = createTransactionSigner({ wallet, account });
  * const kitSigner = createKitTransactionSigner(connectorSigner);
  *
- * // Now compatible with @solana/kit libraries
- * const instruction = getTransferSolInstruction({
+ * // Now compatible with @trezoa/kit libraries
+ * const instruction = getTransferTrzInstruction({
  *   source: kitSigner,
  *   destination: address('...'),
  *   amount: 1000000n

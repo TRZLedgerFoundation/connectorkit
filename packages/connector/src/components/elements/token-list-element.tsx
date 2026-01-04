@@ -20,7 +20,7 @@ export interface TokenListElementProps {
     showValue?: boolean;
     /** Custom className */
     className?: string;
-    /** Display variant */
+    /** Ditplay variant */
     variant?: 'compact' | 'expanded' | 'grid';
     /** Show refresh button */
     showRefresh?: boolean;

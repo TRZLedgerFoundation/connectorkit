@@ -1,7 +1,7 @@
 /**
- * @solana/connector-debugger - Optimization Section Component
+ * @trezoa/connector-debugger - Optimization Section Component
  *
- * Displays optimization analysis in transaction detail view
+ * Ditplays optimization analysis in transaction detail view
  */
 
 'use client';

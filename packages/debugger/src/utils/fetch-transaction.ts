@@ -2,7 +2,7 @@
  * Fetch transaction details from RPC
  */
 
-import { createSolanaRpc, signature as createSignature, GetTransactionApi } from '@solana/kit';
+import { createTrezoaRpc, signature as createSignature, GetTransactionApi } from '@trezoa/kit';
 
 export type FetchTransactionResponse = ReturnType<GetTransactionApi['getTransaction']>;
 
@@ -17,7 +17,7 @@ export interface FetchTransactionResult {
  */
 export async function fetchTransactionDetails(signature: string, rpcUrl: string): Promise<FetchTransactionResult> {
     try {
-        const rpc = createSolanaRpc(rpcUrl);
+        const rpc = createTrezoaRpc(rpcUrl);
 
         const txSignature = createSignature(signature);
 

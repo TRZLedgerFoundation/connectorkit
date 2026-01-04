@@ -74,15 +74,15 @@ describe('React Entry Point (react.ts)', () => {
             expect(ConnectorKitReact.useGillTransactionSigner).toBe(ConnectorKitReact.useKitTransactionSigner);
         });
 
-        it('should export useSolanaClient hook', () => {
-            expect(ConnectorKitReact.useSolanaClient).toBeDefined();
-            expect(typeof ConnectorKitReact.useSolanaClient).toBe('function');
+        it('should export useTrezoaClient hook', () => {
+            expect(ConnectorKitReact.useTrezoaClient).toBeDefined();
+            expect(typeof ConnectorKitReact.useTrezoaClient).toBe('function');
         });
 
-        it('should export useGillSolanaClient hook (deprecated alias)', () => {
-            expect(ConnectorKitReact.useGillSolanaClient).toBeDefined();
-            expect(typeof ConnectorKitReact.useGillSolanaClient).toBe('function');
-            expect(ConnectorKitReact.useGillSolanaClient).toBe(ConnectorKitReact.useSolanaClient);
+        it('should export useGillTrezoaClient hook (deprecated alias)', () => {
+            expect(ConnectorKitReact.useGillTrezoaClient).toBeDefined();
+            expect(typeof ConnectorKitReact.useGillTrezoaClient).toBe('function');
+            expect(ConnectorKitReact.useGillTrezoaClient).toBe(ConnectorKitReact.useTrezoaClient);
         });
 
         it('should export useTransactionPreparer hook', () => {
@@ -144,7 +144,7 @@ describe('React Entry Point (react.ts)', () => {
 
     describe('deprecation notices', () => {
         it('should note debug panel deprecation in comments', () => {
-            // The debug panel has been moved to @solana/connector-debugger
+            // The debug panel has been moved to @trezoa/connector-debugger
             // This is documented in the source file comments
             // No runtime test needed, but verifying the entry point works
             expect(true).toBe(true);

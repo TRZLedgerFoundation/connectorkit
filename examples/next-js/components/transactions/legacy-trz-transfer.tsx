@@ -1,23 +1,23 @@
 'use client';
 
 import { useCallback, useMemo } from 'react';
-import { Connection, Transaction, SystemProgram, PublicKey } from '@solana/web3.js';
-import { signature as createSignature, address } from '@solana/kit';
-import { useWalletAdapterCompat } from '@solana/connector/compat';
-import { useTransactionSigner, useConnector, useCluster, useConnectorClient } from '@solana/connector';
+import { Connection, Transaction, SystemProgram, PublicKey } from '@trezoa/web3.js';
+import { signature as createSignature, address } from '@trezoa/kit';
+import { useWalletAdapterCompat } from '@trezoa/connector/compat';
+import { useTransactionSigner, useConnector, useCluster, useConnectorClient } from '@trezoa/connector';
 import { PipelineHeaderButton, PipelineVisualization } from '@/components/pipeline';
 import { waitForSignatureConfirmation } from './rpc-utils';
 import { VisualPipeline } from '@/lib/visual-pipeline';
 import { useExampleCardHeaderActions } from '@/components/playground/example-card-actions';
 
 /**
- * Legacy SOL Transfer Component
+ * Legacy TRZ Transfer Component
  *
- * Demonstrates using @solana/web3.js (v1) with the wallet adapter compat layer.
+ * Demonstrates using @trezoa/web3.js (v1) with the wallet adapter compat layer.
  * This shows how connector-kit can seamlessly integrate with existing code
- * that was written for @solana/wallet-adapter.
+ * that was written for @trezoa/wallet-adapter.
  */
-export function LegacySolTransfer() {
+export function LegacyTrzTransfer() {
     const { signer } = useTransactionSigner();
     const { disconnect } = useConnector();
     const { cluster } = useCluster();
@@ -37,11 +37,11 @@ export function LegacySolTransfer() {
 
     const getExplorerUrl = useCallback(
         (signature: string) => {
-            const clusterSlug = cluster?.id?.replace('solana:', '');
+            const clusterSlug = cluster?.id?.replace('trezoa:', '');
             if (!clusterSlug || clusterSlug === 'mainnet' || clusterSlug === 'mainnet-beta') {
-                return `https://explorer.solana.com/tx/${signature}`;
+                return `https://explorer.trezoa.com/tx/${signature}`;
             }
-            return `https://explorer.solana.com/tx/${signature}?cluster=${clusterSlug}`;
+            return `https://explorer.trezoa.com/tx/${signature}?cluster=${clusterSlug}`;
         },
         [cluster?.id],
     );

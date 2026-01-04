@@ -1,6 +1,6 @@
 'use client';
 
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 import { useState } from 'react';
 import { WalletModal } from './wallet-modal';
 import { WalletDropdownContent } from './wallet-dropdown-content';

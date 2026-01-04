@@ -4,9 +4,9 @@
 
 import type { TransactionActivity, TransactionActivityStatus } from './transactions';
 import type { WalletName } from './wallets';
-import type { SolanaClusterId } from '@wallet-ui/core';
-import type { Address } from '@solana/addresses';
-import type { Signature } from '@solana/keys';
+import type { TrezoaClusterId } from '@wallet-ui/core';
+import type { Address } from '@trezoa/addresses';
+import type { Signature } from '@trezoa/keys';
 
 /**
  * Event types emitted by the connector
@@ -24,8 +24,8 @@ export type ConnectorEvent =
     | { type: 'account:changed'; account: Address; timestamp: string }
     | {
           type: 'cluster:changed';
-          cluster: SolanaClusterId;
-          previousCluster: SolanaClusterId | null;
+          cluster: TrezoaClusterId;
+          previousCluster: TrezoaClusterId | null;
           timestamp: string;
       }
     | { type: 'wallets:detected'; count: number; timestamp: string }

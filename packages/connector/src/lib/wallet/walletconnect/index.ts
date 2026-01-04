@@ -3,7 +3,7 @@
  *
  * Provides WalletConnect support for ConnectorKit via Wallet Standard.
  *
- * @see https://docs.walletconnect.network/wallet-sdk/chain-support/solana
+ * @see https://docs.walletconnect.network/wallet-sdk/chain-support/trezoa
  */
 
 export { createWalletConnectWallet } from './create-walletconnect-wallet';

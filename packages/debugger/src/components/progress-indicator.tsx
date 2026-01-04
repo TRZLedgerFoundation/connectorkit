@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger - Progress Indicator Component
+ * @trezoa/connector-debugger - Progress Indicator Component
  *
  * Visual progress indicator for transaction lifecycle
  */

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCluster } from '@solana/connector/react';
+import { useCluster } from '@trezoa/connector/react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, ChevronDown, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { SolanaClusterId, SolanaCluster } from '@solana/connector';
+import type { TrezoaClusterId, TrezoaCluster } from '@trezoa/connector';
 
 interface ClusterSelectorProps {
     className?: string;
@@ -39,7 +39,7 @@ export function ClusterSelector({ className }: ClusterSelectorProps) {
     const currentClusterLabel = clusterLabels[cluster?.id || ''] || cluster?.label || 'Unknown';
     const currentClusterColor = clusterColors[cluster?.id || ''] || 'outline';
 
-    const handleClusterChange = async (clusterId: SolanaClusterId) => {
+    const handleClusterChange = async (clusterId: TrezoaClusterId) => {
         try {
             await setCluster(clusterId);
         } catch (error) {
@@ -61,7 +61,7 @@ export function ClusterSelector({ className }: ClusterSelectorProps) {
             <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuLabel>Select Network</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {clusters.map((c: SolanaCluster) => {
+                {clusters.map((c: TrezoaCluster) => {
                     const isSelected = c.id === cluster?.id;
                     const label = clusterLabels[c.id] || c.label || c.id;
                     const color = clusterColors[c.id] || 'outline';
@@ -69,7 +69,7 @@ export function ClusterSelector({ className }: ClusterSelectorProps) {
                     return (
                         <DropdownMenuItem
                             key={c.id}
-                            onClick={() => handleClusterChange(c.id as SolanaClusterId)}
+                            onClick={() => handleClusterChange(c.id as TrezoaClusterId)}
                             className={cn('cursor-pointer', isSelected && 'bg-accent')}
                         >
                             <div className="flex items-center justify-between w-full">

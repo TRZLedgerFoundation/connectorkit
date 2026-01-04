@@ -19,7 +19,7 @@ export default defineConfig({
     banner: {
         js: '"use client";',
     },
-    external: ['react', 'react-dom', '@solana/connector', '@solana/connector/react', '@solana/connector/headless'],
+    external: ['react', 'react-dom', '@trezoa/connector', '@trezoa/connector/react', '@trezoa/connector/headless'],
     esbuildOptions: options => {
         // Aggressive tree-shaking optimizations
         options.treeShaking = true;

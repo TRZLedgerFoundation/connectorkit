@@ -25,7 +25,7 @@ export default defineConfig({
         '@wallet-standard/app',
         '@wallet-standard/base',
         '@wallet-standard/features',
-        '@solana-mobile/wallet-standard-mobile',
+        '@trezoa-mobile/wallet-standard-mobile',
     ],
     esbuildOptions: options => {
         // Aggressive tree-shaking optimizations

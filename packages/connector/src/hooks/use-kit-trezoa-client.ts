@@ -1,30 +1,30 @@
 /**
- * @solana/connector - useSolanaClient hook
+ * @trezoa/connector - useTrezoaClient hook
  *
- * React hook for Kit's SolanaClient with built-in RPC and WebSocket subscriptions
+ * React hook for Kit's TrezoaClient with built-in RPC and WebSocket subscriptions
  * Provides rpc and rpcSubscriptions
  */
 
 'use client';
 
 import { useMemo } from 'react';
-import { createSolanaClient, type SolanaClient, type ModifiedClusterUrl } from '../lib/kit';
+import { createTrezoaClient, type TrezoaClient, type ModifiedClusterUrl } from '../lib/kit';
 import { useCluster } from './use-cluster';
 import { useConnectorClient } from '../ui/connector-provider';
 import type { ClusterType } from '../utils/cluster';
 import { createLogger } from '../lib/utils/secure-logger';
 
-const logger = createLogger('useSolanaClient');
+const logger = createLogger('useTrezoaClient');
 
 /**
- * Return value from useSolanaClient hook
+ * Return value from useTrezoaClient hook
  */
-export interface UseSolanaClientReturn {
+export interface UseTrezoaClientReturn {
     /**
-     * Kit SolanaClient instance with RPC and subscriptions (null if not available)
+     * Kit TrezoaClient instance with RPC and subscriptions (null if not available)
      * Includes: rpc, rpcSubscriptions
      */
-    client: SolanaClient | null;
+    client: TrezoaClient | null;
 
     /**
      * Whether a client is available and ready to use
@@ -38,14 +38,14 @@ export interface UseSolanaClientReturn {
 }
 
 /**
- * @deprecated Use `UseSolanaClientReturn` instead
+ * @deprecated Use `UseTrezoaClientReturn` instead
  */
-export type UseGillSolanaClientReturn = UseSolanaClientReturn;
+export type UseGillTrezoaClientReturn = UseTrezoaClientReturn;
 
 /**
- * Hook for Kit's SolanaClient with automatic RPC and WebSocket subscription management
+ * Hook for Kit's TrezoaClient with automatic RPC and WebSocket subscription management
  *
- * Creates a fully configured SolanaClient based on the current cluster, providing:
+ * Creates a fully configured TrezoaClient based on the current cluster, providing:
  * - Type-safe RPC client
  * - WebSocket subscription client
  *
@@ -53,11 +53,11 @@ export type UseGillSolanaClientReturn = UseSolanaClientReturn;
  *
  * @example
  * ```tsx
- * import { useSolanaClient, useKitTransactionSigner } from '@solana/connector';
- * import { signTransactionMessageWithSigners } from '@solana/kit';
+ * import { useTrezoaClient, useKitTransactionSigner } from '@trezoa/connector';
+ * import { signTransactionMessageWithSigners } from '@trezoa/kit';
  *
  * function SendTransaction() {
- *   const { client, ready } = useSolanaClient();
+ *   const { client, ready } = useTrezoaClient();
  *   const { signer } = useKitTransactionSigner();
  *
  *   const handleSend = async (transaction) => {
@@ -82,7 +82,7 @@ export type UseGillSolanaClientReturn = UseSolanaClientReturn;
  * ```tsx
  * // Direct RPC access
  * function GetBalance() {
- *   const { client } = useSolanaClient();
+ *   const { client } = useTrezoaClient();
  *
  *   const fetchBalance = async (address: Address) => {
  *     if (!client) return;
@@ -93,7 +93,7 @@ export type UseGillSolanaClientReturn = UseSolanaClientReturn;
  * }
  * ```
  */
-export function useSolanaClient(): UseSolanaClientReturn {
+export function useTrezoaClient(): UseTrezoaClientReturn {
     const { type } = useCluster();
     const connectorClient = useConnectorClient();
 
@@ -104,21 +104,21 @@ export function useSolanaClient(): UseSolanaClientReturn {
             // ALWAYS prefer the configured RPC URL from cluster config
             const rpcUrl = connectorClient.getRpcUrl();
             if (rpcUrl) {
-                return createSolanaClient({
+                return createTrezoaClient({
                     urlOrMoniker: rpcUrl as ModifiedClusterUrl,
                 });
             }
 
             // Fallback to moniker only if no RPC URL configured
             if (type !== 'custom') {
-                return createSolanaClient({
+                return createTrezoaClient({
                     urlOrMoniker: type,
                 });
             }
 
             return null;
         } catch (error) {
-            logger.error('Failed to create Solana client', { error });
+            logger.error('Failed to create Trezoa client', { error });
             return null;
         }
     }, [type, connectorClient]);
@@ -135,6 +135,6 @@ export function useSolanaClient(): UseSolanaClientReturn {
 }
 
 /**
- * @deprecated Use `useSolanaClient` instead. This alias is provided for backward compatibility.
+ * @deprecated Use `useTrezoaClient` instead. This alias is provided for backward compatibility.
  */
-export const useGillSolanaClient = useSolanaClient;
+export const useGillTrezoaClient = useTrezoaClient;

@@ -7,7 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { CopyButton } from '@/components/ui/copy-button';
 import { CodeBlock } from '@/components/ui/code-block';
 import { ExampleCardHeaderActionsProvider, ExampleCardHeaderActionsSlot } from './example-card-actions';
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 import { Plug } from 'lucide-react';
 import { IconTypescriptLogo } from 'symbols-react';
 

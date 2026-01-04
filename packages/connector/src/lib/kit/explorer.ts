@@ -1,7 +1,7 @@
 /**
- * @solana/connector - Kit Explorer Utilities
+ * @trezoa/connector - Kit Explorer Utilities
  *
- * Generate Solana Explorer links for addresses, transactions, and blocks.
+ * Generate Trezoa Explorer links for addresses, transactions, and blocks.
  */
 
 /** Cluster type for explorer links */
@@ -15,10 +15,10 @@ export type GetExplorerLinkArgs =
     | { cluster?: ExplorerCluster };
 
 /**
- * Craft a Solana Explorer link on any cluster
+ * Craft a Trezoa Explorer link on any cluster
  *
  * @param props - Configuration for the explorer link
- * @returns Solana Explorer URL
+ * @returns Trezoa Explorer URL
  *
  * @example
  * ```ts
@@ -33,7 +33,7 @@ export type GetExplorerLinkArgs =
  * ```
  */
 export function getExplorerLink(props: GetExplorerLinkArgs = {}): string {
-    const url = new URL('https://explorer.solana.com');
+    const url = new URL('https://explorer.trezoa.com');
 
     // Default to mainnet / mainnet-beta
     let cluster = props.cluster;

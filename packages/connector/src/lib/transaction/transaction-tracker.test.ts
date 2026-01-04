@@ -9,7 +9,7 @@ import { TransactionTracker } from './transaction-tracker';
 import { StateManager } from '../core/state-manager';
 import { EventEmitter } from '../core/event-emitter';
 import type { ConnectorState } from '../../types/connector';
-import type { SolanaCluster } from '@wallet-ui/core';
+import type { TrezoaCluster } from '@wallet-ui/core';
 import { createEventCollector } from '../../__tests__/utils/test-helpers';
 import { createMockTransaction, TEST_SIGNATURES, TEST_SIGNATURES_TYPED } from '../../__tests__/fixtures/transactions';
 
@@ -28,10 +28,10 @@ describe('TransactionTracker', () => {
             accounts: [],
             selectedAccount: null,
             cluster: {
-                id: 'solana:mainnet-beta',
+                id: 'trezoa:mainnet-beta',
                 label: 'Mainnet Beta',
-                url: 'https://api.mainnet-beta.solana.com',
-            } satisfies SolanaCluster,
+                url: 'https://api.mainnet-beta.trezoa.com',
+            } satisfies TrezoaCluster,
             clusters: [],
         };
 
@@ -58,7 +58,7 @@ describe('TransactionTracker', () => {
             expect(transactions[0]).toMatchObject({
                 signature: TEST_SIGNATURES_TYPED.TX_1,
                 status: 'pending',
-                cluster: 'solana:mainnet-beta',
+                cluster: 'trezoa:mainnet-beta',
             });
             expect(transactions[0].timestamp).toBeDefined();
         });
@@ -129,7 +129,7 @@ describe('TransactionTracker', () => {
             });
 
             const transactions = transactionTracker.getTransactions();
-            expect(transactions[0].cluster).toBe('solana:mainnet-beta');
+            expect(transactions[0].cluster).toBe('trezoa:mainnet-beta');
         });
 
         it('should handle unknown cluster', () => {
@@ -142,7 +142,7 @@ describe('TransactionTracker', () => {
             });
 
             const transactions = transactionTracker.getTransactions();
-            expect(transactions[0].cluster).toBe('solana:devnet');
+            expect(transactions[0].cluster).toBe('trezoa:devnet');
         });
     });
 

@@ -3,7 +3,7 @@ import { ConnectorClient } from './connector-client';
 import type { ConnectorConfig } from '../../types/connector';
 import type { ConnectorState } from '../../types/connector';
 import type { Listener } from '../../types/connector';
-import type { SolanaCluster } from '@wallet-ui/core';
+import type { TrezoaCluster } from '@wallet-ui/core';
 
 // Mock all dependencies
 vi.mock('./state-manager');
@@ -149,15 +149,15 @@ describe('ConnectorClient', () => {
             cluster: {
                 clusters: [
                     {
-                        id: 'solana:mainnet',
+                        id: 'trezoa:mainnet',
                         label: 'Mainnet',
-                        url: 'https://api.mainnet.solana.com',
-                    } satisfies SolanaCluster,
+                        url: 'https://api.mainnet.trezoa.com',
+                    } satisfies TrezoaCluster,
                     {
-                        id: 'solana:devnet',
+                        id: 'trezoa:devnet',
                         label: 'Devnet',
-                        url: 'https://api.devnet.solana.com',
-                    } satisfies SolanaCluster,
+                        url: 'https://api.devnet.trezoa.com',
+                    } satisfies TrezoaCluster,
                 ],
             },
         };

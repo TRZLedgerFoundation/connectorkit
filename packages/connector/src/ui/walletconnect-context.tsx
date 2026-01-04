@@ -71,7 +71,7 @@ export function WalletConnectProvider({ children }: { children: ReactNode }) {
  * 
  * @example
  * ```tsx
- * import { useWalletConnectUri } from '@solana/connector/react';
+ * import { useWalletConnectUri } from '@trezoa/connector/react';
  * 
  * function WalletModal() {
  *   const { uri, clearUri } = useWalletConnectUri();

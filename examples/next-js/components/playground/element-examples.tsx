@@ -7,7 +7,7 @@ import {
     DisconnectElement,
     TransactionHistoryElement,
     TokenListElement,
-} from '@solana/connector/react';
+} from '@trezoa/connector/react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -83,8 +83,8 @@ const elementExamples: ExampleConfig[] = [
         id: 'account-element',
         name: 'AccountElement',
         description:
-            'Display connected wallet address with copy functionality. Use render props for full control over the UI.',
-        code: `import { AccountElement } from '@solana/connector/react';
+            'Ditplay connected wallet address with copy functionality. Use render props for full control over the UI.',
+        code: `import { AccountElement } from '@trezoa/connector/react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Wallet, Copy, Check } from 'lucide-react';
 
@@ -187,16 +187,16 @@ import { Wallet, Copy, Check } from 'lucide-react';
         id: 'balance-element',
         name: 'BalanceElement',
         description:
-            'Show SOL balance with optional refresh. Access loading state and refetch function via render props.',
-        code: `import { BalanceElement } from '@solana/connector/react';
+            'Show TRZ balance with optional refresh. Access loading state and refetch function via render props.',
+        code: `import { BalanceElement } from '@trezoa/connector/react';
 import { RefreshCw } from 'lucide-react';
 
 <BalanceElement
-    render={({ solBalance, isLoading, refetch }) => (
+    render={({ trzBalance, isLoading, refetch }) => (
         <div className="flex items-center gap-3 p-3 rounded-lg border bg-card">
             <div className="flex-1">
-                <p className="text-xs text-muted-foreground font-medium">SOL Balance</p>
-                <p className="text-2xl font-bold">{solBalance?.toFixed(4) ?? '--'} SOL</p>
+                <p className="text-xs text-muted-foreground font-medium">TRZ Balance</p>
+                <p className="text-2xl font-bold">{trzBalance?.toFixed(4) ?? '--'} TRZ</p>
             </div>
             <button onClick={() => refetch()} disabled={isLoading} className="p-2 hover:bg-muted rounded-md">
                 <RefreshCw className={\`h-4 w-4 \${isLoading ? 'animate-spin' : ''}\`} />
@@ -206,7 +206,7 @@ import { RefreshCw } from 'lucide-react';
 />`,
         render: () => (
             <BalanceElement
-                render={({ solBalance, isLoading, refetch }) => (
+                render={({ trzBalance, isLoading, refetch }) => (
                     <div className="flex flex-col lg:flex-row gap-6 w-full items-stretch">
                         {/* Left: Element Container with Render Props */}
                         <div className="flex-1 relative bg-sand-100 border border-dashed border-sand-500 rounded-2xl p-3">
@@ -215,7 +215,7 @@ import { RefreshCw } from 'lucide-react';
                                 {'<BalanceElement />'}
                             </span>
                             <div className="space-y-0.5 pt-1">
-                                <RenderPropValue name="solBalance">{solBalance?.toFixed(4) ?? '—'}</RenderPropValue>
+                                <RenderPropValue name="trzBalance">{trzBalance?.toFixed(4) ?? '—'}</RenderPropValue>
                                 <RenderPropValue name="isLoading">{String(isLoading)}</RenderPropValue>
                                 <RenderPropValue name="refetch">
                                     <button
@@ -247,8 +247,8 @@ import { RefreshCw } from 'lucide-react';
                         <div className="flex-1 flex flex-col justify-center">
                             <div className="flex items-center gap-3 p-3 rounded-lg border bg-card">
                                 <div className="flex-1">
-                                    <p className="text-xs text-muted-foreground font-medium">SOL Balance</p>
-                                    <p className="text-2xl font-bold">{solBalance?.toFixed(4) ?? '--'} SOL</p>
+                                    <p className="text-xs text-muted-foreground font-medium">TRZ Balance</p>
+                                    <p className="text-2xl font-bold">{trzBalance?.toFixed(4) ?? '--'} TRZ</p>
                                 </div>
                                 <button
                                     onClick={() => refetch()}
@@ -269,14 +269,14 @@ import { RefreshCw } from 'lucide-react';
         id: 'cluster-element',
         name: 'ClusterElement',
         description: 'Network selector with all available clusters. Use setCluster to change networks dynamically.',
-        code: `import { ClusterElement } from '@solana/connector/react';
+        code: `import { ClusterElement } from '@trezoa/connector/react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const clusterColors: Record<string, string> = {
-    'solana:mainnet': 'bg-green-500',
-    'solana:devnet': 'bg-blue-500',
-    'solana:testnet': 'bg-yellow-500',
-    'solana:localnet': 'bg-red-500',
+    'trezoa:mainnet': 'bg-green-500',
+    'trezoa:devnet': 'bg-blue-500',
+    'trezoa:testnet': 'bg-yellow-500',
+    'trezoa:localnet': 'bg-red-500',
 };
 
 <ClusterElement
@@ -305,10 +305,10 @@ const clusterColors: Record<string, string> = {
 />`,
         render: () => {
             const clusterColors: Record<string, string> = {
-                'solana:mainnet': 'bg-green-500',
-                'solana:devnet': 'bg-blue-500',
-                'solana:testnet': 'bg-yellow-500',
-                'solana:localnet': 'bg-red-500',
+                'trezoa:mainnet': 'bg-green-500',
+                'trezoa:devnet': 'bg-blue-500',
+                'trezoa:testnet': 'bg-yellow-500',
+                'trezoa:localnet': 'bg-red-500',
             };
             return (
                 <ClusterElement
@@ -386,7 +386,7 @@ const clusterColors: Record<string, string> = {
         id: 'disconnect-element',
         name: 'DisconnectElement',
         description: 'Disconnect button with loading state. Style it as a button, link, or menu item.',
-        code: `import { DisconnectElement } from '@solana/connector/react';
+        code: `import { DisconnectElement } from '@trezoa/connector/react';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 
@@ -461,8 +461,8 @@ import { LogOut } from 'lucide-react';
         id: 'token-list-element',
         name: 'TokenListElement',
         description:
-            'Display token holdings with Solana Token List metadata and optional CoinGecko pricing. Includes loading states and refetch.',
-        code: `import { TokenListElement } from '@solana/connector/react';
+            'Ditplay token holdings with Trezoa Token List metadata and optional CoinGecko pricing. Includes loading states and refetch.',
+        code: `import { TokenListElement } from '@trezoa/connector/react';
 import { Coins, RefreshCw } from 'lucide-react';
 
 <TokenListElement
@@ -647,7 +647,7 @@ import { Coins, RefreshCw } from 'lucide-react';
         id: 'transaction-history-element',
         name: 'TransactionHistoryElement',
         description: 'Show recent transactions with status, time, and explorer links. Supports pagination.',
-        code: `import { TransactionHistoryElement } from '@solana/connector/react';
+        code: `import { TransactionHistoryElement } from '@trezoa/connector/react';
 import { ExternalLink, Coins } from 'lucide-react';
 
 <TransactionHistoryElement

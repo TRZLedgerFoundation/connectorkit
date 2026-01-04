@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger - Address Frequency Tracker
+ * @trezoa/connector-debugger - Address Frequency Tracker
  *
  * Tracks address usage across transactions to identify ALT candidates.
  * Addresses that appear frequently across multiple transactions are good
@@ -140,19 +140,19 @@ class AddressTrackerClass {
 export const AddressTracker = new AddressTrackerClass();
 
 /**
- * Get human-readable name for known Solana programs
+ * Get human-readable name for known Trezoa programs
  *
  * @param address - Program address
- * @returns Display name or undefined
+ * @returns Ditplay name or undefined
  */
 function getProgramName(address: string): string | undefined {
     const knownPrograms: Record<string, string> = {
         '11111111111111111111111111111111': 'System Program',
-        TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA: 'Token Program',
-        TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb: 'Token-2022 Program',
-        ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL: 'Associated Token Program',
-        Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo: 'Memo Program',
-        MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr: 'Memo Program (v2)',
+        '4JkrrPuuQPxDZuBW1bgrM1GBa8oYg1LxcuX9szBPh3ic': 'Token Program',
+        '4sYbW7qEG4Wrf2rTNjkGZE9vQ41XdPFQjMDf9Z6Yg7yG': 'Token-2022 Program',
+        '33ksqUXaBWjFMW3TiRuh92meTGShZWTeFRWaNsrrZY8s': 'Associated Token Program',
+        'BZxt6MALayWeCg4vBc1sHcPBzPdBVh4bW8iiKmF3WsnY': 'Memo Program',
+        '3BpMP192hFthcoEubGJ3ZrmUNb8j2RJFjmrBceNVif4S': 'Memo Program (v2)',
         ComputeBudget111111111111111111111111111111: 'Compute Budget Program',
         Ed25519SigVerify111111111111111111111111111: 'Ed25519 Program',
         KeccakSecp256k11111111111111111111111111111: 'Secp256k1 Program',

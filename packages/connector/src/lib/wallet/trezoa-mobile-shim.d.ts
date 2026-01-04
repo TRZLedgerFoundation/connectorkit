@@ -1,5 +1,5 @@
 // Minimal ambient module to satisfy TS when the package types are unavailable during tooling
-declare module '@solana-mobile/wallet-standard-mobile' {
+declare module '@trezoa-mobile/wallet-standard-mobile' {
     import type { IdentifierArray, IdentifierString, Wallet } from '@wallet-standard/base';
 
     /** Authorization result with chain and capabilities */
@@ -22,7 +22,7 @@ declare module '@solana-mobile/wallet-standard-mobile' {
     }
 
     /** Mobile Wallet Adapter wallet interface */
-    export interface SolanaMobileWalletAdapterWallet extends Wallet {
+    export interface TrezoaMobileWalletAdapterWallet extends Wallet {
         url: string;
     }
 
@@ -37,13 +37,13 @@ declare module '@solana-mobile/wallet-standard-mobile' {
         chains: IdentifierArray;
         chainSelector: ChainSelector;
         remoteHostAuthority?: string;
-        onWalletNotFound: (mobileWalletAdapter: SolanaMobileWalletAdapterWallet) => Promise<void>;
+        onWalletNotFound: (mobileWalletAdapter: TrezoaMobileWalletAdapterWallet) => Promise<void>;
     }
 
     export function registerMwa(config: RegisterMwaConfig): void;
     export function createDefaultAuthorizationCache(): AuthorizationCache;
     export function createDefaultChainSelector(): ChainSelector;
     export function createDefaultWalletNotFoundHandler(): (
-        mobileWalletAdapter: SolanaMobileWalletAdapterWallet,
+        mobileWalletAdapter: TrezoaMobileWalletAdapterWallet,
     ) => Promise<void>;
 }

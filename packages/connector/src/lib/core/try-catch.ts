@@ -1,5 +1,5 @@
 /**
- * @solana/connector - Try-Catch Utility
+ * @trezoa/connector - Try-Catch Utility
  *
  * Provides a consistent pattern for async error handling,
  * returning a Result type instead of throwing errors.

@@ -14,7 +14,7 @@ export function TransactionResult({ signature, cluster = 'devnet' }: Transaction
         return null;
     }
 
-    const explorerUrl = `https://explorer.solana.com/tx/${signature}?cluster=${cluster}`;
+    const explorerUrl = `https://explorer.trezoa.com/tx/${signature}?cluster=${cluster}`;
 
     return (
         <Card className="bg-green-50 border-green-200">
@@ -40,7 +40,7 @@ export function TransactionResult({ signature, cluster = 'devnet' }: Transaction
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-sm text-green-700 hover:text-green-800 font-medium"
                 >
-                    View on Solana Explorer
+                    View on Trezoa Explorer
                     <ExternalLink className="h-4 w-4" />
                 </a>
             </CardContent>

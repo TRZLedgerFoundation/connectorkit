@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import { useConnector } from '../../ui/connector-provider';
 
 export interface DisconnectElementProps {
-    /** Display variant */
+    /** Ditplay variant */
     variant?: 'button' | 'menuitem' | 'link';
     /** Custom className */
     className?: string;

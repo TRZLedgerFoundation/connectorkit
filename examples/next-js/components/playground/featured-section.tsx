@@ -9,7 +9,7 @@ import { ConnectButton } from '@/components/connector/radix-ui/connect-button';
 import { WalletDropdownContent } from '@/components/connector/radix-ui/wallet-dropdown-content';
 import { ConnectButton as ConnectButtonBaseUI } from '@/components/connector/base-ui/connect-button';
 import { WalletDropdownContent as WalletDropdownContentBaseUI } from '@/components/connector/base-ui/wallet-dropdown-content';
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
@@ -25,7 +25,7 @@ import { IconTypescriptLogo } from 'symbols-react';
 // Code snippets for each component
 const connectButtonCode = `'use client';
 
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -90,7 +90,7 @@ export function ConnectButton({ className }: { className?: string }) {
 
 const walletModalCode = `'use client';
 
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -175,7 +175,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { BalanceElement, ClusterElement, TokenListElement, TransactionHistoryElement, DisconnectElement } from '@solana/connector/react';
+import { BalanceElement, ClusterElement, TokenListElement, TransactionHistoryElement, DisconnectElement } from '@trezoa/connector/react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Wallet, Copy, Globe, Check, RefreshCw, Coins, History, ExternalLink, LogOut } from 'lucide-react';
 import { useState } from 'react';
@@ -229,13 +229,13 @@ export function WalletDropdownContent({ selectedAccount, walletIcon, walletName 
 
             {/* Balance */}
             <BalanceElement
-                render={({ solBalance, isLoading, refetch }) => (
+                render={({ trzBalance, isLoading, refetch }) => (
                     <div className="rounded-[12px] border p-4">
                         <div className="flex justify-between">
                             <span>Balance</span>
                             <button onClick={() => refetch()}><RefreshCw className={isLoading ? 'animate-spin' : ''} /></button>
                         </div>
-                        <div className="text-2xl font-bold">{solBalance?.toFixed(4)} SOL</div>
+                        <div className="text-2xl font-bold">{trzBalance?.toFixed(4)} TRZ</div>
                     </div>
                 )}
             />
@@ -275,7 +275,7 @@ export function WalletDropdownContent({ selectedAccount, walletIcon, walletName 
 // Base UI Code Snippets
 const connectButtonCodeBaseUI = `'use client';
 
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 import { Menu } from '@base-ui/react/menu';
 import { useState } from 'react';
 import { motion } from 'motion/react';
@@ -345,7 +345,7 @@ export function ConnectButtonBaseUI({ className }) {
 
 const walletModalCodeBaseUI = `'use client';
 
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 import { Dialog } from '@base-ui/react/dialog';
 import { Collapsible } from '@base-ui/react/collapsible';
 import { Wallet, ExternalLink, ChevronDown, X } from 'lucide-react';
@@ -430,7 +430,7 @@ export function WalletModalBaseUI({ open, onOpenChange }) {
 const walletDropdownCodeBaseUI = `'use client';
 
 import { Collapsible } from '@base-ui/react/collapsible';
-import { BalanceElement, ClusterElement, TokenListElement, TransactionHistoryElement, DisconnectElement } from '@solana/connector/react';
+import { BalanceElement, ClusterElement, TokenListElement, TransactionHistoryElement, DisconnectElement } from '@trezoa/connector/react';
 import { Wallet, Copy, Globe, ChevronDown, Check, RefreshCw, Coins, History, LogOut } from 'lucide-react';
 import { useState } from 'react';
 
@@ -474,7 +474,7 @@ export function WalletDropdownContentBaseUI({ selectedAccount, walletIcon, walle
 
             {/* Balance */}
             <BalanceElement
-                render={({ solBalance, isLoading, refetch }) => (
+                render={({ trzBalance, isLoading, refetch }) => (
                     <div className="rounded-[12px] border bg-muted/50 p-4">
                         <div className="flex items-center justify-between mb-1">
                             <span className="text-sm text-muted-foreground">Balance</span>
@@ -482,7 +482,7 @@ export function WalletDropdownContentBaseUI({ selectedAccount, walletIcon, walle
                                 <RefreshCw className={\`h-3.5 w-3.5 \${isLoading ? 'animate-spin' : ''}\`} />
                             </button>
                         </div>
-                        <div className="text-2xl font-bold">{solBalance?.toFixed(4)} SOL</div>
+                        <div className="text-2xl font-bold">{trzBalance?.toFixed(4)} TRZ</div>
                     </div>
                 )}
             />
@@ -595,7 +595,7 @@ function WalletModalContent() {
     const getInstallUrl = (walletName: string) => {
         const name = walletName.toLowerCase();
         if (name.includes('phantom')) return 'https://phantom.app';
-        if (name.includes('solflare')) return 'https://solflare.com';
+        if (name.includes('trzflare')) return 'https://trzflare.com';
         if (name.includes('backpack')) return 'https://backpack.app';
         return 'https://phantom.app';
     };
@@ -733,7 +733,7 @@ function WalletModalContent() {
                                 <Wallet className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
                                 <h3 className="font-semibold mb-2">No Wallets Detected</h3>
                                 <p className="text-sm text-muted-foreground mb-4">
-                                    Install a Solana wallet to get started
+                                    Install a Trezoa wallet to get started
                                 </p>
                                 <Button onClick={() => window.open('https://phantom.app', '_blank')}>
                                     Get Phantom
@@ -788,7 +788,7 @@ function WalletModalContentBaseUI() {
     const getInstallUrl = (walletName: string) => {
         const name = walletName.toLowerCase();
         if (name.includes('phantom')) return 'https://phantom.app';
-        if (name.includes('solflare')) return 'https://solflare.com';
+        if (name.includes('trzflare')) return 'https://trzflare.com';
         if (name.includes('backpack')) return 'https://backpack.app';
         return 'https://phantom.app';
     };
@@ -990,7 +990,7 @@ function WalletModalContentBaseUI() {
                                 <Wallet className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
                                 <h3 className="font-semibold mb-2">No Wallets Detected</h3>
                                 <p className="text-sm text-muted-foreground mb-4">
-                                    Install a Solana wallet to get started
+                                    Install a Trezoa wallet to get started
                                 </p>
                                 <button
                                     onClick={() => window.open('https://phantom.app', '_blank')}

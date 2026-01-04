@@ -177,7 +177,7 @@ export class WalletDetector extends BaseCollaborator {
         const checks = [
             () => windowObj[name],
             () => windowObj[`${name}Wallet`],
-            () => windowObj.solana,
+            () => windowObj.trezoa,
             () => {
                 const keys = Object.keys(window).filter(k => k.toLowerCase().includes(name));
                 return keys.length > 0 ? windowObj[keys[0]] : null;
@@ -245,10 +245,10 @@ export class WalletDetector extends BaseCollaborator {
         const walletWithIcon = applyWalletIconOverride(wallet);
         const hasConnect = hasFeature(walletWithIcon, 'standard:connect');
         const hasDisconnect = hasFeature(walletWithIcon, 'standard:disconnect');
-        const isSolana =
+        const isTrezoa =
             Array.isArray(walletWithIcon.chains) &&
-            walletWithIcon.chains.some(c => typeof c === 'string' && c.includes('solana'));
-        const connectable = hasConnect && hasDisconnect && isSolana;
+            walletWithIcon.chains.some(c => typeof c === 'string' && c.includes('trezoa'));
+        const connectable = hasConnect && hasDisconnect && isTrezoa;
 
         return {
             wallet: walletWithIcon,

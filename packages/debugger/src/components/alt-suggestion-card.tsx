@@ -1,7 +1,7 @@
 /**
- * @solana/connector-debugger - ALT Suggestion Card Component
+ * @trezoa/connector-debugger - ALT Suggestion Card Component
  *
- * Displays optimization suggestions for Address Lookup Tables
+ * Ditplays optimization suggestions for Address Lookup Tables
  */
 
 'use client';

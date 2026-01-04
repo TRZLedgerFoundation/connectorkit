@@ -7,8 +7,8 @@ import {
     type WalletAssetsData,
     type TokenAccountInfo,
 } from './_internal/use-wallet-assets';
-import { formatLamportsToSolSafe, formatBigIntBalance } from '../utils/formatting';
-import type { SolanaClient } from '../lib/kit';
+import { formatLamportsToTrzSafe, formatBigIntBalance } from '../utils/formatting';
+import type { TrezoaClient } from '../lib/kit';
 
 /**
  * Generate the query key for balance data.
@@ -64,16 +64,16 @@ export interface UseBalanceOptions {
     cacheTimeMs?: number;
     /** Whether to refetch on mount (default: 'stale') */
     refetchOnMount?: boolean | 'stale';
-    /** Override the Solana client from provider */
-    client?: SolanaClient | null;
+    /** Override the Trezoa client from provider */
+    client?: TrezoaClient | null;
 }
 
 export interface UseBalanceReturn {
-    /** SOL balance in SOL (not lamports) */
-    solBalance: number;
-    /** SOL balance in lamports */
+    /** TRZ balance in TRZ (not lamports) */
+    trzBalance: number;
+    /** TRZ balance in lamports */
     lamports: bigint;
-    /** Formatted SOL balance string */
+    /** Formatted TRZ balance string */
     formattedSol: string;
     /** Token balances */
     tokens: TokenBalance[];
@@ -89,7 +89,7 @@ export interface UseBalanceReturn {
     lastUpdated: Date | null;
 }
 
-const LAMPORTS_PER_SOL = 1_000_000_000n;
+const LAMPORTS_PER_TRZ = 1_000_000_000n;
 
 /**
  * Format a token account into a TokenBalance (BigInt-safe)
@@ -131,7 +131,7 @@ function selectBalance(assets: WalletAssetsData | undefined): BalanceSelection {
 }
 
 /**
- * Hook for fetching wallet balance (SOL and tokens).
+ * Hook for fetching wallet balance (TRZ and tokens).
  *
  * Features:
  * - Automatic request deduplication across components
@@ -145,7 +145,7 @@ function selectBalance(assets: WalletAssetsData | undefined): BalanceSelection {
  * @example Basic usage
  * ```tsx
  * function Balance() {
- *   const { solBalance, formattedSol, isLoading } = useBalance();
+ *   const { trzBalance, formattedSol, isLoading } = useBalance();
  *
  *   if (isLoading) return <div>Loading...</div>;
  *   return <div>{formattedSol}</div>;
@@ -218,9 +218,9 @@ export function useBalance(options: UseBalanceOptions = {}): UseBalanceReturn {
     const lamports = data?.lamports ?? 0n;
     const tokens = data?.tokens ?? [];
 
-    const solBalance = useMemo(() => Number(lamports) / Number(LAMPORTS_PER_SOL), [lamports]);
+    const trzBalance = useMemo(() => Number(lamports) / Number(LAMPORTS_PER_TRZ), [lamports]);
 
-    const formattedSol = useMemo(() => formatLamportsToSolSafe(lamports, { maxDecimals: 4, suffix: true }), [lamports]);
+    const formattedSol = useMemo(() => formatLamportsToTrzSafe(lamports, { maxDecimals: 4, suffix: true }), [lamports]);
 
     // Preserve old behavior: don't surface "refresh failed" errors if we already have data
     const visibleError = updatedAt ? null : error;
@@ -235,7 +235,7 @@ export function useBalance(options: UseBalanceOptions = {}): UseBalanceReturn {
 
     return useMemo(
         () => ({
-            solBalance,
+            trzBalance,
             lamports,
             formattedSol,
             tokens,
@@ -245,6 +245,6 @@ export function useBalance(options: UseBalanceOptions = {}): UseBalanceReturn {
             abort,
             lastUpdated: updatedAt ? new Date(updatedAt) : null,
         }),
-        [solBalance, lamports, formattedSol, tokens, isFetching, visibleError, refetch, abort, updatedAt],
+        [trzBalance, lamports, formattedSol, tokens, isFetching, visibleError, refetch, abort, updatedAt],
     );
 }

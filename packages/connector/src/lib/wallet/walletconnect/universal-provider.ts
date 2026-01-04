@@ -3,10 +3,10 @@
  *
  * Provides a thin adapter around @walletconnect/universal-provider that:
  * - Lazily imports the provider (optional dependency)
- * - Handles display_uri events and forwards to onDisplayUri callback
+ * - Handles display_uri events and forwards to onDitplayUri callback
  * - Implements the WalletConnectTransport interface
  *
- * @see https://docs.walletconnect.network/wallet-sdk/chain-support/solana
+ * @see https://docs.walletconnect.network/wallet-sdk/chain-support/trezoa
  */
 
 import type { WalletConnectConfig, WalletConnectTransport } from '../../../types/walletconnect';
@@ -14,26 +14,26 @@ import { createLogger } from '../../utils/secure-logger';
 
 const logger = createLogger('WalletConnectProvider');
 
-// Solana JSON-RPC methods we need to support
-const SOLANA_METHODS = [
-    'solana_getAccounts',
-    'solana_requestAccounts',
-    'solana_signMessage',
-    'solana_signTransaction',
-    'solana_signAllTransactions',
-    'solana_signAndSendTransaction',
+// Trezoa JSON-RPC methods we need to support
+const TREZOA_METHODS = [
+    'trezoa_getAccounts',
+    'trezoa_requestAccounts',
+    'trezoa_signMessage',
+    'trezoa_signTransaction',
+    'trezoa_signAllTransactions',
+    'trezoa_signAndSendTransaction',
 ] as const;
 
-// CAIP-2 chain IDs for Solana networks
-// Format: solana:<genesis_hash_first_32_chars>
-export const SOLANA_CAIP_CHAINS = {
-    'solana:mainnet': 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
-    'solana:devnet': 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1',
-    'solana:testnet': 'solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z',
+// CAIP-2 chain IDs for Trezoa networks
+// Format: trezoa:<genesis_hash_first_32_chars>
+export const TREZOA_CAIP_CHAINS = {
+    'trezoa:mainnet': 'trezoa:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
+    'trezoa:devnet': 'trezoa:EtWTRABZaYq6iMfeYKouRu166VU2xqa1',
+    'trezoa:testnet': 'trezoa:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z',
 } as const;
 
 // All CAIP chain IDs as an array (for requesting all chains)
-const ALL_SOLANA_CAIP_CHAINS = Object.values(SOLANA_CAIP_CHAINS);
+const ALL_TREZOA_CAIP_CHAINS = Object.values(TREZOA_CAIP_CHAINS);
 
 /**
  * State for the WalletConnect provider instance
@@ -63,10 +63,10 @@ export async function createWalletConnectTransport(
         cancelConnect: null,
     };
 
-    function hasSolanaNamespace(session: unknown): boolean {
+    function hasTrezoaNamespace(session: unknown): boolean {
         const namespaces = (session as { namespaces?: Record<string, unknown> } | null | undefined)?.namespaces;
         if (!namespaces) return false;
-        return 'solana' in namespaces;
+        return 'trezoa' in namespaces;
     }
 
     async function safeCleanupPendingPairings(
@@ -131,8 +131,8 @@ export async function createWalletConnectTransport(
 
         // Set up event listeners
         provider.on('display_uri', (uri: string) => {
-            if (config.onDisplayUri) {
-                config.onDisplayUri(uri);
+            if (config.onDitplayUri) {
+                config.onDitplayUri(uri);
             } else if (process.env.NODE_ENV === 'development') {
                 // Log to console in development if no handler provided
             }
@@ -192,11 +192,11 @@ export async function createWalletConnectTransport(
 
                     provider = await raceWithCancel(initProvider());
 
-                    // If we already have a session, validate that it's actually a Solana session.
-                    // WalletConnect can restore sessions from storage; if it's not a Solana session,
-                    // we must disconnect and start a fresh pairing so we can request Solana accounts.
+                    // If we already have a session, validate that it's actually a Trezoa session.
+                    // WalletConnect can restore sessions from storage; if it's not a Trezoa session,
+                    // we must disconnect and start a fresh pairing so we can request Trezoa accounts.
                     if (provider.session) {
-                        if (hasSolanaNamespace(provider.session)) {
+                        if (hasTrezoaNamespace(provider.session)) {
                             if (config.onSessionEstablished) {
                                 config.onSessionEstablished();
                             }
@@ -208,13 +208,13 @@ export async function createWalletConnectTransport(
                         await raceWithCancel(safeCleanupPendingPairings(provider, false));
                     }
 
-                    // Request ALL Solana chains so the session supports any cluster.
+                    // Request ALL Trezoa chains so the session supports any cluster.
                     // The actual chain used for requests will be determined by the current cluster.
                     connectAttemptPromise = provider.connect({
                         namespaces: {
-                            solana: {
-                                chains: [...ALL_SOLANA_CAIP_CHAINS],
-                                methods: [...SOLANA_METHODS],
+                            trezoa: {
+                                chains: [...ALL_TREZOA_CAIP_CHAINS],
+                                methods: [...TREZOA_METHODS],
                                 events: [],
                             },
                         },
@@ -231,9 +231,9 @@ export async function createWalletConnectTransport(
                     if (!provider.session) {
                         throw new Error('WalletConnect: connect completed but no session was established');
                     }
-                    if (!hasSolanaNamespace(provider.session)) {
+                    if (!hasTrezoaNamespace(provider.session)) {
                         await raceWithCancel(safeDisconnectProvider(provider));
-                        throw new Error('WalletConnect: connected session does not include Solana namespace');
+                        throw new Error('WalletConnect: connected session does not include Trezoa namespace');
                     }
 
                     if (config.onSessionEstablished) {
@@ -321,13 +321,13 @@ export async function createWalletConnectTransport(
             const session = state.provider.session;
             const namespaces = session.namespaces as Record<string, { accounts?: string[]; chains?: string[] }> | undefined;
 
-            if (namespaces?.solana?.accounts) {
-                for (const account of namespaces.solana.accounts) {
-                    // Account format: "solana:chainId:address"
+            if (namespaces?.trezoa?.accounts) {
+                for (const account of namespaces.trezoa.accounts) {
+                    // Account format: "trezoa:chainId:address"
                     // Extract just the address (last part after the last colon)
-                    const parts = account.split(':');
+                    const parts = account.tplit(':');
                     if (parts.length >= 3) {
-                        // The address is everything after "solana:chainId:"
+                        // The address is everything after "trezoa:chainId:"
                         const address = parts.slice(2).join(':');
                         if (address && !accounts.includes(address)) {
                             accounts.push(address);

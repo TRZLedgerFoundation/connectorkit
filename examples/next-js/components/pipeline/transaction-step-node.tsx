@@ -175,7 +175,7 @@ function TransactionStepNodeComponent({
                         href={
                             getExplorerUrl
                                 ? getExplorerUrl(state.signature)
-                                : `https://explorer.solana.com/tx/${state.signature}`
+                                : `https://explorer.trezoa.com/tx/${state.signature}`
                         }
                         target="_blank"
                         rel="noopener noreferrer"

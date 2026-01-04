@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger - Debug Panel Icons
+ * @trezoa/connector-debugger - Debug Panel Icons
  */
 
 import React from 'react';

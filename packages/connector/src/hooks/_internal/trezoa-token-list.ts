@@ -1,5 +1,5 @@
 /**
- * Shared Solana Token List metadata fetch + cache.
+ * Shared Trezoa Token List metadata fetch + cache.
  *
  * Used by multiple hooks (e.g. useTokens, useTransactions) to avoid duplicate
  * token-list network calls and to share a single in-memory cache.
@@ -10,7 +10,7 @@
 import { createTimeoutSignal } from '../../utils/abort';
 import type { ClusterType } from '../../utils/cluster';
 
-export interface SolanaTokenListMetadata {
+export interface TrezoaTokenListMetadata {
     address: string;
     name: string;
     symbol: string;
@@ -21,12 +21,12 @@ export interface SolanaTokenListMetadata {
     };
 }
 
-interface SolanaTokenListApiResponse {
-    content: SolanaTokenListMetadata[];
+interface TrezoaTokenListApiResponse {
+    content: TrezoaTokenListMetadata[];
 }
 
 /**
- * Solana Token List API chain IDs for different networks
+ * Trezoa Token List API chain IDs for different networks
  * - 101: mainnet-beta
  * - 102: testnet
  * - 103: devnet
@@ -39,7 +39,7 @@ const CLUSTER_CHAIN_IDS: Record<ClusterType, number> = {
     custom: 101, // Default to mainnet for custom clusters
 };
 
-const TOKEN_LIST_API_BASE_URL = 'https://token-list-api.solana.cloud/v1/mints';
+const TOKEN_LIST_API_BASE_URL = 'https://token-list-api.trezoa.cloud/v1/mints';
 
 /**
  * Build the token list API URL for a specific cluster
@@ -54,9 +54,9 @@ const TOKEN_LIST_CACHE_MAX_SIZE = 1500;
 const MAX_ADDRESSES_PER_REQUEST = 100;
 
 // Simple LRU-ish Map: delete+set on get to bump recency.
-const tokenListCache = new Map<string, SolanaTokenListMetadata>();
+const tokenListCache = new Map<string, TrezoaTokenListMetadata>();
 
-function getCachedTokenListMetadata(mint: string): SolanaTokenListMetadata | undefined {
+function getCachedTokenListMetadata(mint: string): TrezoaTokenListMetadata | undefined {
     const value = tokenListCache.get(mint);
     if (!value) return undefined;
     tokenListCache.delete(mint);
@@ -64,7 +64,7 @@ function getCachedTokenListMetadata(mint: string): SolanaTokenListMetadata | und
     return value;
 }
 
-function setCachedTokenListMetadata(mint: string, value: SolanaTokenListMetadata): void {
+function setCachedTokenListMetadata(mint: string, value: TrezoaTokenListMetadata): void {
     if (tokenListCache.has(mint)) {
         tokenListCache.delete(mint);
     }
@@ -106,7 +106,7 @@ function createLinkedSignal(
     };
 }
 
-export interface FetchSolanaTokenListMetadataOptions {
+export interface FetchTrezoaTokenListMetadataOptions {
     /** Timeout in milliseconds for each batch request */
     timeoutMs?: number;
     /** External abort signal */
@@ -115,11 +115,11 @@ export interface FetchSolanaTokenListMetadataOptions {
     cluster?: ClusterType;
 }
 
-export async function fetchSolanaTokenListMetadata(
+export async function fetchTrezoaTokenListMetadata(
     mints: string[],
-    options: FetchSolanaTokenListMetadataOptions = {},
-): Promise<Map<string, SolanaTokenListMetadata>> {
-    const results = new Map<string, SolanaTokenListMetadata>();
+    options: FetchTrezoaTokenListMetadataOptions = {},
+): Promise<Map<string, TrezoaTokenListMetadata>> {
+    const results = new Map<string, TrezoaTokenListMetadata>();
 
     if (!mints.length) return results;
 
@@ -158,11 +158,11 @@ export async function fetchSolanaTokenListMetadata(
             });
 
             if (!response.ok) {
-                console.warn('[token-list] Solana Token List API error:', response.status, response.statusText);
+                console.warn('[token-list] Trezoa Token List API error:', response.status, response.statusText);
                 continue;
             }
 
-            const data: SolanaTokenListApiResponse = await response.json();
+            const data: TrezoaTokenListApiResponse = await response.json();
             if (!data?.content?.length) continue;
 
             for (const item of data.content) {
@@ -171,7 +171,7 @@ export async function fetchSolanaTokenListMetadata(
                 setCachedTokenListMetadata(item.address, item);
             }
         } catch (error) {
-            console.warn('[token-list] Solana Token List API failed:', error);
+            console.warn('[token-list] Trezoa Token List API failed:', error);
         } finally {
             cleanup();
         }
@@ -180,6 +180,6 @@ export async function fetchSolanaTokenListMetadata(
     return results;
 }
 
-export function clearSolanaTokenListCache(): void {
+export function clearTrezoaTokenListCache(): void {
     tokenListCache.clear();
 }

@@ -27,7 +27,7 @@ export function createMockWallet(options: MockWalletOptions): StandardWallet {
         name,
         icon = 'data:image/svg+xml,<svg></svg>',
         accounts = [],
-        chains = ['solana:mainnet', 'solana:devnet'],
+        chains = ['trezoa:mainnet', 'trezoa:devnet'],
         features: additionalFeatures = [],
         connectBehavior = 'success',
         disconnectBehavior = 'success',
@@ -126,18 +126,18 @@ export function createMockPhantomWallet(overrides?: Partial<MockWalletOptions>):
     return createMockWallet({
         name: 'Phantom',
         icon: 'data:image/svg+xml,<svg><text>P</text></svg>',
-        chains: ['solana:mainnet', 'solana:devnet', 'solana:testnet'],
-        features: ['solana:signTransaction', 'solana:signMessage'],
+        chains: ['trezoa:mainnet', 'trezoa:devnet', 'trezoa:testnet'],
+        features: ['trezoa:signTransaction', 'trezoa:signMessage'],
         ...overrides,
     });
 }
 
-export function createMockSolflareWallet(overrides?: Partial<MockWalletOptions>): StandardWallet {
+export function createMockTrzflareWallet(overrides?: Partial<MockWalletOptions>): StandardWallet {
     return createMockWallet({
-        name: 'Solflare',
+        name: 'Trzflare',
         icon: 'data:image/svg+xml,<svg><text>S</text></svg>',
-        chains: ['solana:mainnet', 'solana:devnet', 'solana:testnet'],
-        features: ['solana:signTransaction', 'solana:signMessage'],
+        chains: ['trezoa:mainnet', 'trezoa:devnet', 'trezoa:testnet'],
+        features: ['trezoa:signTransaction', 'trezoa:signMessage'],
         ...overrides,
     });
 }
@@ -146,8 +146,8 @@ export function createMockBackpackWallet(overrides?: Partial<MockWalletOptions>)
     return createMockWallet({
         name: 'Backpack',
         icon: 'data:image/svg+xml,<svg><text>B</text></svg>',
-        chains: ['solana:mainnet', 'solana:devnet'],
-        features: ['solana:signTransaction'],
+        chains: ['trezoa:mainnet', 'trezoa:devnet'],
+        features: ['trezoa:signTransaction'],
         ...overrides,
     });
 }
@@ -173,7 +173,7 @@ export function mockWalletRegistry(wallets: StandardWallet[]) {
         unregister: (wallet: StandardWallet) => {
             const index = wallets.indexOf(wallet);
             if (index > -1) {
-                wallets.splice(index, 1);
+                wallets.tplice(index, 1);
                 listeners.forEach(listener => listener());
             }
         },

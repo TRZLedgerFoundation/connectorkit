@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger - Status Badge Component
+ * @trezoa/connector-debugger - Status Badge Component
  *
  * Animated status indicators for transaction lifecycle
  */

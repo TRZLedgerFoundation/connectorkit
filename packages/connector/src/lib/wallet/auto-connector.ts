@@ -91,7 +91,7 @@ export class AutoConnector {
                                     {
                                         address,
                                         publicKey: publicKeyBytes,
-                                        chains: ['solana:mainnet', 'solana:devnet', 'solana:testnet'] as const,
+                                        chains: ['trezoa:mainnet', 'trezoa:devnet', 'trezoa:testnet'] as const,
                                         features: [],
                                     },
                                 ],
@@ -112,7 +112,7 @@ export class AutoConnector {
                                     {
                                         address,
                                         publicKey: publicKeyBytes,
-                                        chains: ['solana:mainnet', 'solana:devnet', 'solana:testnet'] as const,
+                                        chains: ['trezoa:mainnet', 'trezoa:devnet', 'trezoa:testnet'] as const,
                                         features: [],
                                     },
                                 ],
@@ -135,7 +135,7 @@ export class AutoConnector {
                                     {
                                         address,
                                         publicKey: publicKeyBytes,
-                                        chains: ['solana:mainnet', 'solana:devnet', 'solana:testnet'] as const,
+                                        chains: ['trezoa:mainnet', 'trezoa:devnet', 'trezoa:testnet'] as const,
                                         features: [],
                                     },
                                 ],
@@ -159,14 +159,14 @@ export class AutoConnector {
 
             if (directWallet.signTransaction) {
                 const signTransactionFn = directWallet.signTransaction;
-                features['solana:signTransaction'] = {
+                features['trezoa:signTransaction'] = {
                     signTransaction: (tx: unknown) => signTransactionFn.call(directWallet, tx),
                 };
             }
 
             if (directWallet.signMessage) {
                 const signMessageFn = directWallet.signMessage;
-                features['solana:signMessage'] = {
+                features['trezoa:signMessage'] = {
                     signMessage: (...args: unknown[]) => {
                         const msg = args[0] as Uint8Array;
                         return signMessageFn.call(directWallet, msg);
@@ -190,9 +190,9 @@ export class AutoConnector {
                 name: storedWalletName,
                 icon: walletIcon as Wallet['icon'],
                 chains: (directWallet.chains || [
-                    'solana:mainnet',
-                    'solana:devnet',
-                    'solana:testnet',
+                    'trezoa:mainnet',
+                    'trezoa:devnet',
+                    'trezoa:testnet',
                 ]) as readonly `${string}:${string}`[],
                 features,
                 accounts: [] as const,

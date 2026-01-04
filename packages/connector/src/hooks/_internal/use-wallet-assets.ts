@@ -1,23 +1,23 @@
 'use client';
 
 import { useCallback, useMemo } from 'react';
-import { address as toAddress } from '@solana/addresses';
+import { address as toAddress } from '@trezoa/addresses';
 import { useAccount } from '../use-account';
-import { useSolanaClient } from '../use-kit-solana-client';
+import { useTrezoaClient } from '../use-kit-trezoa-client';
 import { useSharedQuery } from './use-shared-query';
 import type { SharedQueryOptions } from './use-shared-query';
-import type { SolanaClient } from '../../lib/kit';
+import type { TrezoaClient } from '../../lib/kit';
 
 /**
  * Token Program IDs
  */
-export const TOKEN_PROGRAM_ID = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
-export const TOKEN_2022_PROGRAM_ID = 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb';
+export const TOKEN_PROGRAM_ID = '4JkrrPuuQPxDZuBW1bgrM1GBa8oYg1LxcuX9szBPh3ic';
+export const TOKEN_2022_PROGRAM_ID = '4sYbW7qEG4Wrf2rTNjkGZE9vQ41XdPFQjMDf9Z6Yg7yG';
 
 /**
- * Native SOL mint address (wrapped SOL)
+ * Native TRZ mint address (wrapped TRZ)
  */
-export const NATIVE_SOL_MINT = 'So11111111111111111111111111111111111111112';
+export const NATIVE_TRZ_MINT = 'tr11111111111111111111111111111111111111112';
 
 /**
  * Information about a single token account
@@ -43,7 +43,7 @@ export interface TokenAccountInfo {
  * Combined wallet assets data
  */
 export interface WalletAssetsData {
-    /** SOL balance in lamports */
+    /** TRZ balance in lamports */
     lamports: bigint;
     /** All token accounts (Token Program + Token-2022) */
     tokenAccounts: TokenAccountInfo[];
@@ -54,8 +54,8 @@ export interface WalletAssetsData {
  */
 export interface UseWalletAssetsOptions<TSelected = WalletAssetsData>
     extends Omit<SharedQueryOptions<WalletAssetsData, TSelected>, 'select'> {
-    /** Override the Solana client from provider */
-    client?: SolanaClient | null;
+    /** Override the Trezoa client from provider */
+    client?: TrezoaClient | null;
     /** Transform/select a subset of data (reduces rerenders) */
     select?: (data: WalletAssetsData | undefined) => TSelected;
 }
@@ -172,7 +172,7 @@ export function getWalletAssetsQueryKey(rpcUrl: string | null, address: string |
 }
 
 /**
- * Internal hook that fetches both SOL balance and all token accounts.
+ * Internal hook that fetches both TRZ balance and all token accounts.
  * Queries both Token Program and Token-2022 in parallel.
  *
  * This hook is used internally by `useBalance` and `useTokens` to share
@@ -183,7 +183,7 @@ export function getWalletAssetsQueryKey(rpcUrl: string | null, address: string |
  * @example Basic usage
  * ```tsx
  * const { data, isLoading } = useWalletAssets();
- * // data.lamports - SOL balance
+ * // data.lamports - TRZ balance
  * // data.tokenAccounts - all token accounts
  * ```
  *
@@ -208,7 +208,7 @@ export function useWalletAssets<TSelected = WalletAssetsData>(
     } = options;
 
     const { address, connected } = useAccount();
-    const { client: providerClient } = useSolanaClient();
+    const { client: providerClient } = useTrezoaClient();
 
     // Use override client if provided, otherwise use provider client
     const rpcClient = clientOverride ?? providerClient;
@@ -222,7 +222,7 @@ export function useWalletAssets<TSelected = WalletAssetsData>(
         return getWalletAssetsQueryKey(rpcUrl, address);
     }, [enabled, connected, address, rpcClient]);
 
-    // Query function that fetches SOL balance and all token accounts
+    // Query function that fetches TRZ balance and all token accounts
     const queryFn = useCallback(
         async (signal: AbortSignal): Promise<WalletAssetsData> => {
             if (!connected || !address || !rpcClient) {
@@ -239,7 +239,7 @@ export function useWalletAssets<TSelected = WalletAssetsData>(
             const tokenProgramId = toAddress(TOKEN_PROGRAM_ID);
             const token2022ProgramId = toAddress(TOKEN_2022_PROGRAM_ID);
 
-            // Fetch SOL balance and both token programs in parallel
+            // Fetch TRZ balance and both token programs in parallel
             const [balanceResult, tokenAccountsResult, token2022AccountsResult] = await Promise.all([
                 rpc.getBalance(walletAddress).send(),
                 rpc

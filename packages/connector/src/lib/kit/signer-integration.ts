@@ -1,16 +1,16 @@
 /**
- * @solana/connector - Kit Integration Helper
+ * @trezoa/connector - Kit Integration Helper
  *
  * High-level helper to create Kit signers from Wallet Standard wallets.
  * Framework-agnostic and works in any JavaScript environment.
  */
 
 import type { Wallet, WalletAccount } from '@wallet-standard/base';
-import type { Address } from '@solana/addresses';
-import type { MessageModifyingSigner, TransactionSendingSigner } from '@solana/signers';
-import { address } from '@solana/addresses';
-import type { Connection } from '@solana/web3.js';
-import type { Transaction } from '@solana/transactions';
+import type { Address } from '@trezoa/addresses';
+import type { MessageModifyingSigner, TransactionSendingSigner } from '@trezoa/signers';
+import { address } from '@trezoa/addresses';
+import type { Connection } from '@trezoa/web3.js';
+import type { Transaction } from '@trezoa/transactions';
 import { createMessageSignerFromWallet, createTransactionSendingSignerFromWallet } from './signer-factories';
 import { Errors } from '../errors';
 
@@ -48,10 +48,10 @@ export interface KitSignersFromWallet {
  *
  * @example
  * ```typescript
- * import { Connection } from '@solana/web3.js';
- * import { createKitSignersFromWallet } from '@solana/connector/headless';
+ * import { Connection } from '@trezoa/web3.js';
+ * import { createKitSignersFromWallet } from '@trezoa/connector/headless';
  *
- * const connection = new Connection('https://api.devnet.solana.com');
+ * const connection = new Connection('https://api.devnet.trezoa.com');
  * const { address, messageSigner, transactionSigner } = createKitSignersFromWallet(
  *   wallet,
  *   account,
@@ -94,34 +94,34 @@ export function createKitSignersFromWallet(
 
     // Detect network from connection or use provided override
     // Note: Will be enhanced in Phase 2 with chain utilities
-    let chain: `solana:${string}` = 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1'; // Default to devnet
+    let chain: `trezoa:${string}` = 'trezoa:EtWTRABZaYq6iMfeYKouRu166VU2xqa1'; // Default to devnet
 
     if (network) {
         // Map network to Wallet Standard chain ID
-        const chainMap: Record<string, `solana:${string}`> = {
-            mainnet: 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
-            devnet: 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1',
-            testnet: 'solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z',
+        const chainMap: Record<string, `trezoa:${string}`> = {
+            mainnet: 'trezoa:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
+            devnet: 'trezoa:EtWTRABZaYq6iMfeYKouRu166VU2xqa1',
+            testnet: 'trezoa:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z',
         };
         chain = chainMap[network] || chain;
     } else if (connection) {
         // Detect from connection RPC URL
         const rpcUrl = connection.rpcEndpoint || '';
         if (rpcUrl.includes('mainnet') || rpcUrl.includes('api.mainnet-beta')) {
-            chain = 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp';
+            chain = 'trezoa:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp';
         } else if (rpcUrl.includes('testnet')) {
-            chain = 'solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z';
+            chain = 'trezoa:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z';
         } else {
             // Default to devnet
-            chain = 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1';
+            chain = 'trezoa:EtWTRABZaYq6iMfeYKouRu166VU2xqa1';
         }
     }
 
     // Check wallet features for capabilities
     const features = wallet.features as Record<string, Record<string, (...args: unknown[]) => unknown>>;
-    const hasSignMessage = Boolean(features['solana:signMessage']);
-    const hasSignAndSendTransaction = Boolean(features['solana:signAndSendTransaction']);
-    const hasSendTransaction = Boolean(features['solana:sendTransaction']);
+    const hasSignMessage = Boolean(features['trezoa:signMessage']);
+    const hasSignAndSendTransaction = Boolean(features['trezoa:signAndSendTransaction']);
+    const hasSendTransaction = Boolean(features['trezoa:sendTransaction']);
 
     // Create message signer if wallet supports message signing
     const messageSigner: MessageModifyingSigner<string> | null = hasSignMessage
@@ -131,7 +131,7 @@ export function createKitSignersFromWallet(
               }
 
               try {
-                  const signFeature = features['solana:signMessage'];
+                  const signFeature = features['trezoa:signMessage'];
 
                   // Ensure message is a Uint8Array
                   const messageBytes = message instanceof Uint8Array ? message : new Uint8Array(message);
@@ -168,7 +168,7 @@ export function createKitSignersFromWallet(
                   // Prefer signAndSendTransaction (sign + send in one call)
                   if (hasSignAndSendTransaction) {
                       try {
-                          const signAndSendFeature = features['solana:signAndSendTransaction'];
+                          const signAndSendFeature = features['trezoa:signAndSendTransaction'];
                           const result = (await signAndSendFeature.signAndSendTransaction({
                               account,
                               transactions: [transaction],
@@ -188,7 +188,7 @@ export function createKitSignersFromWallet(
                   // may implement it to also send if connection is available
                   if (hasSendTransaction) {
                       try {
-                          const sendFeature = features['solana:sendTransaction'];
+                          const sendFeature = features['trezoa:sendTransaction'];
                           const result = (await sendFeature.sendTransaction({
                               account,
                               transactions: [transaction],

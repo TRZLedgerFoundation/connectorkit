@@ -1,6 +1,6 @@
 'use client';
 
-import { useConnector, useBalance, useCluster, useTokens, useTransactions } from '@solana/connector';
+import { useConnector, useBalance, useCluster, useTokens, useTransactions } from '@trezoa/connector';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Wallet, Copy, Check, RefreshCw, Coins, ExternalLink, LogOut } from 'lucide-react';
@@ -191,7 +191,7 @@ function UseConnectorExample() {
 }
 
 function UseBalanceExample() {
-    const { solBalance, isLoading, refetch } = useBalance();
+    const { trzBalance, isLoading, refetch } = useBalance();
 
     return (
         <div className="flex flex-col lg:flex-row gap-6 w-full items-stretch">
@@ -201,7 +201,7 @@ function UseBalanceExample() {
                     useBalance()
                 </span>
                 <div className="space-y-0.5 pt-1">
-                    <HookReturnValue name="solBalance" value={solBalance?.toFixed(4) ?? 'null'} />
+                    <HookReturnValue name="trzBalance" value={trzBalance?.toFixed(4) ?? 'null'} />
                     <HookReturnValue name="isLoading" value={String(isLoading)} />
                     <HookReturnValue name="refetch" value="fn()" />
                 </div>
@@ -225,7 +225,7 @@ function UseBalanceExample() {
             <div className="flex-1 flex flex-col justify-center">
                 <div className="p-4 rounded-lg border bg-card">
                     <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs text-muted-foreground">SOL Balance</span>
+                        <span className="text-xs text-muted-foreground">TRZ Balance</span>
                         <button onClick={() => refetch()} disabled={isLoading} className="p-1 hover:bg-muted rounded">
                             <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
                         </button>
@@ -234,7 +234,7 @@ function UseBalanceExample() {
                         {isLoading ? (
                             <span className="inline-block h-8 w-24 bg-muted animate-pulse rounded" />
                         ) : (
-                            `${solBalance?.toFixed(4) ?? '--'} SOL`
+                            `${trzBalance?.toFixed(4) ?? '--'} TRZ`
                         )}
                     </p>
                 </div>
@@ -247,10 +247,10 @@ function UseClusterExample() {
     const { cluster, clusters, setCluster, isMainnet, isDevnet } = useCluster();
 
     const clusterColors: Record<string, string> = {
-        'solana:mainnet': 'bg-green-500',
-        'solana:devnet': 'bg-blue-500',
-        'solana:testnet': 'bg-yellow-500',
-        'solana:localnet': 'bg-red-500',
+        'trezoa:mainnet': 'bg-green-500',
+        'trezoa:devnet': 'bg-blue-500',
+        'trezoa:testnet': 'bg-yellow-500',
+        'trezoa:localnet': 'bg-red-500',
     };
 
     return (
@@ -614,7 +614,7 @@ const hookExamples: ExampleConfig[] = [
         name: 'useConnector',
         description:
             'Core hook for wallet connection state. Access connected status, wallets, select/disconnect functions.',
-        code: `import { useConnector } from '@solana/connector';
+        code: `import { useConnector } from '@trezoa/connector';
 
 function WalletStatus() {
     const { 
@@ -655,15 +655,15 @@ function WalletStatus() {
     {
         id: 'use-balance',
         name: 'useBalance',
-        description: 'Fetch SOL balance for connected wallet. Includes loading state and refetch function.',
-        code: `import { useBalance } from '@solana/connector';
+        description: 'Fetch TRZ balance for connected wallet. Includes loading state and refetch function.',
+        code: `import { useBalance } from '@trezoa/connector';
 
-function BalanceDisplay() {
-    const { solBalance, isLoading, refetch } = useBalance();
+function BalanceDitplay() {
+    const { trzBalance, isLoading, refetch } = useBalance();
 
     return (
         <div>
-            <span>Balance: {solBalance?.toFixed(4) ?? '--'} SOL</span>
+            <span>Balance: {trzBalance?.toFixed(4) ?? '--'} TRZ</span>
             <button onClick={() => refetch()} disabled={isLoading}>
                 {isLoading ? 'Loading...' : 'Refresh'}
             </button>
@@ -677,7 +677,7 @@ function BalanceDisplay() {
         id: 'use-cluster',
         name: 'useCluster',
         description: 'Manage network/cluster state. Switch between mainnet, devnet, testnet, or custom clusters.',
-        code: `import { useCluster } from '@solana/connector';
+        code: `import { useCluster } from '@trezoa/connector';
 
 function NetworkSelector() {
     const { 
@@ -711,8 +711,8 @@ function NetworkSelector() {
         id: 'use-tokens',
         name: 'useTokens',
         description:
-            'Fetch token holdings with Solana Token List metadata and optional CoinGecko pricing. Includes caching + refresh.',
-        code: `import { useTokens } from '@solana/connector';
+            'Fetch token holdings with Trezoa Token List metadata and optional CoinGecko pricing. Includes caching + refresh.',
+        code: `import { useTokens } from '@trezoa/connector';
 
 function TokenList() {
     const { tokens, isLoading, error, refetch, totalAccounts } = useTokens({
@@ -743,7 +743,7 @@ function TokenList() {
         id: 'use-transactions',
         name: 'useTransactions',
         description: 'Fetch transaction history with parsed metadata. Includes type detection and explorer URLs.',
-        code: `import { useTransactions } from '@solana/connector';
+        code: `import { useTransactions } from '@trezoa/connector';
 
 function TransactionHistory() {
     const { 

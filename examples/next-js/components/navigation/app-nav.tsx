@@ -10,12 +10,12 @@ import { CopyButton } from '@/components/ui/copy-button';
 export function AppNav() {
     const [stars, setStars] = useState<number | null>(null);
     const [showCopyButton, setShowCopyButton] = useState(false);
-    const npmCommand = 'npm i @solana/connector';
+    const npmCommand = 'npm i @trezoa/connector';
 
     useEffect(() => {
         async function fetchStars() {
             try {
-                const response = await fetch('https://api.github.com/repos/solana-foundation/connectorkit');
+                const response = await fetch('https://api.github.com/repos/trezoa-foundation/connectorkit');
                 if (response.ok) {
                     const data = await response.json();
                     setStars(data.stargazers_count);
@@ -73,7 +73,7 @@ export function AppNav() {
                         )}
                         <Button
                             onClick={() => {
-                                window.open('https://github.com/solana-foundation/connectorkit', '_blank');
+                                window.open('https://github.com/trezoa-foundation/connectorkit', '_blank');
                             }}
                             variant="outline"
                             size="sm"

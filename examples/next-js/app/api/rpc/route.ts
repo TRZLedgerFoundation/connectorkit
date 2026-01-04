@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Server-side only - not exposed to client
-const RPC_URL = process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com';
+const RPC_URL = process.env.TREZOA_RPC_URL || 'https://api.mainnet-beta.trezoa.com';
 
 export async function POST(request: NextRequest) {
     try {

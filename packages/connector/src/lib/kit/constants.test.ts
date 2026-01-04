@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { LAMPORTS_PER_SOL, GENESIS_HASH, lamportsToSol, solToLamports } from './constants';
+import { LAMPORTS_PER_TRZ, GENESIS_HASH, lamportsToSol, trzToLamports } from './constants';
 
 describe('Kit Constants', () => {
-    describe('LAMPORTS_PER_SOL', () => {
+    describe('LAMPORTS_PER_TRZ', () => {
         it('should equal 1 billion', () => {
-            expect(LAMPORTS_PER_SOL).toBe(1_000_000_000);
+            expect(LAMPORTS_PER_TRZ).toBe(1_000_000_000);
         });
     });
 
@@ -23,7 +23,7 @@ describe('Kit Constants', () => {
     });
 
     describe('lamportsToSol', () => {
-        it('should convert lamports to SOL', () => {
+        it('should convert lamports to TRZ', () => {
             expect(lamportsToSol(1_000_000_000)).toBe(1);
             expect(lamportsToSol(500_000_000)).toBe(0.5);
             expect(lamportsToSol(1_500_000_000)).toBe(1.5);
@@ -34,11 +34,11 @@ describe('Kit Constants', () => {
         });
     });
 
-    describe('solToLamports', () => {
-        it('should convert SOL to lamports', () => {
-            expect(solToLamports(1)).toBe(BigInt(1_000_000_000));
-            expect(solToLamports(0.5)).toBe(BigInt(500_000_000));
-            expect(solToLamports(1.5)).toBe(BigInt(1_500_000_000));
+    describe('trzToLamports', () => {
+        it('should convert TRZ to lamports', () => {
+            expect(trzToLamports(1)).toBe(BigInt(1_000_000_000));
+            expect(trzToLamports(0.5)).toBe(BigInt(500_000_000));
+            expect(trzToLamports(1.5)).toBe(BigInt(1_500_000_000));
         });
     });
 });

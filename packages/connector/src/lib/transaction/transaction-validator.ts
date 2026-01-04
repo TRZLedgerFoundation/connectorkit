@@ -1,18 +1,18 @@
 /**
- * @solana/connector - Transaction Validator
+ * @trezoa/connector - Transaction Validator
  *
  * Validates transactions before signing to prevent malformed or malicious transactions
  * Helps ensure transaction safety and proper error handling
  */
 
-import type { SolanaTransaction } from '../../types/transactions';
+import type { TrezoaTransaction } from '../../types/transactions';
 import { createLogger } from '../utils/secure-logger';
 
 const logger = createLogger('TransactionValidator');
 
 /**
- * Maximum transaction size in bytes (Solana network limit)
- * Solana enforces a 1232 byte limit for serialized transactions
+ * Maximum transaction size in bytes (Trezoa network limit)
+ * Trezoa enforces a 1232 byte limit for serialized transactions
  */
 export const MAX_TRANSACTION_SIZE = 1232;
 
@@ -50,7 +50,7 @@ export interface TransactionValidationOptions {
 }
 
 /**
- * TransactionValidator - Validates Solana transactions before signing
+ * TransactionValidator - Validates Trezoa transactions before signing
  *
  * Performs safety checks to prevent:
  * - Oversized transactions that will be rejected by the network
@@ -81,7 +81,7 @@ export class TransactionValidator {
      * @returns Validation result with errors and warnings
      */
     static validate(
-        transaction: SolanaTransaction,
+        transaction: TrezoaTransaction,
         options: TransactionValidationOptions = {},
     ): TransactionValidationResult {
         const {
@@ -249,7 +249,7 @@ export class TransactionValidator {
      * await signer.signTransaction(transaction);
      * ```
      */
-    static assertValid(transaction: SolanaTransaction, options?: TransactionValidationOptions): void {
+    static assertValid(transaction: TrezoaTransaction, options?: TransactionValidationOptions): void {
         const result = this.validate(transaction, options);
 
         if (!result.valid) {
@@ -270,7 +270,7 @@ export class TransactionValidator {
      * @returns Array of validation results
      */
     static validateBatch(
-        transactions: SolanaTransaction[],
+        transactions: TrezoaTransaction[],
         options?: TransactionValidationOptions,
     ): TransactionValidationResult[] {
         return transactions.map((tx, index) => {

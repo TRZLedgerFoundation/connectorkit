@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger - Simulation Tracker
+ * @trezoa/connector-debugger - Simulation Tracker
  *
  * Tracks simulation results across the session for statistics and analysis
  */

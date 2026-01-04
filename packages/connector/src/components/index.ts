@@ -1,5 +1,5 @@
 /**
- * @solana/connector - React Components
+ * @trezoa/connector - React Components
  *
  * Composable elements for building custom wallet connection UI.
  */

@@ -1,5 +1,5 @@
 /**
- * @solana/connector - Browser Compatibility Polyfills
+ * @trezoa/connector - Browser Compatibility Polyfills
  *
  * Ensures connector works across all browser environments including:
  * - Mobile browsers (iOS Safari, Chrome Mobile, etc.)
@@ -9,7 +9,7 @@
  * Inspired by wallet-adapter-compat's polyfill strategy
  */
 
-import { install } from '@solana/webcrypto-ed25519-polyfill';
+import { install } from '@trezoa/webcrypto-ed25519-polyfill';
 import { createLogger } from './secure-logger';
 
 const logger = createLogger('Polyfills');
@@ -32,10 +32,10 @@ let installed = false;
  * @example
  * ```ts
  * // Automatically called when connector-provider is imported
- * import { ConnectorProvider } from '@solana/connector'
+ * import { ConnectorProvider } from '@trezoa/connector'
  *
  * // Can also be called manually if needed
- * import { installPolyfills } from '@solana/connector/headless'
+ * import { installPolyfills } from '@trezoa/connector/headless'
  * installPolyfills()
  * ```
  */
@@ -73,7 +73,7 @@ export function installPolyfills(): void {
  *
  * @example
  * ```ts
- * import { isPolyfillInstalled } from '@solana/connector/headless'
+ * import { isPolyfillInstalled } from '@trezoa/connector/headless'
  *
  * if (!isPolyfillInstalled()) {
  *   console.warn('Polyfills not installed - may have issues on older browsers')
@@ -92,7 +92,7 @@ export function isPolyfillInstalled(): boolean {
  *
  * @example
  * ```ts
- * import { isCryptoAvailable } from '@solana/connector/headless'
+ * import { isCryptoAvailable } from '@trezoa/connector/headless'
  *
  * if (!isCryptoAvailable()) {
  *   // Show warning to user about unsupported browser
@@ -117,7 +117,7 @@ export function isCryptoAvailable(): boolean {
  *
  * @example
  * ```ts
- * import { getPolyfillStatus } from '@solana/connector/headless'
+ * import { getPolyfillStatus } from '@trezoa/connector/headless'
  *
  * const status = getPolyfillStatus()
  * console.log('Polyfills:', status.installed ? 'installed' : 'not installed')

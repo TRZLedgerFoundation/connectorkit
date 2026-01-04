@@ -6,15 +6,15 @@ export {
     validateConfigOptions,
     parseConfigOptions,
     // Individual schemas for advanced use
-    solanaNetworkSchema,
-    solanaClusterIdSchema,
-    solanaClusterSchema,
+    trezoaNetworkSchema,
+    trezoaClusterIdSchema,
+    trezoaClusterSchema,
     coinGeckoConfigSchema,
     defaultConfigOptionsSchema,
 } from './schemas';
 export type {
-    SolanaNetworkInput,
-    SolanaClusterIdInput,
+    TrezoaNetworkInput,
+    TrezoaClusterIdInput,
     CoinGeckoConfigInput,
     DefaultConfigOptionsInput,
 } from './schemas';

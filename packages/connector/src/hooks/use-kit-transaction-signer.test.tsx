@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 
 describe('useKitTransactionSigner', () => {
     const mockConfig = {
-        clusters: [{ id: 'solana:devnet', name: 'Devnet', rpcUrl: 'https://api.devnet.solana.com' }],
+        clusters: [{ id: 'trezoa:devnet', name: 'Devnet', rpcUrl: 'https://api.devnet.trezoa.com' }],
     };
 
     const wrapper = ({ children }: { children: ReactNode }) => (

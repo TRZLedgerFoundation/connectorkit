@@ -6,10 +6,10 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
-    getSolanaExplorerUrl,
-    getSolscanUrl,
+    getTrezoaExplorerUrl,
+    getTrzscanUrl,
     getXrayUrl,
-    getSolanaFmUrl,
+    getTrezoaFmUrl,
     getAllExplorerUrls,
     formatSignature,
     copySignature,
@@ -18,50 +18,50 @@ import {
 describe('Explorer URL Utilities', () => {
     const mockSignature = '5VERv8NMvzbJMEkV8xnrLkEaWRtSz9CosKDYjCJjBRnbJLgp8uirBgmQpjKhoR4tjF3ZpRzrFmBV6UjKdiSZkQUW';
 
-    describe('getSolanaExplorerUrl', () => {
+    describe('getTrezoaExplorerUrl', () => {
         it('should generate mainnet URL by default', () => {
-            const url = getSolanaExplorerUrl(mockSignature);
+            const url = getTrezoaExplorerUrl(mockSignature);
             expect(url).toContain(mockSignature);
-            expect(url).toContain('explorer.solana.com');
+            expect(url).toContain('explorer.trezoa.com');
         });
 
         it('should generate mainnet URL explicitly', () => {
-            const url = getSolanaExplorerUrl(mockSignature, { cluster: 'mainnet' });
+            const url = getTrezoaExplorerUrl(mockSignature, { cluster: 'mainnet' });
             expect(url).toContain(mockSignature);
-            expect(url).toContain('explorer.solana.com');
+            expect(url).toContain('explorer.trezoa.com');
         });
 
         it('should normalize mainnet-beta to mainnet', () => {
-            const url = getSolanaExplorerUrl(mockSignature, { cluster: 'mainnet-beta' });
+            const url = getTrezoaExplorerUrl(mockSignature, { cluster: 'mainnet-beta' });
             expect(url).toContain(mockSignature);
-            expect(url).toContain('explorer.solana.com');
+            expect(url).toContain('explorer.trezoa.com');
         });
 
         it('should generate devnet URL', () => {
-            const url = getSolanaExplorerUrl(mockSignature, { cluster: 'devnet' });
+            const url = getTrezoaExplorerUrl(mockSignature, { cluster: 'devnet' });
             expect(url).toContain(mockSignature);
-            expect(url).toContain('explorer.solana.com');
+            expect(url).toContain('explorer.trezoa.com');
             expect(url).toContain('devnet');
         });
 
         it('should generate testnet URL', () => {
-            const url = getSolanaExplorerUrl(mockSignature, { cluster: 'testnet' });
+            const url = getTrezoaExplorerUrl(mockSignature, { cluster: 'testnet' });
             expect(url).toContain(mockSignature);
-            expect(url).toContain('explorer.solana.com');
+            expect(url).toContain('explorer.trezoa.com');
             expect(url).toContain('testnet');
         });
 
         it('should handle localnet with default URL', () => {
-            const url = getSolanaExplorerUrl(mockSignature, { cluster: 'localnet' });
+            const url = getTrezoaExplorerUrl(mockSignature, { cluster: 'localnet' });
             expect(url).toContain(mockSignature);
-            expect(url).toContain('explorer.solana.com');
+            expect(url).toContain('explorer.trezoa.com');
             expect(url).toContain('cluster=custom');
             expect(url).toContain(encodeURIComponent('http://localhost:8899'));
         });
 
         it('should handle localnet with custom URL', () => {
             const customUrl = 'http://127.0.0.1:8899';
-            const url = getSolanaExplorerUrl(mockSignature, { cluster: 'localnet', customUrl });
+            const url = getTrezoaExplorerUrl(mockSignature, { cluster: 'localnet', customUrl });
             expect(url).toContain(mockSignature);
             expect(url).toContain('cluster=custom');
             expect(url).toContain(encodeURIComponent(customUrl));
@@ -69,45 +69,45 @@ describe('Explorer URL Utilities', () => {
 
         it('should handle unknown clusters as devnet', () => {
             // @ts-expect-error - Testing unknown cluster fallback
-            const url = getSolanaExplorerUrl(mockSignature, { cluster: 'unknown-cluster' });
+            const url = getTrezoaExplorerUrl(mockSignature, { cluster: 'unknown-cluster' });
             expect(url).toContain(mockSignature);
-            expect(url).toContain('explorer.solana.com');
+            expect(url).toContain('explorer.trezoa.com');
         });
     });
 
-    describe('getSolscanUrl', () => {
+    describe('getTrzscanUrl', () => {
         it('should generate mainnet URL by default', () => {
-            const url = getSolscanUrl(mockSignature);
+            const url = getTrzscanUrl(mockSignature);
             expect(url).toBe(`https://solscan.io/tx/${mockSignature}`);
         });
 
         it('should generate mainnet URL explicitly', () => {
-            const url = getSolscanUrl(mockSignature, { cluster: 'mainnet' });
+            const url = getTrzscanUrl(mockSignature, { cluster: 'mainnet' });
             expect(url).toBe(`https://solscan.io/tx/${mockSignature}`);
         });
 
         it('should normalize mainnet-beta to mainnet', () => {
-            const url = getSolscanUrl(mockSignature, { cluster: 'mainnet-beta' });
+            const url = getTrzscanUrl(mockSignature, { cluster: 'mainnet-beta' });
             expect(url).toBe(`https://solscan.io/tx/${mockSignature}`);
         });
 
         it('should generate devnet URL', () => {
-            const url = getSolscanUrl(mockSignature, { cluster: 'devnet' });
+            const url = getTrzscanUrl(mockSignature, { cluster: 'devnet' });
             expect(url).toBe(`https://solscan.io/tx/${mockSignature}?cluster=devnet`);
         });
 
         it('should generate testnet URL', () => {
-            const url = getSolscanUrl(mockSignature, { cluster: 'testnet' });
+            const url = getTrzscanUrl(mockSignature, { cluster: 'testnet' });
             expect(url).toBe(`https://solscan.io/tx/${mockSignature}?cluster=testnet`);
         });
 
         it('should handle localnet', () => {
-            const url = getSolscanUrl(mockSignature, { cluster: 'localnet' });
+            const url = getTrzscanUrl(mockSignature, { cluster: 'localnet' });
             expect(url).toBe(`https://solscan.io/tx/${mockSignature}?cluster=custom`);
         });
 
         it('should handle custom clusters', () => {
-            const url = getSolscanUrl(mockSignature, { cluster: 'custom' });
+            const url = getTrzscanUrl(mockSignature, { cluster: 'custom' });
             expect(url).toBe(`https://solscan.io/tx/${mockSignature}?cluster=custom`);
         });
     });
@@ -125,35 +125,35 @@ describe('Explorer URL Utilities', () => {
         });
     });
 
-    describe('getSolanaFmUrl', () => {
+    describe('getTrezoaFmUrl', () => {
         it('should generate mainnet URL by default', () => {
-            const url = getSolanaFmUrl(mockSignature);
-            expect(url).toBe(`https://solana.fm/tx/${mockSignature}`);
+            const url = getTrezoaFmUrl(mockSignature);
+            expect(url).toBe(`https://trezoa.fm/tx/${mockSignature}`);
         });
 
         it('should generate mainnet URL explicitly', () => {
-            const url = getSolanaFmUrl(mockSignature, { cluster: 'mainnet' });
-            expect(url).toBe(`https://solana.fm/tx/${mockSignature}`);
+            const url = getTrezoaFmUrl(mockSignature, { cluster: 'mainnet' });
+            expect(url).toBe(`https://trezoa.fm/tx/${mockSignature}`);
         });
 
         it('should normalize mainnet-beta to mainnet', () => {
-            const url = getSolanaFmUrl(mockSignature, { cluster: 'mainnet-beta' });
-            expect(url).toBe(`https://solana.fm/tx/${mockSignature}`);
+            const url = getTrezoaFmUrl(mockSignature, { cluster: 'mainnet-beta' });
+            expect(url).toBe(`https://trezoa.fm/tx/${mockSignature}`);
         });
 
         it('should generate devnet URL', () => {
-            const url = getSolanaFmUrl(mockSignature, { cluster: 'devnet' });
-            expect(url).toBe(`https://solana.fm/tx/${mockSignature}?cluster=devnet`);
+            const url = getTrezoaFmUrl(mockSignature, { cluster: 'devnet' });
+            expect(url).toBe(`https://trezoa.fm/tx/${mockSignature}?cluster=devnet`);
         });
 
         it('should generate testnet URL', () => {
-            const url = getSolanaFmUrl(mockSignature, { cluster: 'testnet' });
-            expect(url).toBe(`https://solana.fm/tx/${mockSignature}?cluster=testnet`);
+            const url = getTrezoaFmUrl(mockSignature, { cluster: 'testnet' });
+            expect(url).toBe(`https://trezoa.fm/tx/${mockSignature}?cluster=testnet`);
         });
 
         it('should handle localnet', () => {
-            const url = getSolanaFmUrl(mockSignature, { cluster: 'localnet' });
-            expect(url).toBe(`https://solana.fm/tx/${mockSignature}?cluster=localnet`);
+            const url = getTrezoaFmUrl(mockSignature, { cluster: 'localnet' });
+            expect(url).toBe(`https://trezoa.fm/tx/${mockSignature}?cluster=localnet`);
         });
     });
 
@@ -161,27 +161,27 @@ describe('Explorer URL Utilities', () => {
         it('should return all explorer URLs', () => {
             const urls = getAllExplorerUrls(mockSignature);
 
-            expect(urls).toHaveProperty('solana-explorer');
+            expect(urls).toHaveProperty('trezoa-explorer');
             expect(urls).toHaveProperty('solscan');
             expect(urls).toHaveProperty('xray');
-            expect(urls).toHaveProperty('solana-fm');
+            expect(urls).toHaveProperty('trezoa-fm');
         });
 
         it('should generate URLs for mainnet by default', () => {
             const urls = getAllExplorerUrls(mockSignature);
 
-            expect(urls['solana-explorer']).toContain(mockSignature);
+            expect(urls['trezoa-explorer']).toContain(mockSignature);
             expect(urls['solscan']).toContain('solscan.io');
             expect(urls['xray']).toContain('xray.helius.xyz');
-            expect(urls['solana-fm']).toContain('solana.fm');
+            expect(urls['trezoa-fm']).toContain('trezoa.fm');
         });
 
         it('should respect cluster option for all explorers', () => {
             const urls = getAllExplorerUrls(mockSignature, { cluster: 'devnet' });
 
-            expect(urls['solana-explorer']).toContain('devnet');
+            expect(urls['trezoa-explorer']).toContain('devnet');
             expect(urls['solscan']).toContain('cluster=devnet');
-            expect(urls['solana-fm']).toContain('cluster=devnet');
+            expect(urls['trezoa-fm']).toContain('cluster=devnet');
         });
 
         it('should include all 4 explorer types', () => {
@@ -189,10 +189,10 @@ describe('Explorer URL Utilities', () => {
             const keys = Object.keys(urls);
 
             expect(keys).toHaveLength(4);
-            expect(keys).toContain('solana-explorer');
+            expect(keys).toContain('trezoa-explorer');
             expect(keys).toContain('solscan');
             expect(keys).toContain('xray');
-            expect(keys).toContain('solana-fm');
+            expect(keys).toContain('trezoa-fm');
         });
     });
 
@@ -307,24 +307,24 @@ describe('Explorer URL Utilities', () => {
 
     describe('edge cases', () => {
         it('should handle empty signature', () => {
-            const url = getSolanaExplorerUrl('');
-            expect(url).toContain('explorer.solana.com');
+            const url = getTrezoaExplorerUrl('');
+            expect(url).toContain('explorer.trezoa.com');
         });
 
         it('should handle special characters in signature', () => {
             const specialSig = 'abc%20def';
-            const url = getSolscanUrl(specialSig);
+            const url = getTrzscanUrl(specialSig);
             expect(url).toContain(specialSig);
         });
 
         it('should handle undefined options', () => {
-            const url = getSolanaExplorerUrl(mockSignature);
+            const url = getTrezoaExplorerUrl(mockSignature);
             expect(url).toContain(mockSignature);
         });
 
         it('should handle null cluster', () => {
             // @ts-expect-error - Testing null cluster handling
-            const url = getSolscanUrl(mockSignature, { cluster: null });
+            const url = getTrzscanUrl(mockSignature, { cluster: null });
             expect(url).toContain(mockSignature);
         });
     });
@@ -332,13 +332,13 @@ describe('Explorer URL Utilities', () => {
     describe('URL encoding', () => {
         it('should properly encode custom URLs', () => {
             const customUrl = 'http://localhost:8899?param=value';
-            const url = getSolanaExplorerUrl(mockSignature, { cluster: 'localnet', customUrl });
+            const url = getTrezoaExplorerUrl(mockSignature, { cluster: 'localnet', customUrl });
             expect(url).toContain(encodeURIComponent(customUrl));
         });
 
         it('should handle URLs with special characters', () => {
             const customUrl = 'http://127.0.0.1:8899/rpc?token=abc&key=xyz';
-            const url = getSolanaExplorerUrl(mockSignature, { cluster: 'localnet', customUrl });
+            const url = getTrezoaExplorerUrl(mockSignature, { cluster: 'localnet', customUrl });
             expect(url).toContain(encodeURIComponent(customUrl));
         });
     });

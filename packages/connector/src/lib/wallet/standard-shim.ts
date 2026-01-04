@@ -10,7 +10,7 @@ import type {
 } from '@wallet-standard/features';
 
 /*
- * @solana/connector - wallet-standard integration
+ * @trezoa/connector - wallet-standard integration
  *
  * Simplified wallet standard types and registry access
  */
@@ -49,7 +49,7 @@ let registryInitResolve: (() => void) | null = null;
  *
  * @example
  * ```ts
- * import { ready, getWalletsRegistry } from '@solana/connector';
+ * import { ready, getWalletsRegistry } from '@trezoa/connector';
  *
  * // Wait for registry to be ready before detecting wallets
  * await ready;

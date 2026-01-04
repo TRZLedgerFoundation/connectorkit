@@ -1,7 +1,7 @@
 /**
  * Tests for Wallet Adapter Compatibility layer (compat.ts)
  *
- * Verifies the compatibility bridge with @solana/wallet-adapter interface
+ * Verifies the compatibility bridge with @trezoa/wallet-adapter interface
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';

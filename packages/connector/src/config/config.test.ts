@@ -7,7 +7,7 @@
 import { describe, it, expect } from 'vitest';
 import { getDefaultConfig, getDefaultMobileConfig } from './default-config';
 import type { DefaultConfigOptions } from './default-config';
-import type { SolanaCluster } from '@wallet-ui/core';
+import type { TrezoaCluster } from '@wallet-ui/core';
 
 describe('Configuration System', () => {
     describe('getDefaultConfig', () => {
@@ -121,22 +121,22 @@ describe('Configuration System', () => {
             });
 
             const clusterIds = config.cluster!.clusters.map(c => c.id);
-            expect(clusterIds).toContain('solana:localnet');
+            expect(clusterIds).toContain('trezoa:localnet');
         });
 
         it('should accept custom clusters', () => {
             const customCluster = {
-                id: 'solana:custom',
+                id: 'trezoa:custom',
                 label: 'Custom',
                 url: 'https://custom.com',
-            } satisfies SolanaCluster;
+            } satisfies TrezoaCluster;
 
             const config = getDefaultConfig({
                 ...baseOptions,
                 customClusters: [customCluster],
             });
 
-            expect(config.cluster!.clusters.some(c => c.id === 'solana:custom')).toBe(true);
+            expect(config.cluster!.clusters.some(c => c.id === 'trezoa:custom')).toBe(true);
         });
 
         it('should persist cluster selection by default', () => {
@@ -217,10 +217,10 @@ describe('Configuration System', () => {
     describe('configuration merging', () => {
         it('should merge custom clusters with defaults', () => {
             const customCluster = {
-                id: 'solana:custom',
+                id: 'trezoa:custom',
                 label: 'Custom',
                 url: 'https://custom.com',
-            } satisfies SolanaCluster;
+            } satisfies TrezoaCluster;
 
             const config = getDefaultConfig({
                 appName: 'Test',
@@ -228,7 +228,7 @@ describe('Configuration System', () => {
             });
 
             expect(config.cluster!.clusters.length).toBeGreaterThan(1);
-            expect(config.cluster!.clusters.some(c => c.id === 'solana:custom')).toBe(true);
+            expect(config.cluster!.clusters.some(c => c.id === 'trezoa:custom')).toBe(true);
         });
 
         it('should override defaults with explicit values', () => {

@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       publish_packages:
-        description: 'Publish @solana/connector and @solana/connector-debugger packages to npm'
+        description: 'Publish @trezoa/connector and @trezoa/connector-debugger packages to npm'
         type: boolean
         default: true
 
@@ -56,11 +56,11 @@ jobs:
       - name: Run tests (skip for now)
         run: echo "Skipping tests for initial publish"
 
-      - name: Publish @solana/connector
+      - name: Publish @trezoa/connector
         working-directory: packages/connector
         run: npm publish --access public
 
-      - name: Publish @solana/connector-debugger
+      - name: Publish @trezoa/connector-debugger
         working-directory: packages/debugger
         run: npm publish --access public
 
@@ -81,23 +81,23 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           body: |
-            ## Solana Connector Packages Published
+            ## Trezoa Connector Packages Published
 
-            ### @solana/connector
-            - Package: `@solana/connector`
+            ### @trezoa/connector
+            - Package: `@trezoa/connector`
             - Version: ${{ github.ref_name }}
             - Registry: npm
 
-            ### @solana/connector-debugger
-            - Package: `@solana/connector-debugger`
+            ### @trezoa/connector-debugger
+            - Package: `@trezoa/connector-debugger`
             - Version: ${{ github.ref_name }}
             - Registry: npm
 
             ## Installation
 
             ```bash
-            npm install @solana/connector@${{ github.ref_name }}
-            npm install @solana/connector-debugger@${{ github.ref_name }}
+            npm install @trezoa/connector@${{ github.ref_name }}
+            npm install @trezoa/connector-debugger@${{ github.ref_name }}
             ```
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}

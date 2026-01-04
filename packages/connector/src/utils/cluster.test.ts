@@ -14,37 +14,37 @@ import {
     getClusterType,
     type ClusterType,
 } from './cluster';
-import type { SolanaCluster } from '@wallet-ui/core';
+import type { TrezoaCluster } from '@wallet-ui/core';
 
 // Mock kit
 vi.mock('../lib/kit', () => ({
     getExplorerLink: vi.fn(({ transaction, address, cluster }) => {
         const clusterParam = cluster === 'mainnet' ? '' : `?cluster=${cluster}`;
-        if (transaction) return `https://explorer.solana.com/tx/${transaction}${clusterParam}`;
-        if (address) return `https://explorer.solana.com/address/${address}${clusterParam}`;
-        return `https://explorer.solana.com${clusterParam}`;
+        if (transaction) return `https://explorer.trezoa.com/tx/${transaction}${clusterParam}`;
+        if (address) return `https://explorer.trezoa.com/address/${address}${clusterParam}`;
+        return `https://explorer.trezoa.com${clusterParam}`;
     }),
 }));
 
 describe('Cluster Utilities', () => {
-    const mockClusters: Record<string, SolanaCluster> = {
-        mainnet: { id: 'solana:mainnet', label: 'Mainnet', url: 'https://api.mainnet.solana.com' } as SolanaCluster,
+    const mockClusters: Record<string, TrezoaCluster> = {
+        mainnet: { id: 'trezoa:mainnet', label: 'Mainnet', url: 'https://api.mainnet.trezoa.com' } as TrezoaCluster,
         mainnetBeta: {
-            id: 'solana:mainnet-beta',
+            id: 'trezoa:mainnet-beta',
             label: 'Mainnet Beta',
-            url: 'https://api.mainnet-beta.solana.com',
-        } as SolanaCluster,
-        devnet: { id: 'solana:devnet', label: 'Devnet', url: 'https://api.devnet.solana.com' } as SolanaCluster,
-        testnet: { id: 'solana:testnet', label: 'Testnet', url: 'https://api.testnet.solana.com' } as SolanaCluster,
-        localnet: { id: 'solana:localnet', label: 'Localnet', url: 'http://localhost:8899' } as SolanaCluster,
-        custom: { id: 'custom:test', label: 'Custom', url: 'https://custom-rpc.com' } as SolanaCluster,
+            url: 'https://api.mainnet-beta.trezoa.com',
+        } as TrezoaCluster,
+        devnet: { id: 'trezoa:devnet', label: 'Devnet', url: 'https://api.devnet.trezoa.com' } as TrezoaCluster,
+        testnet: { id: 'trezoa:testnet', label: 'Testnet', url: 'https://api.testnet.trezoa.com' } as TrezoaCluster,
+        localnet: { id: 'trezoa:localnet', label: 'Localnet', url: 'http://localhost:8899' } as TrezoaCluster,
+        custom: { id: 'custom:test', label: 'Custom', url: 'https://custom-rpc.com' } as TrezoaCluster,
     };
 
     describe('getClusterRpcUrl', () => {
         it('should return RPC URL from cluster object', () => {
-            expect(getClusterRpcUrl(mockClusters.mainnet)).toBe('https://api.mainnet.solana.com');
-            expect(getClusterRpcUrl(mockClusters.devnet)).toBe('https://api.devnet.solana.com');
-            expect(getClusterRpcUrl(mockClusters.testnet)).toBe('https://api.testnet.solana.com');
+            expect(getClusterRpcUrl(mockClusters.mainnet)).toBe('https://api.mainnet.trezoa.com');
+            expect(getClusterRpcUrl(mockClusters.devnet)).toBe('https://api.devnet.trezoa.com');
+            expect(getClusterRpcUrl(mockClusters.testnet)).toBe('https://api.testnet.trezoa.com');
             expect(getClusterRpcUrl(mockClusters.custom)).toBe('https://custom-rpc.com');
         });
 
@@ -59,25 +59,25 @@ describe('Cluster Utilities', () => {
         });
 
         it('should throw on null cluster', () => {
-            expect(() => getClusterRpcUrl(null as unknown as SolanaCluster)).toThrow();
+            expect(() => getClusterRpcUrl(null as unknown as TrezoaCluster)).toThrow();
         });
 
         it('should throw on undefined cluster', () => {
-            expect(() => getClusterRpcUrl(undefined as unknown as SolanaCluster)).toThrow();
+            expect(() => getClusterRpcUrl(undefined as unknown as TrezoaCluster)).toThrow();
         });
     });
 
     describe('Explorer URLs', () => {
         it('should generate explorer URL for cluster', () => {
             const url = getClusterExplorerUrl(mockClusters.mainnet);
-            expect(url).toContain('explorer.solana.com');
+            expect(url).toContain('explorer.trezoa.com');
         });
 
         it('should generate transaction explorer URL', () => {
             const sig = 'test-signature';
             const url = getTransactionUrl(sig, mockClusters.devnet);
 
-            expect(url).toContain('explorer.solana.com');
+            expect(url).toContain('explorer.trezoa.com');
             expect(url).toContain('test-signature');
             expect(url).toContain('cluster=devnet');
         });
@@ -86,7 +86,7 @@ describe('Cluster Utilities', () => {
             const addr = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKucSFTa2KSTu8';
             const url = getAddressUrl(addr, mockClusters.mainnet);
 
-            expect(url).toContain('explorer.solana.com');
+            expect(url).toContain('explorer.trezoa.com');
             expect(url).toContain(addr);
         });
 
@@ -94,7 +94,7 @@ describe('Cluster Utilities', () => {
             const token = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'; // USDC
             const url = getTokenUrl(token, mockClusters.mainnet);
 
-            expect(url).toContain('explorer.solana.com');
+            expect(url).toContain('explorer.trezoa.com');
             expect(url).toContain(token);
         });
 
@@ -102,7 +102,7 @@ describe('Cluster Utilities', () => {
             const slot = 123456789;
             const url = getBlockUrl(slot, mockClusters.mainnet);
 
-            expect(url).toContain('explorer.solana.com');
+            expect(url).toContain('explorer.trezoa.com');
             expect(url).toContain('123456789');
         });
     });

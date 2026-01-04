@@ -7,7 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createWalletConnectWallet } from './create-walletconnect-wallet';
 import type { WalletConnectConfig, WalletConnectTransport } from '../../../types/walletconnect';
-import { getBase58Encoder } from '@solana/codecs';
+import { getBase58Encoder } from '@trezoa/codecs';
 
 /**
  * Create a mock transport for testing purposes
@@ -80,19 +80,19 @@ describe('createWalletConnectWallet', () => {
             expect(wallet.icon.startsWith('data:image/')).toBe(true);
         });
 
-        it('should support default Solana chains', () => {
+        it('should support default Trezoa chains', () => {
             const wallet = createWalletConnectWallet(config, mockTransport);
 
-            expect(wallet.chains).toContain('solana:mainnet');
-            expect(wallet.chains).toContain('solana:devnet');
-            expect(wallet.chains).toContain('solana:testnet');
+            expect(wallet.chains).toContain('trezoa:mainnet');
+            expect(wallet.chains).toContain('trezoa:devnet');
+            expect(wallet.chains).toContain('trezoa:testnet');
         });
 
         it('should use custom chain when defaultChain is specified', () => {
-            config.defaultChain = 'solana:devnet';
+            config.defaultChain = 'trezoa:devnet';
             const wallet = createWalletConnectWallet(config, mockTransport);
 
-            expect(wallet.chains).toContain('solana:devnet');
+            expect(wallet.chains).toContain('trezoa:devnet');
         });
 
         it('should have required Wallet Standard features', () => {
@@ -101,10 +101,10 @@ describe('createWalletConnectWallet', () => {
             expect(wallet.features['standard:connect']).toBeDefined();
             expect(wallet.features['standard:disconnect']).toBeDefined();
             expect(wallet.features['standard:events']).toBeDefined();
-            expect(wallet.features['solana:signMessage']).toBeDefined();
-            expect(wallet.features['solana:signTransaction']).toBeDefined();
-            expect(wallet.features['solana:signAllTransactions']).toBeDefined();
-            expect(wallet.features['solana:signAndSendTransaction']).toBeDefined();
+            expect(wallet.features['trezoa:signMessage']).toBeDefined();
+            expect(wallet.features['trezoa:signTransaction']).toBeDefined();
+            expect(wallet.features['trezoa:signAllTransactions']).toBeDefined();
+            expect(wallet.features['trezoa:signAndSendTransaction']).toBeDefined();
         });
     });
 
@@ -126,7 +126,7 @@ describe('createWalletConnectWallet', () => {
             });
         });
 
-        it('should use solana_getAccounts for silent connect', async () => {
+        it('should use trezoa_getAccounts for silent connect', async () => {
             const requestMock = vi.fn().mockResolvedValue([{ pubkey: TEST_PUBKEY }]);
             mockTransport = createMockWalletConnectTransport({ request: requestMock });
             const wallet = createWalletConnectWallet(config, mockTransport);
@@ -139,12 +139,12 @@ describe('createWalletConnectWallet', () => {
 
             expect(requestMock).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    method: 'solana_getAccounts',
+                    method: 'trezoa_getAccounts',
                 }),
             );
         });
 
-        it('should use solana_requestAccounts for non-silent connect', async () => {
+        it('should use trezoa_requestAccounts for non-silent connect', async () => {
             const requestMock = vi.fn().mockResolvedValue([{ pubkey: TEST_PUBKEY }]);
             mockTransport = createMockWalletConnectTransport({ request: requestMock });
             const wallet = createWalletConnectWallet(config, mockTransport);
@@ -157,7 +157,7 @@ describe('createWalletConnectWallet', () => {
 
             expect(requestMock).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    method: 'solana_requestAccounts',
+                    method: 'trezoa_requestAccounts',
                 }),
             );
         });
@@ -166,7 +166,7 @@ describe('createWalletConnectWallet', () => {
             let callCount = 0;
             const requestMock = vi.fn().mockImplementation(async args => {
                 callCount++;
-                if (args.method === 'solana_getAccounts') {
+                if (args.method === 'trezoa_getAccounts') {
                     throw new Error('No session');
                 }
                 return [{ pubkey: TEST_PUBKEY }];
@@ -260,13 +260,13 @@ describe('createWalletConnectWallet', () => {
         });
     });
 
-    describe('solana:signMessage', () => {
+    describe('trezoa:signMessage', () => {
         it('should sign a message and return signature bytes', async () => {
             const requestMock = vi.fn().mockResolvedValue({ signature: TEST_SIGNATURE });
             mockTransport = createMockWalletConnectTransport({ request: requestMock });
             const wallet = createWalletConnectWallet(config, mockTransport);
 
-            const signMessageFeature = wallet.features['solana:signMessage'] as {
+            const signMessageFeature = wallet.features['trezoa:signMessage'] as {
                 signMessage: (args: { account: { address: string }; message: Uint8Array }) => Promise<
                     { signature: Uint8Array; signedMessage: Uint8Array }[]
                 >;
@@ -288,7 +288,7 @@ describe('createWalletConnectWallet', () => {
             mockTransport = createMockWalletConnectTransport({ request: requestMock });
             const wallet = createWalletConnectWallet(config, mockTransport);
 
-            const signMessageFeature = wallet.features['solana:signMessage'] as {
+            const signMessageFeature = wallet.features['trezoa:signMessage'] as {
                 signMessage: (args: { account: { address: string }; message: Uint8Array }) => Promise<unknown>;
             };
 
@@ -300,7 +300,7 @@ describe('createWalletConnectWallet', () => {
 
             expect(requestMock).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    method: 'solana_signMessage',
+                    method: 'trezoa_signMessage',
                     params: expect.objectContaining({
                         pubkey: TEST_PUBKEY,
                         // Message should be base58 encoded
@@ -311,7 +311,7 @@ describe('createWalletConnectWallet', () => {
         });
     });
 
-    describe('solana:signTransaction', () => {
+    describe('trezoa:signTransaction', () => {
         // Create a minimal valid serialized transaction for testing
         // This is a simplified mock - real transactions would have proper structure
         function createMockTransaction(): Uint8Array {
@@ -342,7 +342,7 @@ describe('createWalletConnectWallet', () => {
             mockTransport = createMockWalletConnectTransport({ request: requestMock });
             const wallet = createWalletConnectWallet(config, mockTransport);
 
-            const signTxFeature = wallet.features['solana:signTransaction'] as {
+            const signTxFeature = wallet.features['trezoa:signTransaction'] as {
                 signTransaction: (args: {
                     account: { address: string };
                     transaction: Uint8Array;
@@ -368,7 +368,7 @@ describe('createWalletConnectWallet', () => {
             mockTransport = createMockWalletConnectTransport({ request: requestMock });
             const wallet = createWalletConnectWallet(config, mockTransport);
 
-            const signTxFeature = wallet.features['solana:signTransaction'] as {
+            const signTxFeature = wallet.features['trezoa:signTransaction'] as {
                 signTransaction: (args: {
                     account: { address: string };
                     transaction: Uint8Array;
@@ -395,7 +395,7 @@ describe('createWalletConnectWallet', () => {
             mockTransport = createMockWalletConnectTransport({ request: requestMock });
             const wallet = createWalletConnectWallet(config, mockTransport);
 
-            const signTxFeature = wallet.features['solana:signTransaction'] as {
+            const signTxFeature = wallet.features['trezoa:signTransaction'] as {
                 signTransaction: (args: {
                     account: { address: string };
                     transaction: Uint8Array;
@@ -409,7 +409,7 @@ describe('createWalletConnectWallet', () => {
 
             expect(requestMock).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    method: 'solana_signTransaction',
+                    method: 'trezoa_signTransaction',
                     params: expect.objectContaining({
                         transaction: expect.any(String), // base64
                     }),
@@ -418,7 +418,7 @@ describe('createWalletConnectWallet', () => {
         });
     });
 
-    describe('solana:signAllTransactions', () => {
+    describe('trezoa:signAllTransactions', () => {
         function createMockTransaction(): Uint8Array {
             const tx = new Uint8Array(150);
             tx[0] = 1;
@@ -444,7 +444,7 @@ describe('createWalletConnectWallet', () => {
             mockTransport = createMockWalletConnectTransport({ request: requestMock });
             const wallet = createWalletConnectWallet(config, mockTransport);
 
-            const signAllFeature = wallet.features['solana:signAllTransactions'] as {
+            const signAllFeature = wallet.features['trezoa:signAllTransactions'] as {
                 signAllTransactions: (args: {
                     account: { address: string };
                     transactions: Uint8Array[];
@@ -476,7 +476,7 @@ describe('createWalletConnectWallet', () => {
             mockTransport = createMockWalletConnectTransport({ request: requestMock });
             const wallet = createWalletConnectWallet(config, mockTransport);
 
-            const signAllFeature = wallet.features['solana:signAllTransactions'] as {
+            const signAllFeature = wallet.features['trezoa:signAllTransactions'] as {
                 signAllTransactions: (args: {
                     account: { address: string };
                     transactions: Uint8Array[];
@@ -494,7 +494,7 @@ describe('createWalletConnectWallet', () => {
         });
     });
 
-    describe('solana:signAndSendTransaction', () => {
+    describe('trezoa:signAndSendTransaction', () => {
         function createMockTransaction(): Uint8Array {
             const tx = new Uint8Array(150);
             tx[0] = 1;
@@ -514,7 +514,7 @@ describe('createWalletConnectWallet', () => {
             mockTransport = createMockWalletConnectTransport({ request: requestMock });
             const wallet = createWalletConnectWallet(config, mockTransport);
 
-            const signAndSendFeature = wallet.features['solana:signAndSendTransaction'] as {
+            const signAndSendFeature = wallet.features['trezoa:signAndSendTransaction'] as {
                 signAndSendTransaction: (args: {
                     account: { address: string };
                     transaction: Uint8Array;
@@ -539,7 +539,7 @@ describe('createWalletConnectWallet', () => {
             mockTransport = createMockWalletConnectTransport({ request: requestMock });
             const wallet = createWalletConnectWallet(config, mockTransport);
 
-            const signAndSendFeature = wallet.features['solana:signAndSendTransaction'] as {
+            const signAndSendFeature = wallet.features['trezoa:signAndSendTransaction'] as {
                 signAndSendTransaction: (args: {
                     account: { address: string };
                     transaction: Uint8Array;
@@ -556,7 +556,7 @@ describe('createWalletConnectWallet', () => {
 
             expect(requestMock).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    method: 'solana_signAndSendTransaction',
+                    method: 'trezoa_signAndSendTransaction',
                     params: expect.objectContaining({
                         sendOptions: expect.objectContaining({
                             skipPreflight: true,

@@ -2,34 +2,34 @@
  * WalletConnect Wallet Standard Shim
  *
  * Creates a Wallet Standard-compatible wallet that proxies all operations
- * to WalletConnect Solana JSON-RPC methods.
+ * to WalletConnect Trezoa JSON-RPC methods.
  *
- * @see https://docs.walletconnect.network/wallet-sdk/chain-support/solana
+ * @see https://docs.walletconnect.network/wallet-sdk/chain-support/trezoa
  */
 
 import type { Wallet, WalletAccount, WalletIcon } from '@wallet-standard/base';
 import type {
     WalletConnectConfig,
     WalletConnectTransport,
-    WalletConnectSolanaAccount,
+    WalletConnectTrezoaAccount,
     WalletConnectSignMessageResult,
     WalletConnectSignTransactionResult,
     WalletConnectSignAllTransactionsResult,
     WalletConnectSignAndSendTransactionResult,
 } from '../../../types/walletconnect';
-import { getBase58Encoder, getBase58Decoder } from '@solana/codecs';
+import { getBase58Encoder, getBase58Decoder } from '@trezoa/codecs';
 
 // WalletConnect icon (official WC logo as SVG data URI)
 const WALLETCONNECT_ICON: WalletIcon =
     'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzMzOTZGRiIvPgo8cGF0aCBkPSJNOS42IDEyLjRDMTMuMSA5IDE4LjkgOSAyMi40IDEyLjRMMjIuOSAxMi45QzIzLjEgMTMuMSAyMy4xIDEzLjQgMjIuOSAxMy42TDIxLjQgMTUuMUMyMS4zIDE1LjIgMjEuMSAxNS4yIDIxIDE1LjFMMjAuMyAxNC40QzE4IDEyLjIgMTQgMTIuMiAxMS43IDE0LjRMMTEgMTUuMUMxMC45IDE1LjIgMTAuNyAxNS4yIDEwLjYgMTUuMUw5LjEgMTMuNkM4LjkgMTMuNCA4LjkgMTMuMSA5LjEgMTIuOUw5LjYgMTIuNFpNMjUuMyAxNS4yTDI2LjYgMTYuNUMyNi44IDE2LjcgMjYuOCAxNyAyNi42IDE3LjJMMjAuNyAyMy4xQzIwLjUgMjMuMyAyMC4yIDIzLjMgMjAgMjMuMUwxNS45IDE5QzE1LjggMTguOSAxNS43IDE4LjkgMTUuNiAxOUwxMS41IDIzLjFDMTEuMyAyMy4zIDExIDIzLjMgMTAuOCAyMy4xTDQuOSAxNy4yQzQuNyAxNyA0LjcgMTYuNyA0LjkgMTYuNUw2LjIgMTUuMkM2LjQgMTUgNi43IDE1IDYuOSAxNS4yTDExIDE5LjNDMTEuMSAxOS40IDExLjIgMTkuNCAxMS4zIDE5LjNMMTUuNCAxNS4yQzE1LjYgMTUgMTUuOSAxNSAxNi4xIDE1LjJMMjAuMiAxOS4zQzIwLjMgMTkuNCAyMC40IDE5LjQgMjAuNSAxOS4zTDI0LjYgMTUuMkMyNC44IDE1IDI1LjEgMTUgMjUuMyAxNS4yWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==';
 
-import { SOLANA_CAIP_CHAINS } from './universal-provider';
+import { TREZOA_CAIP_CHAINS } from './universal-provider';
 
 // Default supported chains
-const DEFAULT_CHAINS = ['solana:mainnet', 'solana:devnet', 'solana:testnet'] as const;
+const DEFAULT_CHAINS = ['trezoa:mainnet', 'trezoa:devnet', 'trezoa:testnet'] as const;
 
 function toCaipChainId(chainId: string): string {
-    return SOLANA_CAIP_CHAINS[chainId as keyof typeof SOLANA_CAIP_CHAINS] || chainId;
+    return TREZOA_CAIP_CHAINS[chainId as keyof typeof TREZOA_CAIP_CHAINS] || chainId;
 }
 
 /**
@@ -166,7 +166,7 @@ function injectSignature(txBytes: Uint8Array, signerIndex: number, signatureBase
 /**
  * Convert WalletConnect account response to Wallet Standard account
  */
-function toWalletAccount(account: WalletConnectSolanaAccount, chains: readonly string[]): WalletAccount {
+function toWalletAccount(account: WalletConnectTrezoaAccount, chains: readonly string[]): WalletAccount {
     const base58Encoder = getBase58Encoder();
     return {
         address: account.pubkey,
@@ -187,7 +187,7 @@ export function createWalletConnectWallet(
     
     // Function to get the current CAIP chain ID dynamically
     function getCurrentCaipChainId(): string {
-        const currentChain = config.getCurrentChain?.() || config.defaultChain || 'solana:mainnet';
+        const currentChain = config.getCurrentChain?.() || config.defaultChain || 'trezoa:mainnet';
         return toCaipChainId(currentChain);
     }
 
@@ -223,12 +223,12 @@ export function createWalletConnectWallet(
                     }
 
                     // Fallback: Try RPC methods if session doesn't have accounts
-                    const method = input?.silent ? 'solana_getAccounts' : 'solana_requestAccounts';
-                    let result: WalletConnectSolanaAccount[];
+                    const method = input?.silent ? 'trezoa_getAccounts' : 'trezoa_requestAccounts';
+                    let result: WalletConnectTrezoaAccount[];
                     let firstError: unknown;
 
                     try {
-                        result = await transport.request<WalletConnectSolanaAccount[]>({
+                        result = await transport.request<WalletConnectTrezoaAccount[]>({
                             method,
                             params: {},
                             chainId: getCurrentCaipChainId(),
@@ -237,10 +237,10 @@ export function createWalletConnectWallet(
                         firstError = error;
                         // Fallback to the other method
                         try {
-                            const fallbackMethod = method === 'solana_getAccounts' 
-                                ? 'solana_requestAccounts' 
-                                : 'solana_getAccounts';
-                            result = await transport.request<WalletConnectSolanaAccount[]>({
+                            const fallbackMethod = method === 'trezoa_getAccounts' 
+                                ? 'trezoa_requestAccounts' 
+                                : 'trezoa_getAccounts';
+                            result = await transport.request<WalletConnectTrezoaAccount[]>({
                                 method: fallbackMethod,
                                 params: {},
                                 chainId: getCurrentCaipChainId(),
@@ -251,7 +251,7 @@ export function createWalletConnectWallet(
                                 fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
                             const details = [firstMessage, fallbackMessage].filter(Boolean).join(' | ');
                             throw new Error(
-                                `Failed to get accounts from WalletConnect. The wallet may not support Solana accounts.${
+                                `Failed to get accounts from WalletConnect. The wallet may not support Trezoa accounts.${
                                     details ? ` (Details: ${details})` : ''
                                 }`,
                             );
@@ -286,8 +286,8 @@ export function createWalletConnectWallet(
                 },
             },
 
-            // Solana sign message feature
-            'solana:signMessage': {
+            // Trezoa sign message feature
+            'trezoa:signMessage': {
                 version: '1.0.0',
                 signMessage: async ({ account, message }: { account: WalletAccount; message: Uint8Array }) => {
                     // WalletConnect expects message as base58 string
@@ -295,7 +295,7 @@ export function createWalletConnectWallet(
                     const messageBase58 = base58Decoder.decode(message);
 
                     const result = await transport.request<WalletConnectSignMessageResult>({
-                        method: 'solana_signMessage',
+                        method: 'trezoa_signMessage',
                         params: {
                             message: messageBase58,
                             pubkey: account.address,
@@ -310,8 +310,8 @@ export function createWalletConnectWallet(
                 },
             },
 
-            // Solana sign transaction feature
-            'solana:signTransaction': {
+            // Trezoa sign transaction feature
+            'trezoa:signTransaction': {
                 version: '1.0.0',
                 signTransaction: async ({
                     account,
@@ -326,7 +326,7 @@ export function createWalletConnectWallet(
                     const requestChainId = getCurrentCaipChainId();
 
                     const result = await transport.request<WalletConnectSignTransactionResult>({
-                        method: 'solana_signTransaction',
+                        method: 'trezoa_signTransaction',
                         params: {
                             transaction: transactionBase64,
                         },
@@ -346,15 +346,15 @@ export function createWalletConnectWallet(
                         }
                         signedTransaction = injectSignature(transaction, signerIndex, result.signature);
                     } else {
-                        throw new Error('Invalid solana_signTransaction response: no signature or transaction');
+                        throw new Error('Invalid trezoa_signTransaction response: no signature or transaction');
                     }
 
                     return [{ signedTransaction }];
                 },
             },
 
-            // Solana sign all transactions feature
-            'solana:signAllTransactions': {
+            // Trezoa sign all transactions feature
+            'trezoa:signAllTransactions': {
                 version: '1.0.0',
                 signAllTransactions: async ({
                     account,
@@ -368,7 +368,7 @@ export function createWalletConnectWallet(
 
                     try {
                         const result = await transport.request<WalletConnectSignAllTransactionsResult>({
-                            method: 'solana_signAllTransactions',
+                            method: 'trezoa_signAllTransactions',
                             params: {
                                 transactions: transactionsBase64,
                             },
@@ -382,7 +382,7 @@ export function createWalletConnectWallet(
                     } catch (error) {
                         // Fallback: sign transactions one by one
                         
-                        const signFeature = wallet.features['solana:signTransaction'] as {
+                        const signFeature = wallet.features['trezoa:signTransaction'] as {
                             signTransaction: (args: {
                                 account: WalletAccount;
                                 transaction: Uint8Array;
@@ -398,8 +398,8 @@ export function createWalletConnectWallet(
                 },
             },
 
-            // Solana sign and send transaction feature
-            'solana:signAndSendTransaction': {
+            // Trezoa sign and send transaction feature
+            'trezoa:signAndSendTransaction': {
                 version: '1.0.0',
                 signAndSendTransaction: async ({
                     transaction,
@@ -418,7 +418,7 @@ export function createWalletConnectWallet(
                     const transactionBase64 = bytesToBase64(transaction);
 
                     const result = await transport.request<WalletConnectSignAndSendTransactionResult>({
-                        method: 'solana_signAndSendTransaction',
+                        method: 'trezoa_signAndSendTransaction',
                         params: {
                             transaction: transactionBase64,
                             sendOptions: options

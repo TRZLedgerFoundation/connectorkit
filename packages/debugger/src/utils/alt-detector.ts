@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger - ALT Usage Detector
+ * @trezoa/connector-debugger - ALT Usage Detector
  *
  * Detects when transactions use Address Lookup Tables and analyzes
  * the compression achieved.

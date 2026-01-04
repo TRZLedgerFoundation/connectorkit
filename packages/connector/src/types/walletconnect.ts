@@ -2,8 +2,8 @@
  * WalletConnect configuration types
  *
  * Types for configuring WalletConnect integration with the connector.
- * WalletConnect uses Solana JSON-RPC methods as documented at:
- * https://docs.walletconnect.network/wallet-sdk/chain-support/solana
+ * WalletConnect uses Trezoa JSON-RPC methods as documented at:
+ * https://docs.walletconnect.network/wallet-sdk/chain-support/trezoa
  */
 
 /**
@@ -26,7 +26,7 @@ export interface WalletConnectMetadata {
  *
  * When enabled, ConnectorKit registers a virtual "WalletConnect" wallet
  * into the Wallet Standard registry. This wallet proxies all signing
- * operations through WalletConnect's Solana JSON-RPC methods.
+ * operations through WalletConnect's Trezoa JSON-RPC methods.
  *
  * @example
  * ```typescript
@@ -37,11 +37,11 @@ export interface WalletConnectMetadata {
  *     projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
  *     metadata: {
  *       name: 'My App',
- *       description: 'My Solana Application',
+ *       description: 'My Trezoa Application',
  *       url: 'https://myapp.com',
  *       icons: ['https://myapp.com/icon.png'],
  *     },
- *     onDisplayUri: (uri) => {
+ *     onDitplayUri: (uri) => {
  *       // Show QR code or deep link with this URI
  *       console.log('WalletConnect URI:', uri);
  *     },
@@ -69,21 +69,21 @@ export interface WalletConnectConfig {
     metadata: WalletConnectMetadata;
 
     /**
-     * Default Solana chain/cluster for WalletConnect sessions.
+     * Default Trezoa chain/cluster for WalletConnect sessions.
      * Used as fallback if getCurrentChain is not provided.
      * Uses ConnectorKit's cluster ID format.
-     * @default 'solana:mainnet'
+     * @default 'trezoa:mainnet'
      */
-    defaultChain?: 'solana:mainnet' | 'solana:devnet' | 'solana:testnet';
+    defaultChain?: 'trezoa:mainnet' | 'trezoa:devnet' | 'trezoa:testnet';
 
     /**
      * Callback to get the current chain/cluster dynamically.
      * When provided, this is called before each request to determine the chain.
      * This allows WalletConnect to follow the app's cluster selection.
      * 
-     * @returns The current chain ID (e.g., 'solana:mainnet', 'solana:devnet')
+     * @returns The current chain ID (e.g., 'trezoa:mainnet', 'trezoa:devnet')
      */
-    getCurrentChain?: () => 'solana:mainnet' | 'solana:devnet' | 'solana:testnet';
+    getCurrentChain?: () => 'trezoa:mainnet' | 'trezoa:devnet' | 'trezoa:testnet';
 
     /**
      * Callback invoked when WalletConnect needs to display a connection URI.
@@ -93,7 +93,7 @@ export interface WalletConnectConfig {
      *
      * @param uri - The WalletConnect pairing URI (starts with "wc:")
      */
-    onDisplayUri?: (uri: string) => void;
+    onDitplayUri?: (uri: string) => void;
 
     /**
      * Callback invoked when a WalletConnect session is established.
@@ -138,17 +138,17 @@ export interface WalletConnectTransport {
 }
 
 /**
- * WalletConnect Solana account response
- * Response format from solana_getAccounts and solana_requestAccounts
+ * WalletConnect Trezoa account response
+ * Response format from trezoa_getAccounts and trezoa_requestAccounts
  */
-export interface WalletConnectSolanaAccount {
+export interface WalletConnectTrezoaAccount {
     /** Base58-encoded public key */
     pubkey: string;
 }
 
 /**
  * WalletConnect sign message params
- * Parameters for solana_signMessage
+ * Parameters for trezoa_signMessage
  */
 export interface WalletConnectSignMessageParams {
     /** Base58-encoded message bytes */
@@ -159,7 +159,7 @@ export interface WalletConnectSignMessageParams {
 
 /**
  * WalletConnect sign message result
- * Response from solana_signMessage
+ * Response from trezoa_signMessage
  */
 export interface WalletConnectSignMessageResult {
     /** Base58-encoded signature */
@@ -168,7 +168,7 @@ export interface WalletConnectSignMessageResult {
 
 /**
  * WalletConnect sign transaction params
- * Parameters for solana_signTransaction
+ * Parameters for trezoa_signTransaction
  */
 export interface WalletConnectSignTransactionParams {
     /** Base64-encoded serialized transaction */
@@ -177,7 +177,7 @@ export interface WalletConnectSignTransactionParams {
 
 /**
  * WalletConnect sign transaction result
- * Response from solana_signTransaction
+ * Response from trezoa_signTransaction
  */
 export interface WalletConnectSignTransactionResult {
     /** Base58-encoded signature */
@@ -188,7 +188,7 @@ export interface WalletConnectSignTransactionResult {
 
 /**
  * WalletConnect sign all transactions params
- * Parameters for solana_signAllTransactions
+ * Parameters for trezoa_signAllTransactions
  */
 export interface WalletConnectSignAllTransactionsParams {
     /** Array of Base64-encoded serialized transactions */
@@ -197,7 +197,7 @@ export interface WalletConnectSignAllTransactionsParams {
 
 /**
  * WalletConnect sign all transactions result
- * Response from solana_signAllTransactions
+ * Response from trezoa_signAllTransactions
  */
 export interface WalletConnectSignAllTransactionsResult {
     /** Array of Base64-encoded signed transactions */
@@ -206,7 +206,7 @@ export interface WalletConnectSignAllTransactionsResult {
 
 /**
  * WalletConnect sign and send transaction params
- * Parameters for solana_signAndSendTransaction
+ * Parameters for trezoa_signAndSendTransaction
  */
 export interface WalletConnectSignAndSendTransactionParams {
     /** Base64-encoded serialized transaction */
@@ -230,7 +230,7 @@ export interface WalletConnectSignAndSendTransactionParams {
 
 /**
  * WalletConnect sign and send transaction result
- * Response from solana_signAndSendTransaction
+ * Response from trezoa_signAndSendTransaction
  */
 export interface WalletConnectSignAndSendTransactionResult {
     /** Base58-encoded transaction signature (transaction ID) */

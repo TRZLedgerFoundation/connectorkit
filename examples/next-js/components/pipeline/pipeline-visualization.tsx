@@ -208,7 +208,7 @@ export function PipelineVisualization({
                             href={
                                 getExplorerUrl
                                     ? getExplorerUrl(signature)
-                                    : `https://explorer.solana.com/tx/${signature}`
+                                    : `https://explorer.trezoa.com/tx/${signature}`
                             }
                             target="_blank"
                             rel="noopener noreferrer"

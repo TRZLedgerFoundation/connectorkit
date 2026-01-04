@@ -3,13 +3,13 @@
  */
 
 import type { WalletAccount } from './wallets';
-import type { Address } from '@solana/addresses';
+import type { Address } from '@trezoa/addresses';
 
 /**
  * Extended account information with formatted address
  */
 export interface AccountInfo {
-    /** Formatted Solana address */
+    /** Formatted Trezoa address */
     address: Address;
     /** Optional account icon/avatar URL */
     icon?: string;

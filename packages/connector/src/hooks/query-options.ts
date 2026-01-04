@@ -1,12 +1,12 @@
 /**
- * @solana/connector - Query Options
+ * @trezoa/connector - Query Options
  *
  * Exports query key generators for cache invalidation and prefetching.
  * Use these to programmatically invalidate cached data after transactions.
  *
  * @example
  * ```tsx
- * import { getBalanceQueryKey, invalidateSharedQuery } from '@solana/connector/react';
+ * import { getBalanceQueryKey, invalidateSharedQuery } from '@trezoa/connector/react';
  *
  * // After sending a transaction
  * async function sendAndRefresh() {

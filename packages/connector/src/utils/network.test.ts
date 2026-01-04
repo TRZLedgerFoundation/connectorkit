@@ -13,7 +13,7 @@ import {
     isDevnet,
     isTestnet,
     isLocalnet,
-    getNetworkDisplayName,
+    getNetworkDitplayName,
     PUBLIC_RPC_ENDPOINTS,
 } from './network';
 
@@ -54,28 +54,28 @@ describe('normalizeNetwork', () => {
 
 describe('toClusterId', () => {
     it('should convert mainnet to cluster ID', () => {
-        expect(toClusterId('mainnet')).toBe('solana:mainnet');
+        expect(toClusterId('mainnet')).toBe('trezoa:mainnet');
     });
 
     it('should convert mainnet-beta to cluster ID', () => {
-        expect(toClusterId('mainnet-beta')).toBe('solana:mainnet');
+        expect(toClusterId('mainnet-beta')).toBe('trezoa:mainnet');
     });
 
     it('should convert devnet to cluster ID', () => {
-        expect(toClusterId('devnet')).toBe('solana:devnet');
+        expect(toClusterId('devnet')).toBe('trezoa:devnet');
     });
 
     it('should convert testnet to cluster ID', () => {
-        expect(toClusterId('testnet')).toBe('solana:testnet');
+        expect(toClusterId('testnet')).toBe('trezoa:testnet');
     });
 
     it('should convert localnet to cluster ID', () => {
-        expect(toClusterId('localnet')).toBe('solana:localnet');
+        expect(toClusterId('localnet')).toBe('trezoa:localnet');
     });
 
     it('should handle uppercase network names', () => {
-        expect(toClusterId('MAINNET')).toBe('solana:mainnet');
-        expect(toClusterId('DEVNET')).toBe('solana:devnet');
+        expect(toClusterId('MAINNET')).toBe('trezoa:mainnet');
+        expect(toClusterId('DEVNET')).toBe('trezoa:devnet');
     });
 });
 
@@ -213,30 +213,30 @@ describe('isLocalnet', () => {
     });
 });
 
-describe('getNetworkDisplayName', () => {
+describe('getNetworkDitplayName', () => {
     it('should return capitalized mainnet', () => {
-        expect(getNetworkDisplayName('mainnet')).toBe('Mainnet');
+        expect(getNetworkDitplayName('mainnet')).toBe('Mainnet');
     });
 
     it('should return capitalized devnet', () => {
-        expect(getNetworkDisplayName('devnet')).toBe('Devnet');
+        expect(getNetworkDitplayName('devnet')).toBe('Devnet');
     });
 
     it('should return capitalized testnet', () => {
-        expect(getNetworkDisplayName('testnet')).toBe('Testnet');
+        expect(getNetworkDitplayName('testnet')).toBe('Testnet');
     });
 
     it('should return capitalized localnet', () => {
-        expect(getNetworkDisplayName('localnet')).toBe('Localnet');
+        expect(getNetworkDitplayName('localnet')).toBe('Localnet');
     });
 
     it('should handle mainnet-beta', () => {
-        expect(getNetworkDisplayName('mainnet-beta')).toBe('Mainnet');
+        expect(getNetworkDitplayName('mainnet-beta')).toBe('Mainnet');
     });
 
     it('should handle uppercase names', () => {
-        expect(getNetworkDisplayName('MAINNET')).toBe('Mainnet');
-        expect(getNetworkDisplayName('DEVNET')).toBe('Devnet');
+        expect(getNetworkDitplayName('MAINNET')).toBe('Mainnet');
+        expect(getNetworkDitplayName('DEVNET')).toBe('Devnet');
     });
 });
 

@@ -1,7 +1,7 @@
 import type { ConnectorEvent } from '../../types/events';
 import type { WalletName } from '../../types/wallets';
-import { address as toAddress } from '@solana/addresses';
-import { signature as toSignature } from '@solana/keys';
+import { address as toAddress } from '@trezoa/addresses';
+import { signature as toSignature } from '@trezoa/keys';
 import { TEST_ADDRESSES } from './accounts';
 import { TEST_SIGNATURES } from './transactions';
 

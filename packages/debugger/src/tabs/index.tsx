@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger - Debug Panel Tab Components
+ * @trezoa/connector-debugger - Debug Panel Tab Components
  */
 
 export { EnhancedOverviewTab } from './enhanced-overview-tab';

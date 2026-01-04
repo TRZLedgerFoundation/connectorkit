@@ -62,7 +62,7 @@ export function TransactionForm({
                             type="text"
                             value={recipient}
                             onChange={e => setRecipient(e.target.value)}
-                            placeholder="Enter Solana address"
+                            placeholder="Enter Trezoa address"
                             className="w-full px-3 py-2 border rounded-lg text-sm font-mono"
                             disabled={disabled || loading}
                             required
@@ -71,7 +71,7 @@ export function TransactionForm({
 
                     <div className="space-y-2">
                         <label htmlFor="amount" className="text-sm font-medium">
-                            Amount (SOL)
+                            Amount (TRZ)
                         </label>
                         <input
                             id="amount"

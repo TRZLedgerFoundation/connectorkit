@@ -8,8 +8,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createTransactionSigner, isTransactionSignerError, TransactionSignerError } from './transaction-signer';
 import type { TransactionSignerConfig } from '../../types/transactions';
 import type { WalletStandardAccount, WalletStandardWallet } from '../adapters/wallet-standard-shim';
-import type { SolanaCluster } from '@wallet-ui/core';
-import type { SignatureBytes } from '@solana/keys';
+import type { TrezoaCluster } from '@wallet-ui/core';
+import type { SignatureBytes } from '@trezoa/keys';
 import { signatureBytesToBase58 } from '../kit/signer-utils';
 
 describe('Transaction Signer', () => {
@@ -23,7 +23,7 @@ describe('Transaction Signer', () => {
         mockAccount = {
             address: '5VERv8NMvzbJMEkV8xnrLkEaWRtSz9CosKDYjCJjBRnbJLgp8uirBgmQpjKhoR4tjF3ZpRzrFmBV6UjKdiSZkQUW',
             publicKey: new Uint8Array(32),
-            chains: ['solana:mainnet'],
+            chains: ['trezoa:mainnet'],
             features: [],
         } as WalletStandardAccount;
 
@@ -32,24 +32,24 @@ describe('Transaction Signer', () => {
             icon: 'data:image/svg+xml',
             version: '1.0.0',
             accounts: [mockAccount],
-            chains: ['solana:mainnet'],
+            chains: ['trezoa:mainnet'],
             features: {
-                'solana:signTransaction': {
+                'trezoa:signTransaction': {
                     signTransaction: vi.fn().mockResolvedValue({
                         signedTransactions: [new Uint8Array([6, 7, 8, 9, 10])],
                     }),
                 },
-                'solana:signAllTransactions': {
+                'trezoa:signAllTransactions': {
                     signAllTransactions: vi.fn().mockResolvedValue({
                         signedTransactions: [new Uint8Array([6, 7, 8, 9, 10]), new Uint8Array([11, 12, 13, 14, 15])],
                     }),
                 },
-                'solana:signAndSendTransaction': {
+                'trezoa:signAndSendTransaction': {
                     signAndSendTransaction: vi.fn().mockResolvedValue({
                         signature: 'mockSignature123',
                     }),
                 },
-                'solana:signMessage': {
+                'trezoa:signMessage': {
                     signMessage: vi.fn().mockResolvedValue({
                         signatures: [new Uint8Array([20, 21, 22])],
                     }),
@@ -103,10 +103,10 @@ describe('Transaction Signer', () => {
                 wallet: mockWallet,
                 account: mockAccount,
                 cluster: {
-                    id: 'solana:devnet',
+                    id: 'trezoa:devnet',
                     label: 'Devnet',
-                    url: 'https://api.devnet.solana.com',
-                } satisfies SolanaCluster,
+                    url: 'https://api.devnet.trezoa.com',
+                } satisfies TrezoaCluster,
             };
 
             const signer = createTransactionSigner(config);
@@ -149,7 +149,7 @@ describe('Transaction Signer', () => {
             const walletWithoutSign = {
                 ...mockWallet,
                 features: {
-                    'solana:signAndSendTransaction': mockWallet.features['solana:signAndSendTransaction'],
+                    'trezoa:signAndSendTransaction': mockWallet.features['trezoa:signAndSendTransaction'],
                 },
             } as unknown as WalletStandardWallet;
 
@@ -169,7 +169,7 @@ describe('Transaction Signer', () => {
             const walletWithoutSend = {
                 ...mockWallet,
                 features: {
-                    'solana:signTransaction': mockWallet.features['solana:signTransaction'],
+                    'trezoa:signTransaction': mockWallet.features['trezoa:signTransaction'],
                 },
             } as unknown as WalletStandardWallet;
 
@@ -189,8 +189,8 @@ describe('Transaction Signer', () => {
             const walletWithoutMessage = {
                 ...mockWallet,
                 features: {
-                    'solana:signTransaction': mockWallet.features['solana:signTransaction'],
-                    'solana:signAndSendTransaction': mockWallet.features['solana:signAndSendTransaction'],
+                    'trezoa:signTransaction': mockWallet.features['trezoa:signTransaction'],
+                    'trezoa:signAndSendTransaction': mockWallet.features['trezoa:signAndSendTransaction'],
                 },
             } as unknown as WalletStandardWallet;
 
@@ -209,7 +209,7 @@ describe('Transaction Signer', () => {
             const walletWithoutBatch = {
                 ...mockWallet,
                 features: {
-                    'solana:signTransaction': mockWallet.features['solana:signTransaction'],
+                    'trezoa:signTransaction': mockWallet.features['trezoa:signTransaction'],
                 },
             } as unknown as WalletStandardWallet;
 
@@ -237,7 +237,7 @@ describe('Transaction Signer', () => {
 
             expect(signedTx).toBeDefined();
             expect(signedTx).toBeInstanceOf(Uint8Array);
-            expect(mockWallet.features['solana:signTransaction'].signTransaction).toHaveBeenCalled();
+            expect(mockWallet.features['trezoa:signTransaction'].signTransaction).toHaveBeenCalled();
         });
 
         it('should throw error if signing not supported', async () => {
@@ -268,7 +268,7 @@ describe('Transaction Signer', () => {
             await signer.signTransaction(mockTransaction);
 
             // Verify the feature was called (which means validation passed)
-            expect(mockWallet.features['solana:signTransaction'].signTransaction).toHaveBeenCalled();
+            expect(mockWallet.features['trezoa:signTransaction'].signTransaction).toHaveBeenCalled();
         });
     });
 
@@ -287,14 +287,14 @@ describe('Transaction Signer', () => {
             expect(signedTxs).toBeDefined();
             expect(Array.isArray(signedTxs)).toBe(true);
             expect(signedTxs.length).toBe(2);
-            expect(mockWallet.features['solana:signAllTransactions'].signAllTransactions).toHaveBeenCalled();
+            expect(mockWallet.features['trezoa:signAllTransactions'].signAllTransactions).toHaveBeenCalled();
         });
 
         it('should fallback to sequential signing if batch not supported', async () => {
             const walletWithoutBatch = {
                 ...mockWallet,
                 features: {
-                    'solana:signTransaction': mockWallet.features['solana:signTransaction'],
+                    'trezoa:signTransaction': mockWallet.features['trezoa:signTransaction'],
                 },
             } as unknown as WalletStandardWallet;
 
@@ -311,7 +311,7 @@ describe('Transaction Signer', () => {
             expect(signedTxs).toBeDefined();
             expect(signedTxs.length).toBe(2);
             // Should have called signTransaction twice (sequential fallback)
-            expect(walletWithoutBatch.features['solana:signTransaction'].signTransaction).toHaveBeenCalledTimes(2);
+            expect(walletWithoutBatch.features['trezoa:signTransaction'].signTransaction).toHaveBeenCalledTimes(2);
         });
 
         it('should handle empty array', async () => {
@@ -338,11 +338,11 @@ describe('Transaction Signer', () => {
             const signature = await signer.signAndSendTransaction(mockTransaction);
 
             expect(signature).toBe('mockSignature123');
-            expect(mockWallet.features['solana:signAndSendTransaction'].signAndSendTransaction).toHaveBeenCalled();
+            expect(mockWallet.features['trezoa:signAndSendTransaction'].signAndSendTransaction).toHaveBeenCalled();
         });
 
         it('should return a base58 signature when wallet returns Wallet Standard output array', async () => {
-            // Wallet Standard Solana signAndSendTransaction returns an array of outputs:
+            // Wallet Standard Trezoa signAndSendTransaction returns an array of outputs:
             //   [{ signature: Uint8Array }]
             // Our signer should convert signature bytes to base58 string.
             const signatureBytes = new Uint8Array(64).fill(7) as SignatureBytes;
@@ -352,7 +352,7 @@ describe('Transaction Signer', () => {
                 ...mockWallet,
                 features: {
                     ...mockWallet.features,
-                    'solana:signAndSendTransaction': {
+                    'trezoa:signAndSendTransaction': {
                         signAndSendTransaction: vi.fn().mockResolvedValue([{ signature: signatureBytes }]),
                     },
                 },
@@ -375,7 +375,7 @@ describe('Transaction Signer', () => {
             const walletWithoutSend = {
                 ...mockWallet,
                 features: {
-                    'solana:signTransaction': mockWallet.features['solana:signTransaction'],
+                    'trezoa:signTransaction': mockWallet.features['trezoa:signTransaction'],
                 },
             } as unknown as WalletStandardWallet;
 
@@ -400,7 +400,7 @@ describe('Transaction Signer', () => {
 
             await signer.signAndSendTransaction(mockTransaction, options);
 
-            expect(mockWallet.features['solana:signAndSendTransaction'].signAndSendTransaction).toHaveBeenCalled();
+            expect(mockWallet.features['trezoa:signAndSendTransaction'].signAndSendTransaction).toHaveBeenCalled();
         });
     });
 
@@ -441,7 +441,7 @@ describe('Transaction Signer', () => {
                 ...mockWallet,
                 features: {
                     ...mockWallet.features,
-                    'solana:signMessage': {
+                    'trezoa:signMessage': {
                         signMessage: vi.fn().mockResolvedValue({
                             signature: new Uint8Array([20, 21, 22]),
                         }),
@@ -461,14 +461,14 @@ describe('Transaction Signer', () => {
 
             expect(signature).toBeDefined();
             expect(signature).toBeInstanceOf(Uint8Array);
-            expect(updatedWallet.features['solana:signMessage'].signMessage).toHaveBeenCalled();
+            expect(updatedWallet.features['trezoa:signMessage'].signMessage).toHaveBeenCalled();
         });
 
         it('should be undefined if message signing not supported', () => {
             const walletWithoutMessage = {
                 ...mockWallet,
                 features: {
-                    'solana:signTransaction': mockWallet.features['solana:signTransaction'],
+                    'trezoa:signTransaction': mockWallet.features['trezoa:signTransaction'],
                 },
             } as unknown as WalletStandardWallet;
 
@@ -535,7 +535,7 @@ describe('Transaction Signer', () => {
             const walletWithRejection = {
                 ...mockWallet,
                 features: {
-                    'solana:signTransaction': {
+                    'trezoa:signTransaction': {
                         signTransaction: vi.fn().mockRejectedValue(new Error('User rejected')),
                     },
                 },
@@ -555,7 +555,7 @@ describe('Transaction Signer', () => {
             const walletWithNetworkError = {
                 ...mockWallet,
                 features: {
-                    'solana:signAndSendTransaction': {
+                    'trezoa:signAndSendTransaction': {
                         signAndSendTransaction: vi.fn().mockRejectedValue(new Error('Network error')),
                     },
                 },

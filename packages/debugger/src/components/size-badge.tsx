@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger - Size Badge Component
+ * @trezoa/connector-debugger - Size Badge Component
  *
  * Visual indicator for transaction size with color coding
  */

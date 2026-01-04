@@ -1,7 +1,7 @@
 /**
- * @solana/connector-debugger - Simulation Section Component
+ * @trezoa/connector-debugger - Simulation Section Component
  *
- * Displays simulation results in transaction detail view
+ * Ditplays simulation results in transaction detail view
  */
 
 'use client';

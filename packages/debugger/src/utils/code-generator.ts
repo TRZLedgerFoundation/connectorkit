@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger - Code Snippet Generator
+ * @trezoa/connector-debugger - Code Snippet Generator
  *
  * Generates ready-to-use code snippets for creating and using
  * Address Lookup Tables based on analysis.
@@ -22,7 +22,7 @@ import {
   PublicKey,
   TransactionMessage,
   VersionedTransaction,
-} from '@solana/web3.js';
+} from '@trezoa/web3.js';
 
 // Your addresses to optimize
 const addresses = [
@@ -106,7 +106,7 @@ import {
   PublicKey,
   TransactionMessage,
   VersionedTransaction,
-} from '@solana/web3.js';
+} from '@trezoa/web3.js';
 
 const lookupTableAddress = new PublicKey('${lookupTableAddress}');
 

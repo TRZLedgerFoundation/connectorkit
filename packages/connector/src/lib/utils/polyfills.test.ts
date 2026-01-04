@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { installPolyfills, isPolyfillInstalled, isCryptoAvailable, getPolyfillStatus } from './polyfills';
 
 // Mock dependencies
-vi.mock('@solana/webcrypto-ed25519-polyfill', () => ({
+vi.mock('@trezoa/webcrypto-ed25519-polyfill', () => ({
     install: vi.fn(),
 }));
 

@@ -1,22 +1,22 @@
 ---
-title: '@solana/connector'
-description: Production-ready wallet connector for Solana applications
+title: '@trezoa/connector'
+description: Production-ready wallet connector for Trezoa applications
 ---
 
-**ConnectorKit is your Solana wallet infrastructure.** A headless, framework-agnostic wallet connector built on Wallet Standard that just work.
+**ConnectorKit is your Trezoa wallet infrastructure.** A headless, framework-agnostic wallet connector built on Wallet Standard that just work.
 
-![npm](https://img.shields.io/npm/v/@solana/connector)
+![npm](https://img.shields.io/npm/v/@trezoa/connector)
 ![Bundle Size](https://img.shields.io/badge/bundle-~45KB-gzip-green)
 ![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue)
 
 ### Why ConnectorKit?
 
 - **Wallet Standard First**: Built on the official Wallet Standard protocol for universal wallet compatibility
-- **Modern & Legacy Support**: Works with both `@solana/kit` (web3.js 2.0) and `@solana/web3.js` (legacy)
+- **Modern & Legacy Support**: Works with both `@trezoa/kit` (web3.js 2.0) and `@trezoa/web3.js` (legacy)
 - **Framework Agnostic**: React hooks + headless core for Vue, Svelte, or vanilla JavaScript
 - **Production Ready**: Event system for analytics, health checks for diagnostics, error boundaries for React apps
 - **Enhanced Storage**: Automatic validation, SSR fallback, and error handling out of the box
-- **Mobile Support**: Built-in Solana Mobile Wallet Adapter integration
+- **Mobile Support**: Built-in Trezoa Mobile Wallet Adapter integration
 
 ---
 
@@ -25,13 +25,13 @@ description: Production-ready wallet connector for Solana applications
 ### 1. Install
 
 ```bash
-npm install @solana/connector
+npm install @trezoa/connector
 # or
-pnpm add @solana/connector
+pnpm add @trezoa/connector
 # or
-yarn add @solana/connector
+yarn add @trezoa/connector
 # or
-bun add @solana/connector
+bun add @trezoa/connector
 ```
 
 ### 2. Setup Provider (once in your app root)
@@ -40,28 +40,28 @@ bun add @solana/connector
 'use client';
 
 import { useMemo } from 'react';
-import { AppProvider } from '@solana/connector/react';
-import { getDefaultConfig, getDefaultMobileConfig } from '@solana/connector/headless';
+import { AppProvider } from '@trezoa/connector/react';
+import { getDefaultConfig, getDefaultMobileConfig } from '@trezoa/connector/headless';
 
 export function Providers({ children }: { children: React.ReactNode }) {
     const connectorConfig = useMemo(() => {
         // Optional: Get custom RPC URL from environment variable
-        const customRpcUrl = process.env.SOLANA_RPC_URL;
+        const customRpcUrl = process.env.TREZOA_RPC_URL;
 
         // Optional: Create custom cluster configuration
         const clusters = customRpcUrl
             ? [
                   {
-                      id: 'solana:mainnet' as const,
+                      id: 'trezoa:mainnet' as const,
                       label: 'Mainnet (Custom RPC)',
                       name: 'mainnet-beta' as const,
                       url: customRpcUrl,
                   },
                   {
-                      id: 'solana:devnet' as const,
+                      id: 'trezoa:devnet' as const,
                       label: 'Devnet',
                       name: 'devnet' as const,
-                      url: 'https://api.devnet.solana.com',
+                      url: 'https://api.devnet.trezoa.com',
                   },
               ]
             : undefined;
@@ -97,7 +97,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 ```typescript
 'use client';
 
-import { useConnector, useAccount } from '@solana/connector';
+import { useConnector, useAccount } from '@trezoa/connector';
 
 export function ConnectButton() {
     const { wallets, select, disconnect, connected, connecting, selectedWallet, selectedAccount } = useConnector();
@@ -141,7 +141,7 @@ These are the main hooks you'll use in your components.
 Main hook for wallet connection and state.
 
 ```typescript
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 
 function Component() {
     const {
@@ -165,7 +165,7 @@ function Component() {
 ```typescript
 'use client';
 
-import { useConnector } from '@solana/connector';
+import { useConnector } from '@trezoa/connector';
 import { useState } from 'react';
 
 export function ConnectButton() {
@@ -200,7 +200,7 @@ export function ConnectButton() {
 Hook for working with the connected account.
 
 ```typescript
-import { useAccount } from '@solana/connector';
+import { useAccount } from '@trezoa/connector';
 
 function Component() {
     const {
@@ -220,7 +220,7 @@ function Component() {
 ```typescript
 'use client';
 
-import { useAccount } from '@solana/connector';
+import { useAccount } from '@trezoa/connector';
 
 export function AccountSwitcher() {
     const { accounts, address, selectAccount, connected } = useAccount();
@@ -246,20 +246,20 @@ export function AccountSwitcher() {
 
 ### `useCluster()`
 
-Hook for managing Solana network/cluster.
+Hook for managing Trezoa network/cluster.
 
 ```typescript
-import { useCluster } from '@solana/connector';
+import { useCluster } from '@trezoa/connector';
 
 function Component() {
     const {
-        cluster, // SolanaCluster | null - Active cluster
-        clusters, // SolanaCluster[] - Available clusters
-        setCluster, // (id: SolanaClusterId) => Promise<void>
+        cluster, // TrezoaCluster | null - Active cluster
+        clusters, // TrezoaCluster[] - Available clusters
+        setCluster, // (id: TrezoaClusterId) => Promise<void>
         isMainnet, // boolean - Convenience flags
         isDevnet, // boolean
         rpcUrl, // string - RPC endpoint URL
-        explorerUrl, // string - Solana Explorer base URL
+        explorerUrl, // string - Trezoa Explorer base URL
     } = useCluster();
 }
 ```
@@ -269,7 +269,7 @@ function Component() {
 ```typescript
 'use client';
 
-import { useCluster } from '@solana/connector';
+import { useCluster } from '@trezoa/connector';
 
 export function ClusterSelector() {
     const { cluster, clusters, setCluster } = useCluster();
@@ -277,7 +277,7 @@ export function ClusterSelector() {
     return (
         <select
             value={cluster?.id || ''}
-            onChange={e => setCluster(e.target.value as SolanaClusterId)}
+            onChange={e => setCluster(e.target.value as TrezoaClusterId)}
         >
             {clusters.map(c => (
                 <option key={c.id} value={c.id}>
@@ -294,7 +294,7 @@ export function ClusterSelector() {
 Hook for accessing current wallet metadata.
 
 ```typescript
-import { useWalletInfo } from '@solana/connector';
+import { useWalletInfo } from '@trezoa/connector';
 
 function Component() {
     const {
@@ -310,9 +310,9 @@ function Component() {
 
 ## Transaction Signing
 
-ConnectorKit provides powerful transaction signing capabilities with support for both legacy `@solana/web3.js` and modern `@solana/kit` APIs.
+ConnectorKit provides powerful transaction signing capabilities with support for both legacy `@trezoa/web3.js` and modern `@trezoa/kit` APIs.
 
-### Modern API (`@solana/kit`)
+### Modern API (`@trezoa/kit`)
 
 Use `useKitTransactionSigner()` for modern, type-safe transaction building:
 
@@ -322,7 +322,7 @@ Use `useKitTransactionSigner()` for modern, type-safe transaction building:
 import { useState } from 'react';
 import {
     address,
-    createSolanaRpc,
+    createTrezoaRpc,
     pipe,
     createTransactionMessage,
     setTransactionMessageFeePayerSigner,
@@ -331,14 +331,14 @@ import {
     sendAndConfirmTransactionFactory,
     getSignatureFromTransaction,
     signTransactionMessageWithSigners,
-    createSolanaRpcSubscriptions,
+    createTrezoaRpcSubscriptions,
     lamports,
     assertIsTransactionWithBlockhashLifetime,
-} from '@solana/kit';
-import { getTransferSolInstruction } from '@solana-program/system';
-import { useKitTransactionSigner, useCluster, useConnectorClient, LAMPORTS_PER_SOL } from '@solana/connector';
+} from '@trezoa/kit';
+import { getTransferTrzInstruction } from '@trezoa-program/system';
+import { useKitTransactionSigner, useCluster, useConnectorClient, LAMPORTS_PER_TRZ } from '@trezoa/connector';
 
-export function ModernSolTransfer() {
+export function ModernTrzTransfer() {
     const { signer, ready } = useKitTransactionSigner();
     const { cluster } = useCluster();
     const client = useConnectorClient();
@@ -356,17 +356,17 @@ export function ModernSolTransfer() {
         }
 
         // Create RPC client using web3.js 2.0
-        const rpc = createSolanaRpc(rpcUrl);
-        const rpcSubscriptions = createSolanaRpcSubscriptions(rpcUrl.replace('http', 'ws'));
+        const rpc = createTrezoaRpc(rpcUrl);
+        const rpcSubscriptions = createTrezoaRpcSubscriptions(rpcUrl.replace('http', 'ws'));
 
         // Get recent blockhash
         const { value: latestBlockhash } = await rpc.getLatestBlockhash().send();
 
-        // Convert SOL to lamports
-        const amountInLamports = lamports(BigInt(Math.floor(amount * Number(LAMPORTS_PER_SOL))));
+        // Convert TRZ to lamports
+        const amountInLamports = lamports(BigInt(Math.floor(amount * Number(LAMPORTS_PER_TRZ))));
 
         // Create transfer instruction
-        const transferInstruction = getTransferSolInstruction({
+        const transferInstruction = getTransferTrzInstruction({
             source: signer,
             destination: address(recipientAddress),
             amount: amountInLamports,
@@ -397,7 +397,7 @@ export function ModernSolTransfer() {
         <div>
             {/* Your form UI */}
             <button onClick={() => handleTransfer('...', 0.1)} disabled={!ready}>
-                Send SOL
+                Send TRZ
             </button>
             {signature && <div>Transaction: {signature}</div>}
         </div>
@@ -405,13 +405,13 @@ export function ModernSolTransfer() {
 }
 ```
 
-### Legacy API (`@solana/web3.js`)
+### Legacy API (`@trezoa/web3.js`)
 
 Use `useTransactionSigner()` for legacy web3.js compatibility:
 
 ```typescript
-import { useTransactionSigner } from '@solana/connector';
-import { Transaction, SystemProgram } from '@solana/web3.js';
+import { useTransactionSigner } from '@trezoa/connector';
+import { Transaction, SystemProgram } from '@trezoa/web3.js';
 
 function SendTransaction() {
     const { signer, ready } = useTransactionSigner();
@@ -443,9 +443,9 @@ ConnectorKit provides composable UI elements that handle data fetching and state
 
 ### Available Elements
 
-- `BalanceElement` - Display SOL balance with refresh
+- `BalanceElement` - Ditplay TRZ balance with refresh
 - `ClusterElement` - Network/cluster selector
-- `TokenListElement` - List of SPL tokens
+- `TokenListElement` - List of TPL tokens
 - `TransactionHistoryElement` - Recent transaction history
 - `DisconnectElement` - Disconnect button
 - `AccountElement` - Account display and switcher
@@ -462,16 +462,16 @@ import {
     TokenListElement,
     TransactionHistoryElement,
     DisconnectElement,
-} from '@solana/connector/react';
+} from '@trezoa/connector/react';
 
 export function WalletDropdown() {
     return (
         <div className="wallet-dropdown">
             {/* Balance */}
             <BalanceElement
-                render={({ solBalance, isLoading, refetch }) => (
+                render={({ trzBalance, isLoading, refetch }) => (
                     <div>
-                        <div>Balance: {isLoading ? '...' : `${solBalance?.toFixed(4)} SOL`}</div>
+                        <div>Balance: {isLoading ? '...' : `${trzBalance?.toFixed(4)} TRZ`}</div>
                         <button onClick={refetch}>Refresh</button>
                     </div>
                 )}
@@ -546,7 +546,7 @@ export function WalletDropdown() {
 ### Basic Configuration
 
 ```typescript
-import { getDefaultConfig } from '@solana/connector';
+import { getDefaultConfig } from '@trezoa/connector';
 
 const config = getDefaultConfig({
     appName: 'My App', // Required
@@ -570,22 +570,22 @@ const config = getDefaultConfig({
 ### Custom RPC Endpoints
 
 ```typescript
-import { getDefaultConfig } from '@solana/connector';
+import { getDefaultConfig } from '@trezoa/connector';
 
 const config = getDefaultConfig({
     appName: 'My App',
     clusters: [
         {
-            id: 'solana:mainnet' as const,
+            id: 'trezoa:mainnet' as const,
             label: 'Mainnet (Custom RPC)',
             name: 'mainnet-beta' as const,
             url: 'https://my-custom-rpc.com',
         },
         {
-            id: 'solana:devnet' as const,
+            id: 'trezoa:devnet' as const,
             label: 'Devnet',
             name: 'devnet' as const,
-            url: 'https://api.devnet.solana.com',
+            url: 'https://api.devnet.trezoa.com',
         },
     ],
 });
@@ -594,7 +594,7 @@ const config = getDefaultConfig({
 ### Mobile Wallet Adapter
 
 ```typescript
-import { getDefaultMobileConfig } from '@solana/connector/headless';
+import { getDefaultMobileConfig } from '@trezoa/connector/headless';
 
 const mobile = getDefaultMobileConfig({
     appName: 'My App',
@@ -608,7 +608,7 @@ const mobile = getDefaultMobileConfig({
 
 ### WalletConnect Integration
 
-Connect mobile wallets via QR code or deep link using WalletConnect. This enables users to connect wallets like Trust Wallet, Exodus, and other WalletConnect-compatible Solana wallets.
+Connect mobile wallets via QR code or deep link using WalletConnect. This enables users to connect wallets like Trust Wallet, Exodus, and other WalletConnect-compatible Trezoa wallets.
 
 **1. Install WalletConnect dependency:**
 
@@ -623,7 +623,7 @@ Visit [cloud.walletconnect.com](https://cloud.walletconnect.com/) and create a p
 **3. Configure WalletConnect in your app:**
 
 ```typescript
-import { getDefaultConfig } from '@solana/connector/headless';
+import { getDefaultConfig } from '@trezoa/connector/headless';
 import { useState } from 'react';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -638,12 +638,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
                 metadata: {
                     name: 'My App',
-                    description: 'My Solana Application',
+                    description: 'My Trezoa Application',
                     url: 'https://myapp.com',
                     icons: ['https://myapp.com/icon.png'],
                 },
                 // Handle the WalletConnect URI for QR code display
-                onDisplayUri: (uri) => {
+                onDitplayUri: (uri) => {
                     setWalletConnectUri(uri);
                 },
                 onSessionEstablished: () => {
@@ -691,16 +691,16 @@ function WalletConnectQRModal({ uri, onClose }: { uri: string; onClose: () => vo
 }
 ```
 
-Once enabled, "WalletConnect" appears as a wallet option in your wallet list. When selected, the `onDisplayUri` callback fires with a URI that should be displayed as a QR code for mobile wallet scanning.
+Once enabled, "WalletConnect" appears as a wallet option in your wallet list. When selected, the `onDitplayUri` callback fires with a URI that should be displayed as a QR code for mobile wallet scanning.
 
-**Supported WalletConnect Solana methods:**
-- `solana_getAccounts` / `solana_requestAccounts` - Get connected accounts
-- `solana_signMessage` - Sign arbitrary messages
-- `solana_signTransaction` - Sign transactions
-- `solana_signAllTransactions` - Sign multiple transactions
-- `solana_signAndSendTransaction` - Sign and broadcast transactions
+**Supported WalletConnect Trezoa methods:**
+- `trezoa_getAccounts` / `trezoa_requestAccounts` - Get connected accounts
+- `trezoa_signMessage` - Sign arbitrary messages
+- `trezoa_signTransaction` - Sign transactions
+- `trezoa_signAllTransactions` - Sign multiple transactions
+- `trezoa_signAndSendTransaction` - Sign and broadcast transactions
 
-See the [WalletConnect Solana documentation](https://docs.walletconnect.network/wallet-sdk/chain-support/solana) for more details.
+See the [WalletConnect Trezoa documentation](https://docs.walletconnect.network/wallet-sdk/chain-support/trezoa) for more details.
 
 ---
 
@@ -719,7 +719,7 @@ Create an API route that proxies RPC requests, keeping the API key server-side:
 import { NextRequest, NextResponse } from 'next/server';
 
 // Server-side only - not exposed to client
-const RPC_URL = process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com';
+const RPC_URL = process.env.TREZOA_RPC_URL || 'https://api.mainnet-beta.trezoa.com';
 
 export async function POST(request: NextRequest) {
     try {
@@ -744,7 +744,7 @@ Then configure the connector to use the proxy:
 ```typescript
 'use client';
 
-import { getDefaultConfig } from '@solana/connector/headless';
+import { getDefaultConfig } from '@trezoa/connector/headless';
 
 // Get origin for absolute URL (Kit requires full URLs)
 const getOrigin = () => {
@@ -756,7 +756,7 @@ const config = getDefaultConfig({
     appName: 'My App',
     clusters: [
         {
-            id: 'solana:mainnet' as const,
+            id: 'trezoa:mainnet' as const,
             label: 'Mainnet',
             name: 'mainnet-beta' as const,
             url: `${getOrigin()}/api/rpc`, // Proxy URL
@@ -769,7 +769,7 @@ const config = getDefaultConfig({
 Your `.env` file (no `NEXT_PUBLIC_` prefix):
 
 ```
-SOLANA_RPC_URL=https://mainnet.helius-rpc.com/?api-key=your-key
+TREZOA_RPC_URL=https://mainnet.helius-rpc.com/?api-key=your-key
 ```
 
 ### Token Image Privacy
@@ -1012,7 +1012,7 @@ Token prices are cached for 60 seconds to minimize API calls. The retry logic on
 ConnectorKit exports a `tryCatch` utility for consistent async error handling:
 
 ```typescript
-import { tryCatch } from '@solana/connector/headless';
+import { tryCatch } from '@trezoa/connector/headless';
 
 // Instead of try/catch blocks
 async function sendTransaction() {
@@ -1053,7 +1053,7 @@ import {
     getTokensQueryKey,
     getTransactionsQueryKey,
     invalidateSharedQuery,
-} from '@solana/connector/react';
+} from '@trezoa/connector/react';
 
 // After sending a transaction, invalidate relevant caches
 async function sendAndRefresh() {
@@ -1074,7 +1074,7 @@ async function sendAndRefresh() {
 Configuration is validated at runtime using Zod schemas. For manual validation:
 
 ```typescript
-import { validateConfigOptions } from '@solana/connector/headless';
+import { validateConfigOptions } from '@trezoa/connector/headless';
 
 const result = validateConfigOptions({
     appName: 'My App',
@@ -1091,7 +1091,7 @@ if (!result.success) {
 Use `ConnectorClient` for non-React frameworks:
 
 ```typescript
-import { ConnectorClient, getDefaultConfig } from '@solana/connector/headless';
+import { ConnectorClient, getDefaultConfig } from '@trezoa/connector/headless';
 
 // Create client
 const client = new ConnectorClient(getDefaultConfig({ appName: 'My App' }));
@@ -1119,7 +1119,7 @@ client.destroy();
 
 Storage uses nanostores with built-in enhancements that are **automatically applied**:
 
-- Validation (Solana address format checking)
+- Validation (Trezoa address format checking)
 - Error handling (catches localStorage quota errors, private browsing)
 - SSR fallback (uses memory storage when localStorage unavailable)
 
@@ -1130,7 +1130,7 @@ Storage uses nanostores with built-in enhancements that are **automatically appl
 - Custom error tracking
 
 ```typescript
-import { getDefaultConfig, createEnhancedStorageWallet, EnhancedStorageAdapter } from '@solana/connector';
+import { getDefaultConfig, createEnhancedStorageWallet, EnhancedStorageAdapter } from '@trezoa/connector';
 
 const config = getDefaultConfig({
     appName: 'My App',
@@ -1159,21 +1159,21 @@ const config = getDefaultConfig({
 
 ```typescript
 // Full library - includes React and headless
-import { ConnectorProvider, useConnector, useAccount } from '@solana/connector';
+import { ConnectorProvider, useConnector, useAccount } from '@trezoa/connector';
 ```
 
 ### Headless Export (Framework Agnostic)
 
 ```typescript
 // Headless core only - no React
-import { ConnectorClient, getDefaultConfig } from '@solana/connector/headless';
+import { ConnectorClient, getDefaultConfig } from '@trezoa/connector/headless';
 ```
 
 ### React Export
 
 ```typescript
 // React-specific exports only
-import { useConnector, useAccount } from '@solana/connector/react';
+import { useConnector, useAccount } from '@trezoa/connector/react';
 ```
 
 ---
@@ -1189,9 +1189,9 @@ import { useConnector, useAccount } from '@solana/connector/react';
 | `useCluster()`              | Network/cluster management hook         | `{ cluster, clusters, setCluster, isMainnet, isDevnet, rpcUrl }`                   |
 | `useWalletInfo()`           | Wallet metadata hook                    | `{ name, icon, wallet, connecting }`                                               |
 | `useTransactionSigner()`    | Legacy transaction signer (web3.js)     | `{ signer, ready, address, capabilities }`                                         |
-| `useKitTransactionSigner()` | Modern transaction signer (@solana/kit) | `{ signer, ready, address }`                                                       |
-| `useBalance()`              | SOL balance hook                        | `{ solBalance, isLoading, refetch }`                                               |
-| `useTokens()`               | SPL tokens hook                         | `{ tokens, isLoading, refetch }`                                                   |
+| `useKitTransactionSigner()` | Modern transaction signer (@trezoa/kit) | `{ signer, ready, address }`                                                       |
+| `useBalance()`              | TRZ balance hook                        | `{ trzBalance, isLoading, refetch }`                                               |
+| `useTokens()`               | TPL tokens hook                         | `{ tokens, isLoading, refetch }`                                                   |
 | `useTransactions()`         | Transaction history hook                | `{ transactions, isLoading, refetch }`                                             |
 
 ### Configuration Functions
@@ -1205,11 +1205,11 @@ import { useConnector, useAccount } from '@solana/connector/react';
 
 | Function                                | Description                         |
 | --------------------------------------- | ----------------------------------- |
-| `formatAddress(address, options?)`      | Format Solana address               |
-| `formatSOL(lamports, options?)`         | Format SOL amount                   |
+| `formatAddress(address, options?)`      | Format Trezoa address               |
+| `formatTRZ(lamports, options?)`         | Format TRZ amount                   |
 | `copyAddressToClipboard(address)`       | Copy address to clipboard           |
-| `getTransactionUrl(cluster, signature)` | Get Solana Explorer transaction URL |
-| `getAddressUrl(cluster, address)`       | Get Solana Explorer address URL     |
+| `getTransactionUrl(cluster, signature)` | Get Trezoa Explorer transaction URL |
+| `getAddressUrl(cluster, address)`       | Get Trezoa Explorer address URL     |
 
 ---
 
@@ -1233,8 +1233,8 @@ import type {
     WalletAccount,
 
     // Clusters
-    SolanaCluster,
-    SolanaClusterId,
+    TrezoaCluster,
+    TrezoaClusterId,
 
     // Hook Returns
     UseClusterReturn,
@@ -1242,7 +1242,7 @@ import type {
     UseWalletInfoReturn,
     UseTransactionSignerReturn,
     UseKitTransactionSignerReturn,
-} from '@solana/connector';
+} from '@trezoa/connector';
 ```
 
 ---
@@ -1290,7 +1290,7 @@ Check out the [examples directory](../../examples/next-js) for complete working 
 - **Transaction Signing** - Modern and legacy transaction examples
 - **Network Switching** - Cluster/network management
 - **Account Management** - Multi-account support
-- **Mobile Support** - Solana Mobile Wallet Adapter
+- **Mobile Support** - Trezoa Mobile Wallet Adapter
 
 ---
 
@@ -1299,11 +1299,11 @@ Check out the [examples directory](../../examples/next-js) for complete working 
 Compatible with all [Wallet Standard](https://github.com/wallet-standard/wallet-standard) compliant wallets:
 
 - **Phantom** - Browser extension and mobile
-- **Solflare** - Browser extension and mobile
+- **Trzflare** - Browser extension and mobile
 - **Backpack** - xNFT and wallet
 - **Glow** - Browser extension
 - **Brave Wallet** - Built-in browser wallet
-- **Solana Mobile** - All mobile wallet adapter compatible wallets
+- **Trezoa Mobile** - All mobile wallet adapter compatible wallets
 - **WalletConnect** - Connect any WalletConnect-compatible mobile wallet via QR code
 - **Any Wallet Standard wallet** - Full compatibility
 

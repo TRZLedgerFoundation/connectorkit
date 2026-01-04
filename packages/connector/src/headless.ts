@@ -1,5 +1,5 @@
 /**
- * @solana/connector/headless
+ * @trezoa/connector/headless
  *
  * Framework-agnostic core - works with Vue, Angular, Vanilla JS
  * Zero React dependencies for maximum compatibility
@@ -98,9 +98,9 @@ export type {
 // ============================================================================
 // Wallet-UI Integration
 // ============================================================================
-export type { SolanaCluster, SolanaClusterId } from '@wallet-ui/core';
+export type { TrezoaCluster, TrezoaClusterId } from '@wallet-ui/core';
 
-export { createSolanaMainnet, createSolanaDevnet, createSolanaTestnet, createSolanaLocalnet } from '@wallet-ui/core';
+export { createTrezoaMainnet, createTrezoaDevnet, createTrezoaTestnet, createTrezoaLocalnet } from '@wallet-ui/core';
 
 // ============================================================================
 // Browser Compatibility
@@ -114,8 +114,8 @@ export * from './lib/kit/signer-types';
 export * from './lib/kit/signer-factories';
 export * from './lib/kit/signer-integration';
 export * from './lib/kit/signer-utils';
-export { createSignableMessage } from '@solana/signers';
-export { address } from '@solana/addresses';
+export { createSignableMessage } from '@trezoa/signers';
+export { address } from '@trezoa/addresses';
 
 // ============================================================================
 // Connection Abstraction
@@ -137,10 +137,10 @@ export * from './utils/network';
 // Explorer URLs & Transaction Utilities
 // ============================================================================
 export {
-    getSolanaExplorerUrl,
-    getSolscanUrl,
+    getTrezoaExplorerUrl,
+    getTrzscanUrl,
     getXrayUrl,
-    getSolanaFmUrl,
+    getTrezoaFmUrl,
     getAllExplorerUrls,
     formatSignature,
     copySignature,
@@ -152,20 +152,20 @@ export type { ExplorerType, ExplorerOptions } from './lib/utils/explorer-urls';
 // Kit Utilities (replaces gill imports)
 // ============================================================================
 export {
-    LAMPORTS_PER_SOL,
+    LAMPORTS_PER_TRZ,
     lamportsToSol,
-    solToLamports,
+    trzToLamports,
     getExplorerLink,
-    getPublicSolanaRpcUrl,
-    createSolanaClient,
+    getPublicTrezoaRpcUrl,
+    createTrezoaClient,
     prepareTransaction,
 } from './lib/kit';
 
 export type {
-    SolanaClusterMoniker,
+    TrezoaClusterMoniker,
     ModifiedClusterUrl,
-    SolanaClient,
-    CreateSolanaClientArgs,
+    TrezoaClient,
+    CreateTrezoaClientArgs,
     GetExplorerLinkArgs,
     PrepareTransactionConfig,
 } from './lib/kit';

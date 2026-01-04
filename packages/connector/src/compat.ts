@@ -4,8 +4,8 @@
 
 import { useMemo } from 'react';
 import type { TransactionSigner } from './lib/transaction/transaction-signer';
-import type { SolanaTransaction } from './types/transactions';
-import type { Connection, SendOptions } from '@solana/web3.js';
+import type { TrezoaTransaction } from './types/transactions';
+import type { Connection, SendOptions } from '@trezoa/web3.js';
 import { isWeb3jsTransaction } from './utils/transaction-format';
 import { createLogger } from './lib/utils/secure-logger';
 import { tryCatch } from './lib/core/try-catch';
@@ -21,9 +21,9 @@ export interface WalletAdapterCompatible {
     connecting: boolean;
     disconnecting: boolean;
 
-    signTransaction: (transaction: SolanaTransaction) => Promise<SolanaTransaction>;
-    signAllTransactions: (transactions: SolanaTransaction[]) => Promise<SolanaTransaction[]>;
-    sendTransaction: (transaction: SolanaTransaction, connection: Connection, options?: SendOptions) => Promise<string>;
+    signTransaction: (transaction: TrezoaTransaction) => Promise<TrezoaTransaction>;
+    signAllTransactions: (transactions: TrezoaTransaction[]) => Promise<TrezoaTransaction[]>;
+    sendTransaction: (transaction: TrezoaTransaction, connection: Connection, options?: SendOptions) => Promise<string>;
 
     connect: () => Promise<void>;
     disconnect: () => Promise<void>;
@@ -39,7 +39,7 @@ export interface WalletAdapterCompatOptions {
     disconnect: () => Promise<void>;
 
     /** Optional function to transform transactions before signing */
-    transformTransaction?: (tx: SolanaTransaction) => SolanaTransaction;
+    transformTransaction?: (tx: TrezoaTransaction) => TrezoaTransaction;
 
     /** Optional error handler */
     onError?: (error: Error, operation: string) => void;
@@ -65,7 +65,7 @@ export function createWalletAdapterCompat(
         connecting: false,
         disconnecting: false,
 
-        signTransaction: async (transaction: SolanaTransaction) => {
+        signTransaction: async (transaction: TrezoaTransaction) => {
             if (!signer) {
                 const error = new Error('Wallet not connected');
                 handleError(error, 'signTransaction');
@@ -83,7 +83,7 @@ export function createWalletAdapterCompat(
             return signed;
         },
 
-        signAllTransactions: async (transactions: SolanaTransaction[]) => {
+        signAllTransactions: async (transactions: TrezoaTransaction[]) => {
             if (!signer) {
                 const error = new Error('Wallet not connected');
                 handleError(error, 'signAllTransactions');
@@ -101,7 +101,7 @@ export function createWalletAdapterCompat(
             return signedTxs;
         },
 
-        sendTransaction: async (transaction: SolanaTransaction, connection: Connection, sendOptions?: SendOptions) => {
+        sendTransaction: async (transaction: TrezoaTransaction, connection: Connection, sendOptions?: SendOptions) => {
             if (!signer) {
                 const error = new Error('Wallet not connected');
                 handleError(error, 'sendTransaction');

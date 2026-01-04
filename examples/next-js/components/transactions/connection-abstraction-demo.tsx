@@ -4,14 +4,14 @@
  * Connection Abstraction Demo Component
  *
  * Demonstrates dual-architecture connection helpers that work with both
- * legacy @solana/web3.js Connection and modern @solana/kit Rpc.
+ * legacy @trezoa/web3.js Connection and modern @trezoa/kit Rpc.
  */
 
 import { useState } from 'react';
-import { useConnectorClient } from '@solana/connector';
-import { getLatestBlockhash, isLegacyConnection, isKitConnection } from '@solana/connector/headless';
-import { createSolanaRpc } from '@solana/kit';
-import { Connection } from '@solana/web3.js';
+import { useConnectorClient } from '@trezoa/connector';
+import { getLatestBlockhash, isLegacyConnection, isKitConnection } from '@trezoa/connector/headless';
+import { createTrezoaRpc } from '@trezoa/kit';
+import { Connection } from '@trezoa/web3.js';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -71,7 +71,7 @@ export function ConnectionAbstractionDemo() {
             }
 
             // Create Kit Rpc
-            const rpc = createSolanaRpc(rpcUrl);
+            const rpc = createTrezoaRpc(rpcUrl);
             // Cast to DualConnection - kit's Rpc is compatible with our KitRpc structural type
             const dualRpc = rpc as unknown as Parameters<typeof getLatestBlockhash>[0];
 

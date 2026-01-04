@@ -241,7 +241,7 @@ function DefaultErrorFallback({ error, onRetry }: DefaultErrorFallbackProps) {
             case WalletErrorType.WALLET_NOT_FOUND:
                 return {
                     title: 'Wallet Not Found',
-                    message: 'Please install a supported Solana wallet to continue.',
+                    message: 'Please install a supported Trezoa wallet to continue.',
                     actionText: 'Check Wallets',
                     showRetry: true,
                 };
@@ -257,7 +257,7 @@ function DefaultErrorFallback({ error, onRetry }: DefaultErrorFallbackProps) {
             case WalletErrorType.INSUFFICIENT_FUNDS:
                 return {
                     title: 'Insufficient Funds',
-                    message: "You don't have enough SOL for this transaction.",
+                    message: "You don't have enough TRZ for this transaction.",
                     actionText: 'Add Funds',
                     showRetry: false,
                 };

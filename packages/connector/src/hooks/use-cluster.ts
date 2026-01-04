@@ -1,13 +1,13 @@
 /**
- * @solana/connector - useCluster hook
+ * @trezoa/connector - useCluster hook
  *
- * React hook for managing Solana cluster (network) state
+ * React hook for managing Trezoa cluster (network) state
  */
 
 'use client';
 
 import { useMemo } from 'react';
-import type { SolanaCluster, SolanaClusterId } from '@wallet-ui/core';
+import type { TrezoaCluster, TrezoaClusterId } from '@wallet-ui/core';
 import { useConnector, useConnectorClient } from '../ui/connector-provider';
 import {
     getClusterExplorerUrl,
@@ -21,11 +21,11 @@ import {
 
 export interface UseClusterReturn {
     /** Currently active cluster */
-    cluster: SolanaCluster | null;
+    cluster: TrezoaCluster | null;
     /** All available clusters */
-    clusters: SolanaCluster[];
+    clusters: TrezoaCluster[];
     /** Set the active cluster */
-    setCluster: (id: SolanaClusterId) => Promise<void>;
+    setCluster: (id: TrezoaClusterId) => Promise<void>;
     /** Whether the current cluster is mainnet */
     isMainnet: boolean;
     /** Whether the current cluster is devnet */
@@ -34,14 +34,14 @@ export interface UseClusterReturn {
     isTestnet: boolean;
     /** Whether the current cluster is running locally */
     isLocal: boolean;
-    /** Solana Explorer base URL for the current cluster */
+    /** Trezoa Explorer base URL for the current cluster */
     explorerUrl: string;
     /** Cluster type (mainnet, devnet, testnet, localnet, custom) */
     type: ClusterType | null;
 }
 
 /**
- * Hook for managing Solana cluster (network) selection
+ * Hook for managing Trezoa cluster (network) selection
  *
  * @example
  * ```tsx
@@ -51,7 +51,7 @@ export interface UseClusterReturn {
  *   return (
  *     <select
  *       value={cluster?.id}
- *       onChange={(e) => setCluster(e.target.value as SolanaClusterId)}
+ *       onChange={(e) => setCluster(e.target.value as TrezoaClusterId)}
  *     >
  *       {clusters.map(c => (
  *         <option key={c.id} value={c.id}>{c.label}</option>
@@ -70,7 +70,7 @@ export function useCluster(): UseClusterReturn {
     }
 
     const setCluster = useMemo(
-        () => async (id: SolanaClusterId) => {
+        () => async (id: TrezoaClusterId) => {
             await client.setCluster(id);
         },
         [client],

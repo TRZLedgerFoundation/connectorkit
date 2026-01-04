@@ -1,5 +1,5 @@
 /**
- * @solana/connector-debugger - Debug Panel UI Components
+ * @trezoa/connector-debugger - Debug Panel UI Components
  */
 
 'use client';

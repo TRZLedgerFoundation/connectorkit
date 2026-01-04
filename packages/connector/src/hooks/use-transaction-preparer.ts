@@ -1,5 +1,5 @@
 /**
- * @solana/connector - useTransactionPreparer hook
+ * @trezoa/connector - useTransactionPreparer hook
  *
  * React hook for preparing transactions with automatic optimization
  * Handles blockhash fetching, compute unit limits, and transaction simulation
@@ -12,7 +12,7 @@ import type {
     TransactionMessage,
     TransactionMessageWithFeePayer,
     TransactionMessageWithBlockhashLifetime,
-} from '@solana/kit';
+} from '@trezoa/kit';
 
 /**
  * A transaction message that can be compiled for signing.
@@ -20,7 +20,7 @@ import type {
  */
 type CompilableTransactionMessage = TransactionMessage & TransactionMessageWithFeePayer;
 import { prepareTransaction } from '../lib/kit';
-import { useSolanaClient } from './use-kit-solana-client';
+import { useTrezoaClient } from './use-kit-trezoa-client';
 import { NetworkError } from '../lib/errors';
 
 /**
@@ -68,7 +68,7 @@ export interface UseTransactionPreparerReturn {
 
     /**
      * Whether the preparer is ready to use
-     * False if Solana client is not available
+     * False if Trezoa client is not available
      */
     ready: boolean;
 }
@@ -86,14 +86,14 @@ export interface UseTransactionPreparerReturn {
  *
  * @example
  * ```tsx
- * import { useTransactionPreparer, useKitTransactionSigner } from '@solana/connector';
- * import { pipe, createTransactionMessage, appendTransactionMessageInstructions } from '@solana/kit';
- * import { getTransferSolInstruction } from '@solana-program/system';
+ * import { useTransactionPreparer, useKitTransactionSigner } from '@trezoa/connector';
+ * import { pipe, createTransactionMessage, appendTransactionMessageInstructions } from '@trezoa/kit';
+ * import { getTransferTrzInstruction } from '@trezoa-program/system';
  *
  * function SendOptimizedTransaction() {
  *   const { prepare, ready } = useTransactionPreparer();
  *   const { signer } = useKitTransactionSigner();
- *   const { client } = useSolanaClient();
+ *   const { client } = useTrezoaClient();
  *
  *   const handleSend = async (recipient: string, amount: bigint) => {
  *     if (!ready || !signer || !client) return;
@@ -103,7 +103,7 @@ export interface UseTransactionPreparerReturn {
  *       createTransactionMessage({ version: 0 }),
  *       tx => setTransactionMessageFeePayerSigner(signer, tx),
  *       tx => appendTransactionMessageInstructions([
- *         getTransferSolInstruction({
+ *         getTransferTrzInstruction({
  *           source: signer,
  *           destination: address(recipient),
  *           amount: lamports(amount),
@@ -152,7 +152,7 @@ export interface UseTransactionPreparerReturn {
  * ```
  */
 export function useTransactionPreparer(): UseTransactionPreparerReturn {
-    const { client, ready } = useSolanaClient();
+    const { client, ready } = useTrezoaClient();
 
     const prepare = useCallback(
         async <TMessage extends CompilableTransactionMessage>(
@@ -160,7 +160,7 @@ export function useTransactionPreparer(): UseTransactionPreparerReturn {
             options: TransactionPrepareOptions = {},
         ): Promise<TMessage & TransactionMessageWithBlockhashLifetime> => {
             if (!client) {
-                throw new NetworkError('RPC_ERROR', 'Solana client not available. Cannot prepare transaction.');
+                throw new NetworkError('RPC_ERROR', 'Trezoa client not available. Cannot prepare transaction.');
             }
 
             return prepareTransaction({

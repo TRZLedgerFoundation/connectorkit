@@ -1,11 +1,11 @@
 import type { AccountInfo } from '../../types/accounts';
 import type { WalletAccount } from '@wallet-standard/base';
-import { address as toAddress } from '@solana/addresses';
+import { address as toAddress } from '@trezoa/addresses';
 
 export const TEST_ADDRESSES = {
     ACCOUNT_1: 'HMJfh9P8FEF5eVHp3XypYWThUYCQ9sWNZZQQxVP2jjr1',
-    ACCOUNT_2: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM',
-    ACCOUNT_3: 'FpqDXqs8fvFmvf9F7Qz5xQVpbVaWqvZvG8M9KJ9qDqJq',
+    ACCOUNT_2: '9hayjcGAfxbKr2q5UenHABNrUnn7RSXKQRSj2jMbBwmT',
+    ACCOUNT_3: 'Aw3xx2cF5VPbRfVDgjnsZGGYZbPjiUmsATCgAdQjEj9C',
 } as const;
 
 export function createMockWalletAccount(
@@ -19,7 +19,7 @@ export function createMockWalletAccount(
     return {
         address,
         publicKey: new Uint8Array(32).fill(1),
-        chains: (options.chains ?? ['solana:mainnet', 'solana:devnet']) as `${string}:${string}`[],
+        chains: (options.chains ?? ['trezoa:mainnet', 'trezoa:devnet']) as `${string}:${string}`[],
         features: (options.features ?? []) as WalletAccount['features'],
         label: options.label,
     };

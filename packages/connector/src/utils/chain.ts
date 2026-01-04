@@ -1,28 +1,28 @@
-import type { SolanaCluster, SolanaClusterId } from '@wallet-ui/core';
-import type { Connection } from '@solana/web3.js';
+import type { TrezoaCluster, TrezoaClusterId } from '@wallet-ui/core';
+import type { Connection } from '@trezoa/web3.js';
 import type { ClusterType } from './cluster';
 import { getClusterType, isMainnetCluster, isDevnetCluster, isTestnetCluster } from './cluster';
 
-export const SOLANA_CHAIN_IDS = {
-    mainnet: 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
-    devnet: 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1',
-    testnet: 'solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z',
+export const TREZOA_CHAIN_IDS = {
+    mainnet: 'trezoa:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
+    devnet: 'trezoa:EtWTRABZaYq6iMfeYKouRu166VU2xqa1',
+    testnet: 'trezoa:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z',
 } as const;
 
 const CHAIN_ID_TO_CLUSTER_TYPE: Record<string, ClusterType> = {
-    [SOLANA_CHAIN_IDS.mainnet]: 'mainnet',
-    [SOLANA_CHAIN_IDS.devnet]: 'devnet',
-    [SOLANA_CHAIN_IDS.testnet]: 'testnet',
+    [TREZOA_CHAIN_IDS.mainnet]: 'mainnet',
+    [TREZOA_CHAIN_IDS.devnet]: 'devnet',
+    [TREZOA_CHAIN_IDS.testnet]: 'testnet',
 };
 
-const CLUSTER_ID_TO_CHAIN_ID: Partial<Record<SolanaClusterId, string>> = {
-    'solana:mainnet': SOLANA_CHAIN_IDS.mainnet,
-    'solana:mainnet-beta': SOLANA_CHAIN_IDS.mainnet,
-    'solana:devnet': SOLANA_CHAIN_IDS.devnet,
-    'solana:testnet': SOLANA_CHAIN_IDS.testnet,
+const CLUSTER_ID_TO_CHAIN_ID: Partial<Record<TrezoaClusterId, string>> = {
+    'trezoa:mainnet': TREZOA_CHAIN_IDS.mainnet,
+    'trezoa:mainnet-beta': TREZOA_CHAIN_IDS.mainnet,
+    'trezoa:devnet': TREZOA_CHAIN_IDS.devnet,
+    'trezoa:testnet': TREZOA_CHAIN_IDS.testnet,
 };
 
-export function getChainIdFromCluster(cluster: SolanaCluster): `solana:${string}` | null {
+export function getChainIdFromCluster(cluster: TrezoaCluster): `trezoa:${string}` | null {
     const clusterType = getClusterType(cluster);
 
     if (clusterType === 'localnet' || clusterType === 'custom') {
@@ -32,18 +32,18 @@ export function getChainIdFromCluster(cluster: SolanaCluster): `solana:${string}
     return getChainIdFromClusterType(clusterType);
 }
 
-export function getChainIdFromClusterId(clusterId: SolanaClusterId): `solana:${string}` | null {
-    return (CLUSTER_ID_TO_CHAIN_ID[clusterId] as `solana:${string}` | undefined) || null;
+export function getChainIdFromClusterId(clusterId: TrezoaClusterId): `trezoa:${string}` | null {
+    return (CLUSTER_ID_TO_CHAIN_ID[clusterId] as `trezoa:${string}` | undefined) || null;
 }
 
-export function getChainIdFromClusterType(type: ClusterType): `solana:${string}` | null {
+export function getChainIdFromClusterType(type: ClusterType): `trezoa:${string}` | null {
     switch (type) {
         case 'mainnet':
-            return SOLANA_CHAIN_IDS.mainnet;
+            return TREZOA_CHAIN_IDS.mainnet;
         case 'devnet':
-            return SOLANA_CHAIN_IDS.devnet;
+            return TREZOA_CHAIN_IDS.devnet;
         case 'testnet':
-            return SOLANA_CHAIN_IDS.testnet;
+            return TREZOA_CHAIN_IDS.testnet;
         case 'localnet':
         case 'custom':
             return null;
@@ -54,7 +54,7 @@ export function getClusterTypeFromChainId(chainId: string): ClusterType | null {
     return CHAIN_ID_TO_CLUSTER_TYPE[chainId] || null;
 }
 
-export function getClusterIdFromChainId(chainId: string): SolanaClusterId | null {
+export function getClusterIdFromChainId(chainId: string): TrezoaClusterId | null {
     const clusterType = getClusterTypeFromChainId(chainId);
     if (!clusterType) {
         return null;
@@ -62,33 +62,33 @@ export function getClusterIdFromChainId(chainId: string): SolanaClusterId | null
 
     switch (clusterType) {
         case 'mainnet':
-            return 'solana:mainnet';
+            return 'trezoa:mainnet';
         case 'devnet':
-            return 'solana:devnet';
+            return 'trezoa:devnet';
         case 'testnet':
-            return 'solana:testnet';
+            return 'trezoa:testnet';
         default:
             return null;
     }
 }
 
-export function isSolanaChain(chain: string): chain is `solana:${string}` {
-    return chain.startsWith('solana:');
+export function isTrezoaChain(chain: string): chain is `trezoa:${string}` {
+    return chain.startsWith('trezoa:');
 }
 
-export function isKnownSolanaChain(chain: string): boolean {
+export function isKnownTrezoaChain(chain: string): boolean {
     return (
-        chain === SOLANA_CHAIN_IDS.mainnet || chain === SOLANA_CHAIN_IDS.devnet || chain === SOLANA_CHAIN_IDS.testnet
+        chain === TREZOA_CHAIN_IDS.mainnet || chain === TREZOA_CHAIN_IDS.devnet || chain === TREZOA_CHAIN_IDS.testnet
     );
 }
 
-export function validateKnownSolanaChain(chain: string): asserts chain is `solana:${string}` {
-    if (!isSolanaChain(chain)) {
-        throw new Error(`Invalid chain format: expected 'solana:...', got '${chain}'`);
+export function validateKnownTrezoaChain(chain: string): asserts chain is `trezoa:${string}` {
+    if (!isTrezoaChain(chain)) {
+        throw new Error(`Invalid chain format: expected 'trezoa:...', got '${chain}'`);
     }
 
-    if (!isKnownSolanaChain(chain)) {
-        throw new Error(`Unknown Solana chain: ${chain}. Known chains: ${Object.values(SOLANA_CHAIN_IDS).join(', ')}`);
+    if (!isKnownTrezoaChain(chain)) {
+        throw new Error(`Unknown Trezoa chain: ${chain}. Known chains: ${Object.values(TREZOA_CHAIN_IDS).join(', ')}`);
     }
 }
 
@@ -121,7 +121,7 @@ export function getClusterTypeFromConnection(connection: Connection | null): Clu
 export function getChainIdFromConnection(
     connection: Connection | null,
     network?: 'mainnet' | 'devnet' | 'testnet',
-): `solana:${string}` | null {
+): `trezoa:${string}` | null {
     if (network) {
         return getChainIdFromClusterType(network);
     }
@@ -134,7 +134,7 @@ export function getChainIdFromConnection(
     return getChainIdFromClusterType(clusterType);
 }
 
-export function clusterToChainId(cluster: SolanaCluster): `solana:${string}` | null {
+export function clusterToChainId(cluster: TrezoaCluster): `trezoa:${string}` | null {
     return getChainIdFromCluster(cluster);
 }
 
@@ -142,6 +142,6 @@ export function chainIdToClusterType(chainId: string): ClusterType | null {
     return getClusterTypeFromChainId(chainId);
 }
 
-export function chainIdToClusterId(chainId: string): SolanaClusterId | null {
+export function chainIdToClusterId(chainId: string): TrezoaClusterId | null {
     return getClusterIdFromChainId(chainId);
 }

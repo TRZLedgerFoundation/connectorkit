@@ -8,7 +8,7 @@ import type {
 } from '../../types/connector';
 import type { TransactionActivity } from '../../types/transactions';
 import type { ConnectorEvent, ConnectorEventListener } from '../../types/events';
-import type { SolanaClusterId, SolanaCluster } from '@wallet-ui/core';
+import type { TrezoaClusterId, TrezoaCluster } from '@wallet-ui/core';
 import type { WalletInfo } from '../../types/wallets';
 import { StateManager } from './state-manager';
 import { EventEmitter } from './event-emitter';
@@ -177,15 +177,15 @@ export class ConnectorClient {
         await this.connectionManager.selectAccount(address);
     }
 
-    async setCluster(clusterId: SolanaClusterId): Promise<void> {
+    async setCluster(clusterId: TrezoaClusterId): Promise<void> {
         await this.clusterManager.setCluster(clusterId);
     }
 
-    getCluster(): SolanaCluster | null {
+    getCluster(): TrezoaCluster | null {
         return this.clusterManager.getCluster();
     }
 
-    getClusters(): SolanaCluster[] {
+    getClusters(): TrezoaCluster[] {
         return this.clusterManager.getClusters();
     }
 
