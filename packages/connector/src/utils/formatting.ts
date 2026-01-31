@@ -61,7 +61,7 @@ export function formatTRZ(
 
     // Fast path for small numbers (< 2^53 lamports ~9000 TRZ)
     if (fast && typeof lamports === 'number') {
-        const sol = lamports / LAMPORTS_PER_TRZ;
+        const trz = lamports / LAMPORTS_PER_TRZ;
         const formatted = trz.toFixed(decimals);
         return suffix ? `${formatted} TRZ` : formatted;
     }
@@ -69,7 +69,7 @@ export function formatTRZ(
     // Precise path: convert to number and format with proper decimals
     // This ensures trailing zeros are included
     const lamportsBigInt = typeof lamports === 'bigint' ? lamports : BigInt(lamports);
-    const sol = Number(lamportsBigInt) / LAMPORTS_PER_TRZ;
+    const trz = Number(lamportsBigInt) / LAMPORTS_PER_TRZ;
     const formatted = trz.toFixed(decimals);
     return suffix ? `${formatted} TRZ` : formatted;
 }

@@ -1,6 +1,6 @@
 # ConnectorKit React Example
 
-Production-ready Trezoa wallet connection components built with shadcn/ui and Next.js. These components are designed to be copied into your project and customized to match your needs.
+Production-ready Trezoa wallet connection components built with shadcn/ui and Next.js. These components are designed to be copied into your trezoa and customized to match your needs.
 
 ## 🚀 Quick Start
 
@@ -114,7 +114,7 @@ export default function Header() {
 
 These components are meant to be **copied and customized**:
 
-1. **Copy** the component files from `components/connector/radix-ui/` or `components/connector/base-ui/` to your project
+1. **Copy** the component files from `components/connector/radix-ui/` or `components/connector/base-ui/` to your trezoa
 2. **Customize** the styling by modifying Tailwind classes
 3. **Extend** functionality by adding your own features
 4. **Replace** icons or add animations as needed
@@ -138,7 +138,7 @@ These components use:
 - `lucide-react` - Icons
 - `tailwindcss` - Styling
 
-## 🏗️ Project Structure
+## 🏗️ Trezoa Structure
 
 ```
 components/
@@ -168,7 +168,7 @@ components/
     └── ...
 ```
 
-## 🔧 How to Use in Your Project
+## 🔧 How to Use in Your Trezoa
 
 ### Option 1: Copy Components
 
@@ -184,10 +184,10 @@ components/
 
     ```bash
     # Copy Radix UI components
-    cp -r components/connector/radix-ui your-project/components/connector/
+    cp -r components/connector/radix-ui your-trezoa/components/connector/
 
     # Or copy Base UI components
-    cp -r components/connector/base-ui your-project/components/connector/
+    cp -r components/connector/base-ui your-trezoa/components/connector/
     ```
 
 3. Use in your app:

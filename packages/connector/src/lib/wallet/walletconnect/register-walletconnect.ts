@@ -40,7 +40,7 @@ export interface WalletConnectRegistration {
  * @example
  * ```typescript
  * const { wallet, unregister } = await registerWalletConnectWallet({
- *   projectId: 'your-project-id',
+ *   projectId: 'your-trezoa-id',
  *   metadata: {
  *     name: 'My App',
  *     description: 'My Trezoa App',

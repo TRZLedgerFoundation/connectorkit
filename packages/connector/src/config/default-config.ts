@@ -70,7 +70,7 @@ export interface DefaultConfigOptions {
      * When enabled, a "WalletConnect" wallet appears in the wallet list.
      * 
      * Can be:
-     * - `true` to enable with auto-detected project ID from NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID env var
+     * - `true` to enable with auto-detected trezoa ID from NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID env var
      * - An object with optional overrides (projectId, metadata, etc.)
      * - `undefined` or `false` to disable
      * 
@@ -85,13 +85,13 @@ export interface DefaultConfigOptions {
      * 
      * @example
      * ```ts
-     * // Simplest - just enable it (reads project ID from env)
+     * // Simplest - just enable it (reads trezoa ID from env)
      * getDefaultConfig({ appName: 'My App', walletConnect: true })
      * 
-     * // With explicit project ID
+     * // With explicit trezoa ID
      * getDefaultConfig({ 
      *   appName: 'My App', 
-     *   walletConnect: { projectId: 'my-project-id' } 
+     *   walletConnect: { projectId: 'my-trezoa-id' } 
      * })
      * ```
      * 
@@ -106,7 +106,7 @@ export interface DefaultConfigOptions {
  */
 export interface SimplifiedWalletConnectConfig {
     /**
-     * WalletConnect Cloud project ID.
+     * WalletConnect Cloud trezoa ID.
      * If not provided, reads from NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID env var.
      */
     projectId?: string;
@@ -308,17 +308,17 @@ function buildWalletConnectConfig(
     // Disabled
     if (!walletConnect) return undefined;
 
-    // Get project ID from config or environment
+    // Get trezoa ID from config or environment
     const configProjectId = typeof walletConnect === 'object' ? walletConnect.projectId : undefined;
     const envProjectId = typeof process !== 'undefined' 
         ? process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID 
         : undefined;
     const projectId = configProjectId || envProjectId;
 
-    // If no project ID available, WalletConnect is disabled
+    // If no trezoa ID available, WalletConnect is disabled
     if (!projectId) {
         if (typeof walletConnect === 'object' || walletConnect === true) {
-            logger.warn('WalletConnect enabled but no project ID found. Set NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID or provide projectId in config.');
+            logger.warn('WalletConnect enabled but no trezoa ID found. Set NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID or provide projectId in config.');
         }
         return undefined;
     }

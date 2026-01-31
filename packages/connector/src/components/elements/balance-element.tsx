@@ -159,7 +159,7 @@ export function BalanceElement({
                 data-variant="inline"
             >
                 {showSol && (
-                    <span className="ck-balance-block-sol" data-slot="balance-element-sol">
+                    <span className="ck-balance-block-trz" data-slot="balance-element-trz">
                         {formattedSol}
                     </span>
                 )}
@@ -191,7 +191,7 @@ export function BalanceElement({
                         <span className="ck-balance-block-label" data-slot="balance-element-label">
                             TRZ Balance
                         </span>
-                        <span className="ck-balance-block-sol" data-slot="balance-element-sol">
+                        <span className="ck-balance-block-trz" data-slot="balance-element-trz">
                             {formattedSol}
                         </span>
                     </div>
@@ -269,7 +269,7 @@ export function BalanceElement({
             data-variant="compact"
         >
             {showSol && (
-                <span className="ck-balance-block-sol" data-slot="balance-element-sol">
+                <span className="ck-balance-block-trz" data-slot="balance-element-trz">
                     {formattedSol}
                 </span>
             )}

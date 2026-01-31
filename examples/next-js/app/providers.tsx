@@ -47,7 +47,7 @@ export function Providers({ children }: { children: ReactNode }) {
             enableMobile: true,
             clusters,
             // WalletConnect: just set to true!
-            // Project ID is auto-read from NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
+            // Trezoa ID is auto-read from NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
             // Metadata is auto-generated from appName/appUrl
             // Callbacks are auto-wired by AppProvider
             walletConnect: true,

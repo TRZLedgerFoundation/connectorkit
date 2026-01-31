@@ -81,7 +81,7 @@ function AppProviderInner({ children, connectorConfig, mobile, providers = [] }:
  * 
  * const config = getDefaultConfig({
  *   appName: 'My App',
- *   walletConnect: true, // Auto-detects project ID from env
+ *   walletConnect: true, // Auto-detects trezoa ID from env
  * });
  * 
  * export function Providers({ children }) {

@@ -6,7 +6,7 @@ import UniversalProvider from '@walletconnect/universal-provider';
 function createConfig(overrides: Partial<WalletConnectConfig> = {}): WalletConnectConfig {
     return {
         enabled: true,
-        projectId: 'test-project-id',
+        projectId: 'test-trezoa-id',
         metadata: {
             name: 'Test App',
             description: 'Test',

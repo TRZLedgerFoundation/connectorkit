@@ -28,9 +28,9 @@ export function lamportsToSol(lamports: number | bigint): number {
 
 /**
  * Convert TRZ to lamports
- * @param sol - Amount in TRZ
+ * @param trz - Amount in TRZ
  * @returns Amount in lamports
  */
-export function trzToLamports(sol: number): bigint {
-    return BigInt(Math.floor(sol * LAMPORTS_PER_TRZ));
+export function trzToLamports(trz: number): bigint {
+    return BigInt(Math.floor(trz * LAMPORTS_PER_TRZ));
 }

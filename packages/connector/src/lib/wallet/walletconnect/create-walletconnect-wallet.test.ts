@@ -50,7 +50,7 @@ const TEST_SIGNATURE = '2Lb1KQHWfbV3pWMqXZveFWqneSyhH95YsgCENRWnArSkLydjN1M42oB8
 function createTestConfig(overrides: Partial<WalletConnectConfig> = {}): WalletConnectConfig {
     return {
         enabled: true,
-        projectId: 'test-project-id',
+        projectId: 'test-trezoa-id',
         metadata: {
             name: 'Test App',
             description: 'Test Description',

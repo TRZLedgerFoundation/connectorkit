@@ -1,6 +1,6 @@
 # Contributing to ConnectorKit
 
-Thank you for your interest in contributing! This document provides guidelines for contributing to the project.
+Thank you for your interest in contributing! This document provides guidelines for contributing to the trezoa.
 
 ## Getting Started
 
@@ -23,7 +23,7 @@ Thank you for your interest in contributing! This document provides guidelines f
     git checkout -b feature/your-feature-name
     ```
 
-## Project Structure
+## Trezoa Structure
 
 - `packages/connector/` - Core wallet connector with React hooks and headless client
 - `packages/debugger/` - Development debug panel with transaction analysis

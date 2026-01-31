@@ -360,8 +360,8 @@ export function formatComputeUnits(units: number): string {
  * @returns Formatted string
  */
 export function formatFee(lamports: number): string {
-    const sol = lamports / 1_000_000_000;
-    if (sol < 0.000001) {
+    const trz = lamports / 1_000_000_000;
+    if (trz < 0.000001) {
         return `${lamports} lamports`;
     }
     return `${trz.toFixed(6)} TRZ`;

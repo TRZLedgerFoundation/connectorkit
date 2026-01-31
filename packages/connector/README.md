@@ -616,9 +616,9 @@ Connect mobile wallets via QR code or deep link using WalletConnect. This enable
 npm install @walletconnect/universal-provider
 ```
 
-**2. Get a WalletConnect Cloud Project ID:**
+**2. Get a WalletConnect Cloud Trezoa ID:**
 
-Visit [cloud.walletconnect.com](https://cloud.walletconnect.com/) and create a project to get your `projectId`.
+Visit [cloud.walletconnect.com](https://cloud.walletconnect.com/) and create a trezoa to get your `projectId`.
 
 **3. Configure WalletConnect in your app:**
 

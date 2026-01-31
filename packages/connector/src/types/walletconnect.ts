@@ -58,7 +58,7 @@ export interface WalletConnectConfig {
     enabled?: boolean;
 
     /**
-     * WalletConnect Cloud project ID.
+     * WalletConnect Cloud trezoa ID.
      * Get one at https://cloud.walletconnect.com/
      */
     projectId: string;

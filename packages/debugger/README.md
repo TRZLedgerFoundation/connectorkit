@@ -529,4 +529,4 @@ MIT
 
 ## Credits
 
-Transaction analysis capabilities adapted from [Trezoa Explorer](https://github.com/trezoa-labs/explorer).
+Transaction analysis capabilities adapted from [Trezoa Explorer](https://github.com/trezoa-team/explorer).

@@ -27,7 +27,7 @@ Thank you for your interest in contributing! This document provides guidelines f
     git checkout -b fix/your-bug-fix
     ```
 
-## Project Structure
+## Trezoa Structure
 
 ```
 packages/connector/
@@ -98,7 +98,7 @@ pnpm test        # Run tests
 
 ### PR Checklist
 
-- [ ] Code follows the project's style guidelines
+- [ ] Code follows the trezoa's style guidelines
 - [ ] Tests added/updated and passing
 - [ ] TypeScript types are correct
 - [ ] Documentation updated if needed
